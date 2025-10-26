@@ -66,7 +66,7 @@ const Index = () => {
           itemNumber: "1000543",
           price: 110,
           shopUrl: "https://www.newbalance.com",
-          position: { top: "92%", left: "58%" },
+          position: { top: "86%", left: "58%" },
           placement: "below" as const,
         },
       ],
