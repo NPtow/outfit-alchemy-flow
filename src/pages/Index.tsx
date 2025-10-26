@@ -22,7 +22,7 @@ const Index = () => {
           itemNumber: "1000321",
           price: 98,
           shopUrl: "https://shop.lululemon.com",
-          position: { top: "18%", left: "23%" },
+          position: { top: "22%", left: "35%" },
           placement: "above" as const,
         },
         {
@@ -66,7 +66,7 @@ const Index = () => {
           itemNumber: "1000543",
           price: 110,
           shopUrl: "https://www.newbalance.com",
-          position: { top: "82%", left: "62%" },
+          position: { top: "88%", left: "50%" },
           placement: "below" as const,
         },
       ],
