@@ -1,4 +1,4 @@
-import { OutfitCollection } from "@/components/OutfitCollection";
+import { OutfitCard } from "@/components/OutfitCard";
 import { Sparkles } from "lucide-react";
 
 // Import product images
@@ -145,7 +145,7 @@ const Index = () => {
       </header>
 
       {/* Main Feed */}
-      <main className="max-w-md mx-auto px-4 py-6 space-y-8">
+      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
         <div>
           <h2 className="text-lg font-semibold mb-2">Outfit Suggestions</h2>
           <p className="text-sm text-muted-foreground">
@@ -153,13 +153,19 @@ const Index = () => {
           </p>
         </div>
 
-        {outfits.map((outfit) => (
-          <OutfitCollection
-            key={outfit.id}
-            occasion={outfit.occasion}
-            products={outfit.products}
-          />
-        ))}
+        {/* Outfit Feed */}
+        <div className="space-y-6">
+          {outfits.map((outfit, index) => (
+            <div
+              key={outfit.id}
+              style={{
+                animation: `fade-in 0.6s ease-out ${index * 0.15}s backwards`,
+              }}
+            >
+              <OutfitCard occasion={outfit.occasion} products={outfit.products} />
+            </div>
+          ))}
+        </div>
 
         {/* Bottom Padding */}
         <div className="h-20" />
