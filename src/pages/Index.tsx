@@ -1,177 +1,236 @@
-import { OutfitCard } from "@/components/OutfitCard";
-import { Sparkles } from "lucide-react";
+import { VerticalOutfitFeed } from "@/components/VerticalOutfitFeed";
 
-// Import product images
-import jacketBrown from "@/assets/jacket-brown.jpg";
-import turtleneckWhite from "@/assets/turtleneck-white.jpg";
-import skirtPolka from "@/assets/skirt-polka.jpg";
-import bagCream from "@/assets/bag-cream.jpg";
-import sneakersWhite from "@/assets/sneakers-white.jpg";
-import bootsBlack from "@/assets/boots-black.jpg";
+// Import outfit images
+import outfitAthleisure from "@/assets/outfit-athleisure.png";
+import outfitCasual from "@/assets/outfit-casual.png";
+import outfitDate from "@/assets/outfit-date.png";
+import outfitWork from "@/assets/outfit-work.png";
+import outfitElegant from "@/assets/outfit-elegant.png";
 
 const Index = () => {
-  // Sample outfit collections
   const outfits = [
     {
-      id: "date-night",
-      occasion: "Date Night",
-      products: [
+      id: "athleisure",
+      occasion: "Athleisure Vibes",
+      image: outfitAthleisure,
+      items: [
         {
           id: "1",
-          image: jacketBrown,
-          brand: "AllSaints",
-          name: "Corduroy Jacket",
-          price: 295,
-          shopUrl: "https://www.allsaints.com",
+          name: "Cropped Hoodie",
+          brand: "Lululemon",
+          price: 98,
+          shopUrl: "https://shop.lululemon.com",
+          position: { top: "15%", left: "20%" },
         },
         {
           id: "2",
-          image: turtleneckWhite,
-          brand: "COS",
-          name: "Cashmere Turtleneck",
-          price: 169,
-          shopUrl: "https://www.cosstores.com",
+          name: "Tank Top",
+          brand: "Athleta",
+          price: 54,
+          shopUrl: "https://athleta.gap.com",
+          position: { top: "20%", left: "65%" },
         },
         {
           id: "3",
-          image: skirtPolka,
-          brand: "& Other Stories",
-          name: "Polka Dot Skirt",
-          price: 119,
-          shopUrl: "https://www.stories.com",
+          name: "Wide Leg Pants",
+          brand: "Outdoor Voices",
+          price: 88,
+          shopUrl: "https://www.outdoorvoices.com",
+          position: { top: "55%", left: "70%" },
         },
         {
           id: "4",
-          image: bagCream,
-          brand: "Charles & Keith",
-          name: "Shoulder Bag",
-          price: 79,
-          shopUrl: "https://www.charleskeith.com",
+          name: "Canvas Tote",
+          brand: "Baggu",
+          price: 32,
+          shopUrl: "https://baggu.com",
+          position: { top: "68%", left: "15%" },
+        },
+        {
+          id: "5",
+          name: "Retro Sneakers",
+          brand: "New Balance",
+          price: 110,
+          shopUrl: "https://www.newbalance.com",
+          position: { top: "78%", left: "65%" },
         },
       ],
     },
     {
-      id: "casual-chic",
-      occasion: "Casual Chic",
-      products: [
-        {
-          id: "5",
-          image: turtleneckWhite,
-          brand: "Everlane",
-          name: "Merino Turtleneck",
-          price: 88,
-          shopUrl: "https://www.everlane.com",
-        },
+      id: "casual",
+      occasion: "Casual Day Out",
+      image: outfitCasual,
+      items: [
         {
           id: "6",
-          image: sneakersWhite,
-          brand: "Veja",
-          name: "Campo Sneakers",
-          price: 150,
-          shopUrl: "https://www.veja-store.com",
+          name: "Graphic Tee",
+          brand: "Urban Outfitters",
+          price: 42,
+          shopUrl: "https://www.urbanoutfitters.com",
+          position: { top: "18%", left: "50%" },
         },
         {
           id: "7",
-          image: bagCream,
-          brand: "Mansur Gavriel",
-          name: "Bucket Bag",
-          price: 395,
-          shopUrl: "https://www.mansurgavriel.com",
+          name: "Mom Jeans",
+          brand: "Levi's",
+          price: 98,
+          shopUrl: "https://www.levi.com",
+          position: { top: "45%", left: "55%" },
         },
         {
           id: "8",
-          image: jacketBrown,
-          brand: "Madewell",
-          name: "Sherpa Jacket",
-          price: 168,
-          shopUrl: "https://www.madewell.com",
+          name: "Leopard Tote",
+          brand: "Clare V",
+          price: 285,
+          shopUrl: "https://www.clarev.com",
+          position: { top: "60%", left: "18%" },
+        },
+        {
+          id: "9",
+          name: "Platform Sneakers",
+          brand: "Puma",
+          price: 90,
+          shopUrl: "https://us.puma.com",
+          position: { top: "75%", left: "65%" },
+        },
+      ],
+    },
+    {
+      id: "date-night",
+      occasion: "Date Night",
+      image: outfitDate,
+      items: [
+        {
+          id: "10",
+          name: "Corduroy Jacket",
+          brand: "AllSaints",
+          price: 295,
+          shopUrl: "https://www.allsaints.com",
+          position: { top: "20%", left: "25%" },
+        },
+        {
+          id: "11",
+          name: "Turtleneck Top",
+          brand: "COS",
+          price: 69,
+          shopUrl: "https://www.cosstores.com",
+          position: { top: "25%", left: "65%" },
+        },
+        {
+          id: "12",
+          name: "Polka Dot Skirt",
+          brand: "& Other Stories",
+          price: 119,
+          shopUrl: "https://www.stories.com",
+          position: { top: "52%", left: "70%" },
+        },
+        {
+          id: "13",
+          name: "Shoulder Bag",
+          brand: "Charles & Keith",
+          price: 79,
+          shopUrl: "https://www.charleskeith.com",
+          position: { top: "70%", left: "20%" },
+        },
+        {
+          id: "14",
+          name: "Block Heel Shoes",
+          brand: "Everlane",
+          price: 165,
+          shopUrl: "https://www.everlane.com",
+          position: { top: "82%", left: "68%" },
         },
       ],
     },
     {
       id: "work-ready",
       occasion: "Work Ready",
-      products: [
+      image: outfitWork,
+      items: [
         {
-          id: "9",
-          image: bootsBlack,
-          brand: "Vagabond",
-          name: "Leather Chelsea Boots",
-          price: 180,
-          shopUrl: "https://www.vagabond.com",
+          id: "15",
+          name: "Pinstripe Blazer",
+          brand: "Mango",
+          price: 149,
+          shopUrl: "https://shop.mango.com",
+          position: { top: "22%", left: "28%" },
         },
         {
-          id: "10",
-          image: skirtPolka,
-          brand: "Reiss",
-          name: "Midi Skirt",
-          price: 148,
-          shopUrl: "https://www.reiss.com",
-        },
-        {
-          id: "11",
-          image: turtleneckWhite,
+          id: "16",
+          name: "Sleeveless Turtleneck",
           brand: "Massimo Dutti",
-          name: "Silk Blend Top",
-          price: 129,
+          price: 79,
           shopUrl: "https://www.massimodutti.com",
+          position: { top: "28%", left: "65%" },
         },
         {
-          id: "12",
-          image: jacketBrown,
+          id: "17",
+          name: "Tailored Trousers",
+          brand: "Reiss",
+          price: 195,
+          shopUrl: "https://www.reiss.com",
+          position: { top: "58%", left: "68%" },
+        },
+        {
+          id: "18",
+          name: "Leather Shoulder Bag",
+          brand: "Strathberry",
+          price: 495,
+          shopUrl: "https://www.strathberry.com",
+          position: { top: "68%", left: "18%" },
+        },
+        {
+          id: "19",
+          name: "Pointed Pumps",
+          brand: "Sam Edelman",
+          price: 150,
+          shopUrl: "https://www.samedelman.com",
+          position: { top: "80%", left: "70%" },
+        },
+      ],
+    },
+    {
+      id: "elegant",
+      occasion: "Elegant Evening",
+      image: outfitElegant,
+      items: [
+        {
+          id: "20",
+          name: "Corduroy Blazer",
           brand: "Sezane",
-          name: "Wool Blend Coat",
           price: 290,
           shopUrl: "https://www.sezane.com",
+          position: { top: "22%", left: "25%" },
+        },
+        {
+          id: "21",
+          name: "Knit Maxi Dress",
+          brand: "H&M Studio",
+          price: 129,
+          shopUrl: "https://www2.hm.com",
+          position: { top: "40%", left: "65%" },
+        },
+        {
+          id: "22",
+          name: "Structured Handbag",
+          brand: "The Row",
+          price: 850,
+          shopUrl: "https://www.therow.com",
+          position: { top: "72%", left: "18%" },
+        },
+        {
+          id: "23",
+          name: "Slingback Heels",
+          brand: "Zara",
+          price: 89,
+          shopUrl: "https://www.zara.com",
+          position: { top: "78%", left: "70%" },
         },
       ],
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-10 h-10 rounded-2xl bg-[image:var(--gradient-primary)] flex items-center justify-center shadow-[var(--shadow-card)]">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <h1 className="text-2xl font-bold bg-[image:var(--gradient-primary)] bg-clip-text text-transparent">
-              StyleFeed
-            </h1>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Feed */}
-      <main className="max-w-md mx-auto px-4 py-6 space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold mb-2">Outfit Suggestions</h2>
-          <p className="text-sm text-muted-foreground">
-            Curated looks tailored just for you
-          </p>
-        </div>
-
-        {/* Outfit Feed */}
-        <div className="space-y-6">
-          {outfits.map((outfit, index) => (
-            <div
-              key={outfit.id}
-              style={{
-                animation: `fade-in 0.6s ease-out ${index * 0.15}s backwards`,
-              }}
-            >
-              <OutfitCard occasion={outfit.occasion} products={outfit.products} />
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom Padding */}
-        <div className="h-20" />
-      </main>
-    </div>
-  );
+  return <VerticalOutfitFeed outfits={outfits} />;
 };
 
 export default Index;
