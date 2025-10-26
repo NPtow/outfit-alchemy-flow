@@ -1,14 +1,15 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Heart, Bookmark, Share2, ShoppingBag, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 interface ShoppableItem {
   id: string;
   name: string;
   brand: string;
+  category: string;
+  itemNumber: string;
   price: number;
   shopUrl: string;
   position: {
@@ -78,26 +79,22 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
 
   const handleItemClick = (item: ShoppableItem) => {
     window.open(item.shopUrl, "_blank");
-    toast.success(`Opening ${item.brand} ${item.name}`);
   };
 
   const handleLike = () => {
-    toast.success("Added to favorites!");
+    // Like action
   };
 
   const handleSave = () => {
-    toast.success("Saved outfit!");
+    // Save action
   };
 
   const handleShare = () => {
-    toast.success("Link copied to clipboard!");
+    // Share action
   };
 
   const handleShopLook = () => {
     setShowPrices(!showPrices);
-    if (!showPrices) {
-      toast.success("Tap items to shop!");
-    }
   };
 
   return (
@@ -160,7 +157,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
               <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="absolute z-10 group animate-scale-in hover:scale-110 transition-all duration-300"
+                className="absolute z-10 animate-scale-in hover:scale-105 transition-all duration-300"
                 style={{
                   top: item.position.top,
                   left: item.position.left,
@@ -168,15 +165,10 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                <div className="relative">
-                  {/* Compact Price Tag */}
-                  <div className="bg-primary text-primary-foreground px-3 py-2 rounded-xl shadow-[var(--shadow-hover)] backdrop-blur-sm min-w-[90px]">
-                    <p className="text-xs font-semibold whitespace-nowrap">{item.brand}</p>
-                    <p className="text-sm font-medium text-primary-foreground/90 line-clamp-1 mb-0.5">{item.name}</p>
-                    <p className="text-lg font-bold">${item.price}</p>
-                  </div>
-                  {/* Click indicator dot */}
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-pulse" />
+                <div className="bg-primary text-primary-foreground px-2.5 py-1.5 rounded-lg shadow-[var(--shadow-hover)] backdrop-blur-sm">
+                  <p className="text-xs font-semibold whitespace-nowrap">
+                    {item.category} {item.itemNumber} ${item.price}
+                  </p>
                 </div>
               </button>
             ))}
