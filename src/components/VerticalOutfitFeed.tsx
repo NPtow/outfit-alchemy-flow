@@ -113,7 +113,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         className="relative w-full h-full flex items-center justify-center animate-fade-in"
       >
       {/* Occasion Badge */}
-      <div className="absolute top-4 left-6 z-20">
+      <div className="absolute top-16 left-6 z-20">
         <Badge variant="secondary" className="text-base px-5 py-2 backdrop-blur-md bg-secondary/90 font-bold">
           {currentOutfit.occasion}
         </Badge>

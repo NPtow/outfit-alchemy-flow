@@ -22,7 +22,7 @@ const Index = () => {
           itemNumber: "1000321",
           price: 98,
           shopUrl: "https://shop.lululemon.com",
-          position: { top: "15%", left: "20%" },
+          position: { top: "18%", left: "23%" },
           placement: "above" as const,
         },
         {
@@ -33,7 +33,7 @@ const Index = () => {
           itemNumber: "1000145",
           price: 54,
           shopUrl: "https://athleta.gap.com",
-          position: { top: "20%", left: "65%" },
+          position: { top: "25%", left: "62%" },
           placement: "above" as const,
         },
         {
@@ -44,7 +44,7 @@ const Index = () => {
           itemNumber: "1000789",
           price: 88,
           shopUrl: "https://www.outdoorvoices.com",
-          position: { top: "55%", left: "70%" },
+          position: { top: "58%", left: "68%" },
           placement: "below" as const,
         },
         {
@@ -55,7 +55,7 @@ const Index = () => {
           itemNumber: "1000165",
           price: 32,
           shopUrl: "https://baggu.com",
-          position: { top: "68%", left: "15%" },
+          position: { top: "68%", left: "18%" },
           placement: "below" as const,
         },
         {
@@ -66,7 +66,7 @@ const Index = () => {
           itemNumber: "1000543",
           price: 110,
           shopUrl: "https://www.newbalance.com",
-          position: { top: "78%", left: "65%" },
+          position: { top: "82%", left: "62%" },
           placement: "below" as const,
         },
       ],
@@ -84,7 +84,7 @@ const Index = () => {
           itemNumber: "1000234",
           price: 42,
           shopUrl: "https://www.urbanoutfitters.com",
-          position: { top: "18%", left: "50%" },
+          position: { top: "22%", left: "48%" },
           placement: "above" as const,
         },
         {
@@ -95,7 +95,7 @@ const Index = () => {
           itemNumber: "1000678",
           price: 98,
           shopUrl: "https://www.levi.com",
-          position: { top: "45%", left: "55%" },
+          position: { top: "52%", left: "52%" },
           placement: "below" as const,
         },
         {
@@ -106,7 +106,7 @@ const Index = () => {
           itemNumber: "1000912",
           price: 285,
           shopUrl: "https://www.clarev.com",
-          position: { top: "60%", left: "18%" },
+          position: { top: "64%", left: "20%" },
           placement: "below" as const,
         },
         {
@@ -117,7 +117,7 @@ const Index = () => {
           itemNumber: "1000456",
           price: 90,
           shopUrl: "https://us.puma.com",
-          position: { top: "75%", left: "65%" },
+          position: { top: "78%", left: "62%" },
           placement: "below" as const,
         },
       ],
@@ -135,7 +135,7 @@ const Index = () => {
           itemNumber: "1000295",
           price: 295,
           shopUrl: "https://www.allsaints.com",
-          position: { top: "20%", left: "25%" },
+          position: { top: "24%", left: "28%" },
           placement: "above" as const,
         },
         {
@@ -146,7 +146,7 @@ const Index = () => {
           itemNumber: "1000169",
           price: 69,
           shopUrl: "https://www.cosstores.com",
-          position: { top: "25%", left: "65%" },
+          position: { top: "30%", left: "62%" },
           placement: "above" as const,
         },
         {
@@ -157,7 +157,7 @@ const Index = () => {
           itemNumber: "1000419",
           price: 119,
           shopUrl: "https://www.stories.com",
-          position: { top: "52%", left: "70%" },
+          position: { top: "58%", left: "68%" },
           placement: "below" as const,
         },
         {
@@ -168,7 +168,7 @@ const Index = () => {
           itemNumber: "1000179",
           price: 79,
           shopUrl: "https://www.charleskeith.com",
-          position: { top: "70%", left: "20%" },
+          position: { top: "72%", left: "22%" },
           placement: "below" as const,
         },
         {
@@ -179,7 +179,7 @@ const Index = () => {
           itemNumber: "1000565",
           price: 165,
           shopUrl: "https://www.everlane.com",
-          position: { top: "82%", left: "68%" },
+          position: { top: "84%", left: "66%" },
           placement: "below" as const,
         },
       ],
@@ -197,7 +197,7 @@ const Index = () => {
           itemNumber: "1000349",
           price: 149,
           shopUrl: "https://shop.mango.com",
-          position: { top: "22%", left: "28%" },
+          position: { top: "26%", left: "30%" },
           placement: "above" as const,
         },
         {
@@ -208,7 +208,7 @@ const Index = () => {
           itemNumber: "1000279",
           price: 79,
           shopUrl: "https://www.massimodutti.com",
-          position: { top: "28%", left: "65%" },
+          position: { top: "32%", left: "62%" },
           placement: "above" as const,
         },
         {
@@ -219,7 +219,7 @@ const Index = () => {
           itemNumber: "1000695",
           price: 195,
           shopUrl: "https://www.reiss.com",
-          position: { top: "58%", left: "68%" },
+          position: { top: "62%", left: "66%" },
           placement: "below" as const,
         },
         {
@@ -230,7 +230,7 @@ const Index = () => {
           itemNumber: "1000895",
           price: 495,
           shopUrl: "https://www.strathberry.com",
-          position: { top: "68%", left: "18%" },
+          position: { top: "70%", left: "20%" },
           placement: "below" as const,
         },
         {
@@ -241,7 +241,7 @@ const Index = () => {
           itemNumber: "1000650",
           price: 150,
           shopUrl: "https://www.samedelman.com",
-          position: { top: "80%", left: "70%" },
+          position: { top: "82%", left: "68%" },
           placement: "below" as const,
         },
       ],
@@ -259,7 +259,7 @@ const Index = () => {
           itemNumber: "1000490",
           price: 290,
           shopUrl: "https://www.sezane.com",
-          position: { top: "22%", left: "25%" },
+          position: { top: "26%", left: "28%" },
           placement: "above" as const,
         },
         {
@@ -270,7 +270,7 @@ const Index = () => {
           itemNumber: "1000329",
           price: 129,
           shopUrl: "https://www2.hm.com",
-          position: { top: "40%", left: "65%" },
+          position: { top: "45%", left: "62%" },
           placement: "above" as const,
         },
         {
@@ -281,7 +281,7 @@ const Index = () => {
           itemNumber: "1000950",
           price: 850,
           shopUrl: "https://www.therow.com",
-          position: { top: "72%", left: "18%" },
+          position: { top: "74%", left: "20%" },
           placement: "below" as const,
         },
         {
@@ -292,7 +292,7 @@ const Index = () => {
           itemNumber: "1000289",
           price: 89,
           shopUrl: "https://www.zara.com",
-          position: { top: "78%", left: "70%" },
+          position: { top: "80%", left: "68%" },
           placement: "below" as const,
         },
       ],
