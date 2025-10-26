@@ -145,11 +145,11 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         </div>
 
         {/* Outfit Image with Clickable Items */}
-        <div className="relative w-full h-full max-w-2xl flex items-center justify-center px-6">
+        <div className="relative w-full h-full flex items-center justify-center">
           <img
             src={currentOutfit.image}
             alt={currentOutfit.occasion}
-            className="w-full h-auto max-h-[80vh] object-contain rounded-3xl"
+            className="w-full h-full object-contain"
           />
 
           {/* Clickable Price Tags */}
