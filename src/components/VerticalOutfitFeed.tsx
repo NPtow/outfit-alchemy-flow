@@ -163,7 +163,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
                   top: item.position.top,
                   left: item.position.left,
                   animationDelay: `${index * 0.1}s`,
-                  transform: "translate(-50%, -100%) translateY(-8px)",
+                  transform: "translate(-50%, -50%)",
                 }}
               >
                 <div className="bg-primary text-primary-foreground px-2.5 py-1.5 rounded-lg shadow-[var(--shadow-hover)] backdrop-blur-sm">
