@@ -30,7 +30,7 @@ interface VerticalOutfitFeedProps {
 
 export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showPrices, setShowPrices] = useState(true);
+  const [showPrices, setShowPrices] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -40,14 +40,14 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   const handleNext = () => {
     if (currentIndex < outfits.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setShowPrices(true);
+      setShowPrices(false);
     }
   };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setShowPrices(true);
+      setShowPrices(false);
     }
   };
 
@@ -93,11 +93,11 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
     toast.success("Link copied to clipboard!");
   };
 
-  const handleShopAll = () => {
-    currentOutfit.items.forEach((item) => {
-      window.open(item.shopUrl, "_blank");
-    });
-    toast.success("Opening all shop links...");
+  const handleShopLook = () => {
+    setShowPrices(!showPrices);
+    if (!showPrices) {
+      toast.success("Tap items to shop!");
+    }
   };
 
   return (
@@ -144,13 +144,6 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
           >
             <Share2 className="w-6 h-6 text-foreground" />
           </button>
-          <button
-            onClick={() => setShowPrices(!showPrices)}
-            className="w-14 h-14 rounded-full bg-primary/90 backdrop-blur-md flex items-center justify-center hover:bg-primary transition-all duration-300 hover:scale-110 shadow-[var(--shadow-hover)] text-primary-foreground font-bold text-xl"
-            aria-label="Toggle prices"
-          >
-            $
-          </button>
         </div>
 
         {/* Outfit Image with Clickable Items */}
@@ -167,25 +160,23 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
               <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="absolute z-10 group animate-fade-in hover:scale-110 transition-transform duration-300"
+                className="absolute z-10 group animate-scale-in hover:scale-110 transition-all duration-300"
                 style={{
                   top: item.position.top,
                   left: item.position.left,
                   animationDelay: `${index * 0.1}s`,
+                  transform: "translate(-50%, -50%)",
                 }}
               >
                 <div className="relative">
-                  {/* Price Bubble */}
-                  <div className="bg-primary text-primary-foreground px-4 py-2 rounded-2xl shadow-[var(--shadow-hover)] backdrop-blur-sm">
-                    <p className="text-xs font-medium whitespace-nowrap">{item.brand}</p>
+                  {/* Compact Price Tag */}
+                  <div className="bg-primary text-primary-foreground px-3 py-2 rounded-xl shadow-[var(--shadow-hover)] backdrop-blur-sm min-w-[90px]">
+                    <p className="text-xs font-semibold whitespace-nowrap">{item.brand}</p>
+                    <p className="text-sm font-medium text-primary-foreground/90 line-clamp-1 mb-0.5">{item.name}</p>
                     <p className="text-lg font-bold">${item.price}</p>
                   </div>
-                  {/* Hover Tooltip */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                    <div className="bg-foreground text-background px-3 py-1.5 rounded-lg text-xs whitespace-nowrap">
-                      {item.name}
-                    </div>
-                  </div>
+                  {/* Click indicator dot */}
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-pulse" />
                 </div>
               </button>
             ))}
@@ -197,10 +188,10 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
             variant="gradient"
             size="lg"
             className="w-full gap-3 text-lg font-bold py-6"
-            onClick={handleShopAll}
+            onClick={handleShopLook}
           >
             <ShoppingBag className="w-6 h-6" />
-            Shop This Look
+            {showPrices ? "Hide Items" : "Shop This Look"}
           </Button>
         </div>
 
