@@ -38,6 +38,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showPrices, setShowPrices] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isShared, setIsShared] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -141,6 +142,9 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   };
 
   const handleShare = async () => {
+    setIsShared(true);
+    setTimeout(() => setIsShared(false), 600);
+    
     const shareData = {
       title: `${currentOutfit.occasion} - InspirationKit`,
       text: "Посмотри этот образ в InspirationKit!",
@@ -187,7 +191,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
             className={cn(
               "w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95",
               isLiked 
-                ? "bg-primary/20" 
+                ? "bg-primary/30 shadow-[0_0_20px_rgba(168,138,237,0.5)]" 
                 : "bg-card/90 hover:bg-primary/20"
             )}
             aria-label="Like"
@@ -197,19 +201,27 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
               alt="Like" 
               className={cn(
                 "w-8 h-8 transition-all duration-200",
-                isLiked && "scale-110 drop-shadow-lg"
+                isLiked && "scale-110 drop-shadow-[0_0_8px_rgba(168,138,237,0.8)]"
               )} 
             />
           </button>
           <button
             onClick={handleShare}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
+            className={cn(
+              "w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95",
+              isShared 
+                ? "bg-primary/30 shadow-[0_0_20px_rgba(168,138,237,0.5)]" 
+                : "bg-card/90 hover:bg-primary/20"
+            )}
             aria-label="Share"
           >
             <img 
               src={shareIcon} 
               alt="Share" 
-              className="w-8 h-8 transition-all duration-200" 
+              className={cn(
+                "w-8 h-8 transition-all duration-200",
+                isShared && "scale-110 drop-shadow-[0_0_8px_rgba(168,138,237,0.8)]"
+              )} 
             />
           </button>
         </div>
