@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         display: ['Poppins', 'sans-serif'],
-        cooper: ['Cooper Black', 'Cooper BT', 'serif'],
+        stolzl: ['Stolzl', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

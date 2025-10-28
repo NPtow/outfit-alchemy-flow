@@ -6,7 +6,13 @@
 All colors MUST be HSL.
 */
 
-/* Gropled font is loaded via Google Fonts in index.html */
+/* Stolzl font definition */
+@font-face {
+  font-family: 'Stolzl';
+  src: url('/fonts/stolzl_regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 @layer base {
   :root {
