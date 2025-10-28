@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Share2, ShoppingBag, ChevronDown } from "lucide-react";
+import { ShoppingBag, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorage";
 import { useToast } from "@/hooks/use-toast";
 import heartLike from "@/assets/heart-like.png";
+import shareIcon from "@/assets/share-icon.png";
 
 interface ShoppableItem {
   id: string;
@@ -202,10 +203,14 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
           </button>
           <button
             onClick={handleShare}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95 text-foreground"
+            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
             aria-label="Share"
           >
-            <Share2 className="w-6 h-6" />
+            <img 
+              src={shareIcon} 
+              alt="Share" 
+              className="w-8 h-8 transition-all duration-200" 
+            />
           </button>
         </div>
 
