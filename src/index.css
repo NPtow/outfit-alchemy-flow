@@ -6,6 +6,13 @@
 All colors MUST be HSL.
 */
 
+@font-face {
+  font-family: 'Soledago';
+  src: url('/fonts/soledago.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     /* InspirationKit Color System */

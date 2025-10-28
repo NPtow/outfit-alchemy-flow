@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         display: ['Poppins', 'sans-serif'],
+        soledago: ['Soledago', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
