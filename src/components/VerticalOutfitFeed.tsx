@@ -247,15 +247,14 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
 
         {/* Bottom Shop Button */}
         <div className="absolute bottom-16 left-6 right-6 z-20">
-          <Button
-            variant="gradient"
-            size="lg"
-            className="w-full gap-3 text-lg font-display font-bold py-6 animate-pulse-scale"
+          <button
             onClick={handleShopLook}
+            className="w-full px-6 py-4 rounded-full font-semibold text-lg transition-all duration-200 font-soledago bg-card border-2 border-border hover:border-primary flex items-center justify-center gap-3"
+            style={{ color: '#A88AED' }}
           >
             <ShoppingBag className="w-6 h-6" />
             {showPrices ? "Hide Items" : "Shop This Look"}
-          </Button>
+          </button>
         </div>
 
         {/* Scroll Indicator */}
