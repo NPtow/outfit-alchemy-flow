@@ -249,8 +249,8 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         <div className="absolute bottom-16 left-6 right-6 z-20">
           <button
             onClick={handleShopLook}
-            className="w-full px-6 py-4 rounded-full font-semibold text-lg transition-all duration-200 font-soledago bg-card border-2 border-border hover:border-primary flex items-center justify-center gap-3"
-            style={{ color: '#A88AED' }}
+            className="w-full px-6 py-4 rounded-full font-semibold text-lg transition-all duration-200 font-soledago border-2 border-border hover:border-primary flex items-center justify-center gap-3"
+            style={{ backgroundColor: '#ffefe8', color: '#A88AED' }}
           >
             <ShoppingBag className="w-6 h-6" />
             {showPrices ? "Hide Items" : "Shop This Look"}
