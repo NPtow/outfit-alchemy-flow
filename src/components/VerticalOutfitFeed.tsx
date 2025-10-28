@@ -167,7 +167,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 bg-background overflow-hidden"
+      className="fixed inset-0 bg-background overflow-hidden pt-16 pb-28"
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
