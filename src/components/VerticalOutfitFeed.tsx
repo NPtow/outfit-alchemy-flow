@@ -41,6 +41,13 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   const [touchEnd, setTouchEnd] = useState(0);
   const { toast } = useToast();
 
+  // Reset index when outfits array changes
+  useEffect(() => {
+    if (currentIndex >= outfits.length) {
+      setCurrentIndex(0);
+    }
+  }, [outfits, currentIndex]);
+
   const currentOutfit = outfits[currentIndex];
 
   useEffect(() => {
@@ -48,6 +55,27 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
       setIsLiked(isOutfitSaved(currentOutfit.id));
     }
   }, [currentOutfit]);
+
+  // Show empty state if no outfits
+  if (!outfits || outfits.length === 0) {
+    return (
+      <div className="fixed inset-0 bg-background flex items-center justify-center px-6">
+        <div className="text-center">
+          <h2 className="text-xl font-display font-semibold text-foreground mb-2">
+            Образы не найдены
+          </h2>
+          <p className="text-muted-foreground">
+            Попробуйте выбрать другую категорию
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Safety check for currentOutfit
+  if (!currentOutfit) {
+    return null;
+  }
 
   const handleNext = () => {
     if (currentIndex < outfits.length - 1) {
