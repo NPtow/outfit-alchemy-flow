@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         display: ['Poppins', 'sans-serif'],
-        gropled: ['Groped', 'sans-serif'],
+        gota: ['Gota', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
