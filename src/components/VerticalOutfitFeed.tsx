@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Heart, Share2, ShoppingBag, ChevronDown } from "lucide-react";
+import { Share2, ShoppingBag, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorage";
 import { useToast } from "@/hooks/use-toast";
+import heartLike from "@/assets/heart-like.png";
 
 interface ShoppableItem {
   id: string;
@@ -185,12 +186,19 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
             className={cn(
               "w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95",
               isLiked 
-                ? "bg-primary text-primary-foreground" 
-                : "bg-card/90 hover:bg-primary/20 text-foreground"
+                ? "bg-primary/20" 
+                : "bg-card/90 hover:bg-primary/20"
             )}
             aria-label="Like"
           >
-            <Heart className={cn("w-6 h-6", isLiked && "fill-current")} />
+            <img 
+              src={heartLike} 
+              alt="Like" 
+              className={cn(
+                "w-8 h-8 transition-all duration-200",
+                isLiked && "scale-110 drop-shadow-lg"
+              )} 
+            />
           </button>
           <button
             onClick={handleShare}
