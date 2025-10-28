@@ -1,8 +1,10 @@
-import { useState, useRef } from "react";
-import { Heart, Bookmark, Share2, ShoppingBag, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Heart, Share2, ShoppingBag, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorage";
+import { useToast } from "@/hooks/use-toast";
 
 interface ShoppableItem {
   id: string;
@@ -33,11 +35,19 @@ interface VerticalOutfitFeedProps {
 export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showPrices, setShowPrices] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const { toast } = useToast();
 
   const currentOutfit = outfits[currentIndex];
+
+  useEffect(() => {
+    if (currentOutfit) {
+      setIsLiked(isOutfitSaved(currentOutfit.id));
+    }
+  }, [currentOutfit]);
 
   const handleNext = () => {
     if (currentIndex < outfits.length - 1) {
@@ -83,15 +93,43 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   };
 
   const handleLike = () => {
-    // Like action
+    if (isLiked) {
+      removeSavedOutfit(currentOutfit.id);
+      setIsLiked(false);
+      toast({
+        title: "Удалено из сохраненных",
+        description: "Образ удален из вашей коллекции",
+      });
+    } else {
+      saveOutfit(currentOutfit.id);
+      setIsLiked(true);
+      toast({
+        title: "Сохранено!",
+        description: "Образ добавлен в 'Мои образы'",
+      });
+    }
   };
 
-  const handleSave = () => {
-    // Save action
-  };
+  const handleShare = async () => {
+    const shareData = {
+      title: `${currentOutfit.occasion} - InspirationKit`,
+      text: "Посмотри этот образ в InspirationKit!",
+      url: window.location.href,
+    };
 
-  const handleShare = () => {
-    // Share action
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Ссылка скопирована",
+          description: "Поделитесь образом с друзьями",
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
   };
 
   const handleShopLook = () => {
@@ -123,24 +161,22 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         <div className="absolute right-6 bottom-32 z-20 flex flex-col gap-4">
           <button
             onClick={handleLike}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
+            className={cn(
+              "w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95",
+              isLiked 
+                ? "bg-primary text-primary-foreground" 
+                : "bg-card/90 hover:bg-primary/20 text-foreground"
+            )}
             aria-label="Like"
           >
-            <Heart className="w-6 h-6 text-foreground" />
-          </button>
-          <button
-            onClick={handleSave}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
-            aria-label="Save"
-          >
-            <Bookmark className="w-6 h-6 text-foreground" />
+            <Heart className={cn("w-6 h-6", isLiked && "fill-current")} />
           </button>
           <button
             onClick={handleShare}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
+            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95 text-foreground"
             aria-label="Share"
           >
-            <Share2 className="w-6 h-6 text-foreground" />
+            <Share2 className="w-6 h-6" />
           </button>
         </div>
 
