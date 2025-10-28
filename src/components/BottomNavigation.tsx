@@ -1,6 +1,7 @@
-import { Home, Bookmark } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import homeIcon from "@/assets/home-icon.png";
+import bookmarkIcon from "@/assets/bookmark-icon.png";
 
 export const BottomNavigation = () => {
   const location = useLocation();
@@ -8,12 +9,12 @@ export const BottomNavigation = () => {
   const navItems = [
     {
       name: "Лента",
-      icon: Home,
+      icon: homeIcon,
       path: "/",
     },
     {
       name: "Мои образы",
-      icon: Bookmark,
+      icon: bookmarkIcon,
       path: "/my-outfits",
     },
   ];
@@ -23,19 +24,21 @@ export const BottomNavigation = () => {
       <div className="flex items-center justify-around h-14">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
-          const Icon = item.icon;
 
           return (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors duration-200",
-                isActive ? "text-primary" : "text-muted-foreground"
+                "flex items-center justify-center flex-1 h-full transition-all duration-200",
+                isActive ? "opacity-100 scale-110" : "opacity-70"
               )}
             >
-              <Icon className="w-6 h-6" />
-              <span className="text-xs font-semibold">{item.name}</span>
+              <img 
+                src={item.icon} 
+                alt={item.name}
+                className="w-8 h-8"
+              />
             </Link>
           );
         })}
