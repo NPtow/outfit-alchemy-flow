@@ -114,7 +114,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
       >
       {/* Occasion Badge */}
       <div className="absolute top-16 left-6 z-20">
-        <Badge variant="secondary" className="text-base px-5 py-2 backdrop-blur-md bg-secondary/90 font-bold">
+        <Badge variant="secondary" className="text-base px-5 py-2 backdrop-blur-md bg-secondary/90 font-display font-semibold">
           {currentOutfit.occasion}
         </Badge>
       </div>
@@ -123,21 +123,21 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         <div className="absolute right-6 bottom-32 z-20 flex flex-col gap-4">
           <button
             onClick={handleLike}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-accent transition-all duration-300 hover:scale-110 shadow-[var(--shadow-card)]"
+            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
             aria-label="Like"
           >
             <Heart className="w-6 h-6 text-foreground" />
           </button>
           <button
             onClick={handleSave}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-accent transition-all duration-300 hover:scale-110 shadow-[var(--shadow-card)]"
+            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
             aria-label="Save"
           >
             <Bookmark className="w-6 h-6 text-foreground" />
           </button>
           <button
             onClick={handleShare}
-            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-accent transition-all duration-300 hover:scale-110 shadow-[var(--shadow-card)]"
+            className="w-14 h-14 rounded-full bg-card/90 backdrop-blur-md flex items-center justify-center hover:bg-primary/20 transition-all duration-200 hover:scale-110 shadow-[var(--shadow-card)] active:scale-95"
             aria-label="Share"
           >
             <Share2 className="w-6 h-6 text-foreground" />
@@ -166,9 +166,9 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                <div className="bg-primary text-primary-foreground px-2.5 py-1.5 rounded-lg shadow-[var(--shadow-hover)] backdrop-blur-sm">
-                  <p className="text-xs font-semibold whitespace-nowrap">
-                    {item.category} {item.itemNumber} ${item.price}
+                <div className="bg-primary text-primary-foreground px-3 py-2 rounded-xl shadow-[var(--shadow-hover)] backdrop-blur-sm">
+                  <p className="text-xs font-semibold whitespace-nowrap font-sans">
+                    {item.category} {item.itemNumber} {item.price}₽
                   </p>
                 </div>
               </button>
@@ -180,7 +180,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
           <Button
             variant="gradient"
             size="lg"
-            className="w-full gap-3 text-lg font-bold py-6"
+            className="w-full gap-3 text-lg font-display font-bold py-6 animate-pulse-scale"
             onClick={handleShopLook}
           >
             <ShoppingBag className="w-6 h-6" />

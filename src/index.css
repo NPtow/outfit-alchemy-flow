@@ -8,42 +8,44 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 240 10% 15%;
+    /* InspirationKit Color System */
+    --background: 0 0% 96%;
+    --foreground: 0 0% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 15%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 280 70% 55%;
+    --primary: 330 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 290 80% 70%;
+    --primary-glow: 330 100% 60%;
 
-    --secondary: 160 40% 60%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 68 100% 50%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 240 5% 94%;
-    --muted-foreground: 240 5% 45%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 50%;
 
-    --accent: 320 75% 65%;
+    --accent: 277 85% 36%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 10% 90%;
-    --input: 240 10% 90%;
-    --ring: 280 70% 55%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 330 100% 50%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
     
-    --gradient-primary: linear-gradient(135deg, hsl(280 70% 55%), hsl(320 75% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(160 40% 60%), hsl(180 45% 55%));
-    --shadow-card: 0 2px 20px -4px hsl(280 70% 55% / 0.15);
-    --shadow-hover: 0 8px 30px -6px hsl(280 70% 55% / 0.25);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --gradient-primary: linear-gradient(135deg, hsl(330 100% 50%), hsl(277 85% 36%));
+    --gradient-secondary: linear-gradient(135deg, hsl(68 100% 50%), hsl(68 100% 60%));
+    --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease-in-out;
 
     --sidebar-background: 0 0% 98%;
 
@@ -63,37 +65,37 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 240 10% 10%;
+    --background: 0 0% 10%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 13%;
+    --card: 0 0% 13%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 13%;
+    --popover: 0 0% 13%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 280 70% 60%;
+    --primary: 330 100% 55%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 290 80% 75%;
+    --primary-glow: 330 100% 65%;
 
-    --secondary: 160 40% 55%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 68 100% 55%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 240 10% 20%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 320 75% 60%;
+    --accent: 277 85% 40%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 10% 20%;
-    --input: 240 10% 20%;
-    --ring: 280 70% 60%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 330 100% 55%;
     
-    --shadow-card: 0 2px 20px -4px hsl(280 70% 60% / 0.3);
-    --shadow-hover: 0 8px 30px -6px hsl(280 70% 60% / 0.4);
+    --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.3);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
