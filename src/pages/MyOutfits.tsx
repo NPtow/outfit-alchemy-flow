@@ -35,12 +35,12 @@ const MyOutfits = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="flex items-center justify-between px-6 py-4">
-          <h1 className="text-2xl font-display font-bold text-foreground">
+          <h1 className="text-2xl font-soledago font-bold" style={{ color: '#A88AED' }}>
             Мои образы
           </h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2">
             <Heart className="w-5 h-5 fill-primary text-primary" />
-            <span className="text-sm font-semibold">{savedOutfits.length}</span>
+            <span className="text-sm font-soledago font-semibold" style={{ color: '#A88AED' }}>{savedOutfits.length}</span>
           </div>
         </div>
       </header>
@@ -50,10 +50,10 @@ const MyOutfits = () => {
         {savedOutfits.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
             <Heart className="w-20 h-20 text-muted-foreground mb-4" />
-            <h2 className="text-xl font-display font-semibold text-foreground mb-2">
+            <h2 className="text-xl font-soledago font-semibold mb-2" style={{ color: '#A88AED' }}>
               Пока нет сохраненных образов
             </h2>
-            <p className="text-muted-foreground">
+            <p className="font-soledago" style={{ color: '#A88AED' }}>
               Нажмите на сердечко в ленте, чтобы сохранить понравившиеся образы
             </p>
           </div>
@@ -70,7 +70,7 @@ const MyOutfits = () => {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-                  <p className="text-white text-sm font-semibold">
+                  <p className="text-sm font-soledago font-semibold" style={{ color: '#A88AED' }}>
                     {outfit.occasion}
                   </p>
                 </div>
