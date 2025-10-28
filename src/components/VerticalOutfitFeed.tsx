@@ -178,15 +178,8 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         key={currentOutfit.id}
         className="relative w-full h-full flex items-center justify-center animate-fade-in"
       >
-      {/* Occasion Badge */}
-      <div className="absolute top-16 left-6 z-20">
-        <Badge variant="secondary" className="text-base px-5 py-2 backdrop-blur-md bg-secondary/90 font-display font-semibold">
-          {currentOutfit.occasion}
-        </Badge>
-      </div>
-
         {/* Action Buttons - Right Side */}
-        <div className="absolute right-6 bottom-32 z-20 flex flex-col gap-4">
+        <div className="absolute right-6 bottom-36 z-20 flex flex-col gap-4">
           <button
             onClick={handleLike}
             className={cn(
@@ -240,7 +233,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         </div>
 
         {/* Bottom Shop Button */}
-        <div className="absolute bottom-6 left-6 right-6 z-20">
+        <div className="absolute bottom-16 left-6 right-6 z-20">
           <Button
             variant="gradient"
             size="lg"
