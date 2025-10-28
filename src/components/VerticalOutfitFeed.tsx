@@ -237,10 +237,10 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
           {/* Clickable Price Tags */}
           {showPrices &&
             currentOutfit.items.map((item, index) => (
-                <button
+              <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="absolute z-10 animate-scale-in hover:scale-105 transition-all duration-300"
+                className="absolute z-10 animate-scale-in hover:scale-105 transition-all duration-300 group"
                 style={{
                   top: item.position.top,
                   left: item.position.left,
@@ -248,22 +248,27 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                <div className="bg-card/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-[var(--shadow-hover)] border border-border min-w-[140px]">
+                {/* Точка-маркер */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary border-2 border-background shadow-[0_0_10px_rgba(168,138,237,0.6)] animate-pulse"></div>
+                
+                {/* Информационная карточка */}
+                <div 
+                  className="bg-card/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-[var(--shadow-hover)] border border-border min-w-[140px]"
+                  style={{
+                    position: 'relative',
+                    [item.placement === 'above' ? 'bottom' : 'top']: '20px'
+                  }}
+                >
                   <div className="flex flex-col gap-1">
-                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                    <p className="text-sm font-bold text-foreground leading-tight">
                       {item.category}
                     </p>
-                    <p className="text-xs font-semibold text-foreground leading-tight">
-                      {item.name}
+                    <p className="text-xs text-muted-foreground">
+                      Артикул: {item.itemNumber}
                     </p>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-base font-bold" style={{ color: '#A88AED' }}>
-                        {item.price}₽
-                      </p>
-                      <span className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                        №{item.itemNumber}
-                      </span>
-                    </div>
+                    <p className="text-base font-bold mt-1" style={{ color: '#A88AED' }}>
+                      {item.price}₽
+                    </p>
                   </div>
                 </div>
               </button>
