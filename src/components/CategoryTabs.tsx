@@ -24,7 +24,7 @@ export const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsP
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
             className={cn(
-              "px-8 py-3 rounded-full whitespace-nowrap font-semibold text-lg transition-all duration-200 flex-shrink-0 font-gota",
+              "px-8 py-3 rounded-full whitespace-nowrap font-semibold text-lg transition-all duration-200 flex-shrink-0 font-cooper",
               activeCategory === category.id
                 ? "bg-secondary text-secondary-foreground"
                 : "bg-card border-2 border-border hover:border-primary"
