@@ -253,7 +253,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
             style={{ backgroundColor: '#ffefe8', color: '#A88AED' }}
           >
             <ShoppingBag className="w-6 h-6" />
-            {showPrices ? "Hide Items" : "Shop This Look"}
+            {showPrices ? "Скрыть артикулы" : "узнать артикулы"}
           </button>
         </div>
 
