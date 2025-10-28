@@ -237,7 +237,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
           {/* Clickable Price Tags */}
           {showPrices &&
             currentOutfit.items.map((item, index) => (
-              <button
+                <button
                 key={item.id}
                 onClick={() => handleItemClick(item)}
                 className="absolute z-10 animate-scale-in hover:scale-105 transition-all duration-300"
@@ -248,10 +248,23 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
                   transform: "translate(-50%, -50%)",
                 }}
               >
-                <div className="bg-primary text-primary-foreground px-3 py-2 rounded-xl shadow-[var(--shadow-hover)] backdrop-blur-sm">
-                  <p className="text-xs font-semibold whitespace-nowrap font-sans">
-                    {item.category} {item.itemNumber} {item.price}₽
-                  </p>
+                <div className="bg-card/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-[var(--shadow-hover)] border border-border min-w-[140px]">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                      {item.category}
+                    </p>
+                    <p className="text-xs font-semibold text-foreground leading-tight">
+                      {item.name}
+                    </p>
+                    <div className="flex items-center justify-between mt-1">
+                      <p className="text-base font-bold" style={{ color: '#A88AED' }}>
+                        {item.price}₽
+                      </p>
+                      <span className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
+                        №{item.itemNumber}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </button>
             ))}
