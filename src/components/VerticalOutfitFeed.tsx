@@ -179,7 +179,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
         className="relative w-full h-full flex items-center justify-center animate-fade-in"
       >
         {/* Action Buttons - Right Side */}
-        <div className="absolute right-6 bottom-36 z-20 flex flex-col gap-4">
+        <div className="absolute right-6 bottom-52 z-20 flex flex-col gap-4">
           <button
             onClick={handleLike}
             className={cn(
