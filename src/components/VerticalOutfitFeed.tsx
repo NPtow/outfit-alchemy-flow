@@ -249,24 +249,24 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
                 }}
               >
                 {/* Точка-маркер */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary border-2 border-background shadow-[0_0_10px_rgba(168,138,237,0.6)] animate-pulse"></div>
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary/80 border-4 border-background shadow-lg"></div>
                 
                 {/* Информационная карточка */}
                 <div 
-                  className="bg-card/95 backdrop-blur-md px-4 py-3 rounded-2xl shadow-[var(--shadow-hover)] border border-border min-w-[140px]"
+                  className="bg-card/95 backdrop-blur-md px-3 py-2 rounded-xl shadow-[var(--shadow-hover)] border border-border w-[120px]"
                   style={{
                     position: 'relative',
-                    [item.placement === 'above' ? 'bottom' : 'top']: '20px'
+                    [item.placement === 'above' ? 'bottom' : 'top']: '16px'
                   }}
                 >
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-bold text-foreground leading-tight">
+                  <div className="flex flex-col gap-0.5 text-left">
+                    <p className="text-[11px] font-semibold text-foreground leading-tight">
                       {item.category}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[9px] text-muted-foreground">
                       Артикул: {item.itemNumber}
                     </p>
-                    <p className="text-base font-bold mt-1" style={{ color: '#A88AED' }}>
+                    <p className="text-sm font-bold mt-0.5" style={{ color: '#A88AED' }}>
                       {item.price}₽
                     </p>
                   </div>
