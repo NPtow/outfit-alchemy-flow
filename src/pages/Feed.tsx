@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from '@tanstack/react-query';
 import { VerticalOutfitFeed } from "@/components/VerticalOutfitFeed";
 import { CategoryTabs, Category } from "@/components/CategoryTabs";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { mlApi } from "@/lib/mlApi";
+import { getUserId } from "@/lib/userStorage";
+import { useToast } from "@/hooks/use-toast";
 
 // Import outfit images
 import outfit1 from "@/assets/outfit-1.png";
@@ -12,6 +16,25 @@ import outfit5 from "@/assets/outfit-5.png";
 
 const Feed = () => {
   const [activeCategory, setActiveCategory] = useState<Category>("all");
+  const [useML, setUseML] = useState(false);
+  const userId = getUserId();
+  const { toast } = useToast();
+  
+  // Проверяем доступность ML backend при загрузке
+  useEffect(() => {
+    mlApi.checkStatus().then(status => {
+      if (status) {
+        console.log('✅ ML Backend доступен:', status);
+        setUseML(true);
+      } else {
+        console.warn('⚠️ ML Backend недоступен, используем fallback');
+        toast({
+          title: "ML Backend недоступен",
+          description: "Работаем без ML персонализации",
+        });
+      }
+    });
+  }, []);
 
   const allOutfits = [
     {
@@ -309,19 +332,85 @@ const Feed = () => {
     },
   ];
 
-  const filteredOutfits = activeCategory === "all" 
-    ? allOutfits 
-    : allOutfits.filter(outfit => outfit.category === activeCategory);
+  // ML-персонализированная лента
+  const { data: mlData, isLoading, error, refetch } = useQuery({
+    queryKey: ['ml-feed', userId, activeCategory],
+    queryFn: async () => {
+      const response = await mlApi.getFeed(userId, 20);
+      
+      // Мапим ML outfits к нашему формату
+      const mappedOutfits = response.outfits.map((mlOutfit, index) => {
+        const fallback = allOutfits[index % allOutfits.length];
+        return {
+          ...fallback,
+          id: mlOutfit.outfit_id,
+          mlScore: mlOutfit.score,
+          mlAttributes: mlOutfit.attributes,
+          mlPhase: mlOutfit.phase
+        };
+      });
+      
+      return {
+        outfits: mappedOutfits,
+        user_phase: response.user_phase,
+        total_likes: response.total_likes
+      };
+    },
+    enabled: useML,
+    refetchOnWindowFocus: false
+  });
+
+  // Фильтрация по категории
+  const filteredOutfits = useML && mlData
+    ? (activeCategory === "all" 
+        ? mlData.outfits 
+        : mlData.outfits.filter(outfit => outfit.category === activeCategory))
+    : (activeCategory === "all" 
+        ? allOutfits 
+        : allOutfits.filter(outfit => outfit.category === activeCategory));
+
+  const userPhase = mlData?.user_phase || 'cold_start';
 
   return (
     <div className="min-h-screen w-full">
+      {/* Индикатор фазы персонализации */}
+      {useML && userPhase === 'cold_start' && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-4 py-2 rounded-full text-sm animate-fade-in">
+          👋 Лайкни 5+ образов для ML персонализации
+        </div>
+      )}
+      
+      {useML && userPhase === 'learning' && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-4 py-2 rounded-full text-sm animate-fade-in">
+          🤖 ML учится твои предпочтения...
+        </div>
+      )}
+      
+      {useML && userPhase === 'personalized' && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-4 py-2 rounded-full text-sm animate-fade-in">
+          ✨ Лента персонализирована ML!
+        </div>
+      )}
+      
       <CategoryTabs 
         activeCategory={activeCategory} 
         onCategoryChange={setActiveCategory}
       />
+      
       <div className="pt-16 pb-14">
-        <VerticalOutfitFeed outfits={filteredOutfits} />
+        {isLoading ? (
+          <div className="flex items-center justify-center h-screen">
+            <p className="text-primary">Загружаем ML рекомендации...</p>
+          </div>
+        ) : (
+          <VerticalOutfitFeed 
+            outfits={filteredOutfits} 
+            onInteraction={refetch}
+            useML={useML}
+          />
+        )}
       </div>
+      
       <BottomNavigation />
     </div>
   );

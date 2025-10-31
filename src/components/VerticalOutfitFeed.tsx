@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorage";
 import { useToast } from "@/hooks/use-toast";
+import { mlApi } from '@/lib/mlApi';
+import { getUserId } from '@/lib/userStorage';
 import heartLike from "@/assets/heart-like.png";
 import shareIcon from "@/assets/share-icon.png";
 
@@ -32,9 +34,15 @@ interface OutfitSlide {
 
 interface VerticalOutfitFeedProps {
   outfits: OutfitSlide[];
+  onInteraction?: () => void;
+  useML?: boolean;
 }
 
-export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
+export const VerticalOutfitFeed = ({ 
+  outfits, 
+  onInteraction, 
+  useML = false 
+}: VerticalOutfitFeedProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showPrices, setShowPrices] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -42,7 +50,9 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [viewStartTime, setViewStartTime] = useState(Date.now());
   const { toast } = useToast();
+  const userId = getUserId();
 
   // Reset index when outfits array changes
   useEffect(() => {
@@ -58,6 +68,15 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
       setIsLiked(isOutfitSaved(currentOutfit.id));
     }
   }, [currentOutfit]);
+
+  // При смене образа записываем view
+  useEffect(() => {
+    setViewStartTime(Date.now());
+    
+    if (useML && currentOutfit) {
+      mlApi.recordInteraction(userId, currentOutfit.id, 'view').catch(console.error);
+    }
+  }, [currentIndex, useML, currentOutfit, userId]);
 
   // Show empty state if no outfits
   if (!outfits || outfits.length === 0) {
@@ -81,6 +100,20 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   }
 
   const handleNext = () => {
+    // Вычисляем длительность просмотра
+    const viewDuration = (Date.now() - viewStartTime) / 1000;
+    
+    if (useML && currentOutfit) {
+      // Если меньше 2 секунд = skip
+      const interactionType = viewDuration < 2 ? 'skip' : 'view';
+      mlApi.recordInteraction(
+        userId, 
+        currentOutfit.id, 
+        interactionType, 
+        viewDuration
+      ).catch(console.error);
+    }
+    
     if (currentIndex < outfits.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setShowPrices(false);
@@ -123,7 +156,7 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
     window.open(item.shopUrl, "_blank");
   };
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (isLiked) {
       removeSavedOutfit(currentOutfit.id);
       setIsLiked(false);
@@ -134,10 +167,32 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
     } else {
       saveOutfit(currentOutfit.id);
       setIsLiked(true);
-      toast({
-        title: "Сохранено!",
-        description: "Образ добавлен в 'Мои образы'",
-      });
+      
+      // Записываем лайк в ML backend
+      if (useML) {
+        try {
+          await mlApi.recordInteraction(userId, currentOutfit.id, 'like');
+          
+          // Обновляем ленту для персонализации
+          if (onInteraction) {
+            setTimeout(() => onInteraction(), 500);
+          }
+          
+          toast({
+            title: "Образ сохранен!",
+            description: "ML покажет больше похожих образов ✨",
+          });
+        } catch (error) {
+          console.error('Failed to record like:', error);
+          toast({
+            title: "Образ сохранен!",
+          });
+        }
+      } else {
+        toast({
+          title: "Образ сохранен!",
+        });
+      }
     }
   };
 
@@ -167,6 +222,10 @@ export const VerticalOutfitFeed = ({ outfits }: VerticalOutfitFeedProps) => {
   };
 
   const handleShopLook = () => {
+    if (!showPrices && useML && currentOutfit) {
+      // Записываем view_detail
+      mlApi.recordInteraction(userId, currentOutfit.id, 'view_detail').catch(console.error);
+    }
     setShowPrices(!showPrices);
   };
 

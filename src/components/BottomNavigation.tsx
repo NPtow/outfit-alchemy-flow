@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { Brain } from "lucide-react";
 import homeIcon from "@/assets/home-icon.png";
 import bookmarkIcon from "@/assets/bookmark-icon.png";
 
@@ -11,11 +12,18 @@ export const BottomNavigation = () => {
       name: "Лента",
       icon: homeIcon,
       path: "/",
+      isImage: true,
     },
     {
       name: "Мои образы",
       icon: bookmarkIcon,
       path: "/my-outfits",
+      isImage: true,
+    },
+    {
+      name: "ML",
+      path: "/ml-insights",
+      isImage: false,
     },
   ];
 
@@ -34,11 +42,18 @@ export const BottomNavigation = () => {
                 isActive ? "opacity-100 scale-110" : "opacity-70"
               )}
             >
-              <img 
-                src={item.icon} 
-                alt={item.name}
-                className="w-8 h-8"
-              />
+              {item.isImage ? (
+                <img 
+                  src={item.icon} 
+                  alt={item.name}
+                  className="w-8 h-8"
+                />
+              ) : (
+                <Brain className={cn(
+                  "w-8 h-8",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )} />
+              )}
             </Link>
           );
         })}
