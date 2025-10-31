@@ -334,7 +334,7 @@ const Feed = () => {
   ];
 
   // Генерируем образы из базы данных
-  const { data: generatedOutfits, isLoading: isGenerating } = useQuery({
+  const { data: generatedOutfits, isLoading: isGenerating, error: generateError } = useQuery({
     queryKey: ['generated-outfits', userId],
     queryFn: async () => {
       // Генерируем несколько образов
@@ -342,7 +342,10 @@ const Feed = () => {
         const { data, error } = await supabase.functions.invoke('generate-outfit', {
           body: { userId }
         });
-        if (error) throw error;
+        if (error) {
+          console.warn('Failed to generate outfit:', error);
+          return null;
+        }
         return data?.outfit;
       });
       
@@ -351,6 +354,7 @@ const Feed = () => {
     },
     enabled: true,
     refetchOnWindowFocus: false,
+    retry: false,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
@@ -421,8 +425,16 @@ const Feed = () => {
 
   return (
     <div className="min-h-screen w-full">
+      {/* Сообщение о пустой базе данных */}
+      {generateError && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-yellow-500 text-white px-6 py-3 rounded-lg text-sm animate-fade-in max-w-md text-center">
+          <div className="font-semibold mb-1">⚠️ База данных пуста</div>
+          <div className="text-xs">Добавьте товары через <a href="/admin" className="underline font-bold">админ-панель</a></div>
+        </div>
+      )}
+      
       {/* Индикатор фазы персонализации */}
-      {useML && userPhase === 'cold_start' && (
+      {useML && userPhase === 'cold_start' && !generateError && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-4 py-2 rounded-full text-sm animate-fade-in">
           👋 Лайкни 5+ образов для ML персонализации
         </div>
