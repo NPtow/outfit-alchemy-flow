@@ -6,6 +6,7 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { mlApi } from "@/lib/mlApi";
 import { getUserId } from "@/lib/userStorage";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Import outfit images
 import outfit1 from "@/assets/outfit-1.png";
@@ -332,16 +333,61 @@ const Feed = () => {
     },
   ];
 
+  // Генерируем образы из базы данных
+  const { data: generatedOutfits, isLoading: isGenerating } = useQuery({
+    queryKey: ['generated-outfits', userId],
+    queryFn: async () => {
+      // Генерируем несколько образов
+      const outfitPromises = Array.from({ length: 10 }, async () => {
+        const { data, error } = await supabase.functions.invoke('generate-outfit', {
+          body: { userId }
+        });
+        if (error) throw error;
+        return data?.outfit;
+      });
+      
+      const outfits = await Promise.all(outfitPromises);
+      return outfits.filter(Boolean);
+    },
+    enabled: true,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
   // ML-персонализированная лента
-  const { data: mlData, isLoading, error, refetch } = useQuery({
+  const { data: mlData, isLoading: isLoadingML, error, refetch } = useQuery({
     queryKey: ['ml-feed', userId, activeCategory],
     queryFn: async () => {
       const response = await mlApi.getFeed(userId, 20);
       
-      // Мапим ML outfits к нашему формату
+      // Мапим ML outfits к нашему формату, используем сгенерированные образы
       const mappedOutfits = response.outfits.map((mlOutfit, index) => {
+        const generatedOutfit = generatedOutfits?.[index % (generatedOutfits?.length || 1)];
         const fallback = allOutfits[index % allOutfits.length];
-        return {
+        
+        return generatedOutfit ? {
+          id: mlOutfit.outfit_id,
+          occasion: generatedOutfit.occasion || fallback.occasion,
+          category: (generatedOutfit.occasion?.toLowerCase() || 'casual') as Category,
+          image: generatedOutfit.image || fallback.image,
+          items: generatedOutfit.items.map((item: any, idx: number) => {
+            const placement = idx < 2 ? 'above' : 'below';
+            return {
+              id: item.id || `${index}-${idx}`,
+              name: item.name || '',
+              brand: item.brand || '',
+              category: item.category || '',
+              itemNumber: item.id || '',
+              price: 0,
+              shopUrl: '#',
+              position: { top: `${20 + idx * 15}%`, left: `${40 + (idx % 2) * 20}%` },
+              placement: placement as 'above' | 'below',
+            };
+          }),
+          mlScore: mlOutfit.score,
+          mlAttributes: mlOutfit.attributes,
+          mlPhase: mlOutfit.phase
+        } : {
           ...fallback,
           id: mlOutfit.outfit_id,
           mlScore: mlOutfit.score,
@@ -356,9 +402,11 @@ const Feed = () => {
         total_likes: response.total_likes
       };
     },
-    enabled: useML,
+    enabled: useML && !isGenerating && !!generatedOutfits,
     refetchOnWindowFocus: false
   });
+
+  const isLoading = isGenerating || isLoadingML;
 
   // Фильтрация по категории
   const filteredOutfits = useML && mlData
