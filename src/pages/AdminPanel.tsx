@@ -38,9 +38,9 @@ const AdminPanel = () => {
       });
 
       if (bgError) throw bgError;
-      if (!bgData?.processedImage) throw new Error('No processed image');
+      if (!bgData?.processedImageUrl) throw new Error('No processed image');
 
-      const processedImageUrl = bgData.processedImage;
+      const processedImageUrl = bgData.processedImageUrl;
 
       // Step 2: Generate attributes via LLM
       toast({

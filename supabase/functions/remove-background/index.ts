@@ -1,4 +1,3 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -13,14 +12,19 @@ serve(async (req) => {
 
   try {
     const { imageUrl, category } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    console.log('Processing image:', imageUrl, 'Category:', category);
 
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    console.log('Removing background for category:', category);
+    // Fetch the original image
+    const imageResponse = await fetch(imageUrl);
+    const imageBuffer = await imageResponse.arrayBuffer();
+    const base64Image = btoa(String.fromCharCode(...new Uint8Array(imageBuffer)));
 
+    // Use NanoBanana to remove background
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -35,12 +39,12 @@ serve(async (req) => {
             content: [
               {
                 type: 'text',
-                text: `Create an image of ${category} separately on a white background. Remove all background elements, keep only the clothing item.`
+                text: `Make an image of ${category} separately on a white background. Remove the background and keep only the clothing item.`
               },
               {
                 type: 'image_url',
                 image_url: {
-                  url: imageUrl
+                  url: `data:image/jpeg;base64,${base64Image}`
                 }
               }
             ]
@@ -51,25 +55,38 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: 'Rate limits exceeded, please try again later.' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: 'Payment required, please add funds to your Lovable AI workspace.' }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const errorText = await response.text();
       console.error('AI gateway error:', response.status, errorText);
-      throw new Error(`AI gateway error: ${response.status}`);
+      return new Response(JSON.stringify({ error: 'AI gateway error' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const data = await response.json();
-    const processedImage = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-
-    if (!processedImage) {
-      throw new Error('No image returned from AI');
+    console.log('AI response received');
+    
+    const processedImageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    
+    if (!processedImageUrl) {
+      throw new Error('No image generated');
     }
 
-    console.log('Background removed successfully');
-
     return new Response(
-      JSON.stringify({ processedImage }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      JSON.stringify({ processedImageUrl }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error in remove-background function:', error);
