@@ -53,7 +53,7 @@ export const BottomNavigation = () => {
                 to={item.path}
                 className={cn(
                   "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
-                  isActive && "bg-[#C8E871] shadow-[0_0_20px_rgba(200,232,113,0.6)]"
+                  isActive && "shadow-[0_0_20px_rgba(200,232,113,0.6)]"
                 )}
               >
                 <img src={iconSrc} alt={item.name} className="w-10 h-10" />
