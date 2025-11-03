@@ -40,22 +40,27 @@ export const BottomNavigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#1a1a1a] border-t border-white/10">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-4">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
-          const iconSrc = isActive && item.activeIcon ? item.activeIcon : item.icon;
+    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4">
+      <div className="relative rounded-full px-6 py-3 bg-gradient-to-r from-white/[0.32] to-black/[0.32] backdrop-blur-md shadow-lg">
+        <div className="flex items-center justify-center gap-8">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            const iconSrc = isActive && item.activeIcon ? item.activeIcon : item.icon;
 
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-200 relative"
-            >
-              <img src={iconSrc} alt={item.name} className="w-[52px] h-[52px]" />
-            </Link>
-          );
-        })}
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
+                  isActive && "bg-[#C8E871]"
+                )}
+              >
+                <img src={iconSrc} alt={item.name} className="w-6 h-6" />
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );
