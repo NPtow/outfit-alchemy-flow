@@ -52,6 +52,7 @@ export const VerticalOutfitFeed = ({
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [isShared, setIsShared] = useState(false);
+  const [detailsViewed, setDetailsViewed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -71,6 +72,7 @@ export const VerticalOutfitFeed = ({
   useEffect(() => {
     if (currentOutfit) {
       setIsLiked(isOutfitSaved(currentOutfit.id));
+      setDetailsViewed(false);
     }
   }, [currentOutfit]);
 
@@ -269,12 +271,13 @@ export const VerticalOutfitFeed = ({
               onClick={() => {
                 setShowCarousel(true);
                 setCarouselStartIndex(0);
+                setDetailsViewed(true);
               }}
               className="w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Details"
             >
               <img 
-                src={showCarousel ? detailsActive : detailsDefault} 
+                src={detailsViewed ? detailsActive : detailsDefault} 
                 alt="Details" 
                 className="w-full h-full"
               />
