@@ -147,21 +147,21 @@ export const ItemCarousel = ({
 
         {/* Item details */}
         <div className="bg-[#2a2a2a] rounded-t-3xl px-6 pt-6 pb-8 space-y-4">
-          <div className="flex items-start justify-between">
+          <div className="bg-[#1a1a1a] rounded-2xl p-5 flex items-center justify-between">
             <div className="flex-1">
-              <h3 className="text-xl font-stolzl font-bold text-white mb-1">
+              <h3 className="text-lg font-stolzl font-semibold text-white mb-1">
                 Название
               </h3>
-              <p className="text-sm text-white/60 font-stolzl mb-3">
+              <p className="text-sm text-white/50 font-stolzl mb-2">
                 Артикул
               </p>
-              <p className="text-2xl font-stolzl font-bold text-[#C8E871]">
+              <p className="text-xl font-stolzl font-bold text-[#C8E871]">
                 {currentItem.price.toLocaleString()} ₽
               </p>
             </div>
 
             <button
-              className="w-12 h-12 flex items-center justify-center flex-shrink-0 bg-transparent border-2 border-white rounded-full transition-colors hover:bg-white/10"
+              className="w-12 h-12 flex items-center justify-center flex-shrink-0 bg-transparent border-2 border-white rounded-full transition-colors hover:bg-white/10 ml-4"
               onClick={() => handleLike(currentItem.id)}
             >
               <img
