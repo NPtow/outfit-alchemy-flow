@@ -251,26 +251,10 @@ export const VerticalOutfitFeed = ({
         >
           {/* Action Buttons - Right Side */}
           <div className="absolute right-6 bottom-52 z-20 flex flex-col gap-4">
-            {/* Details Button */}
-            <button
-              onClick={() => {
-                setShowCarousel(true);
-                setCarouselStartIndex(0);
-              }}
-              className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
-              aria-label="Details"
-            >
-              <img 
-                src={showCarousel ? detailsActive : detailsDefault} 
-                alt="Details" 
-                className="w-full h-full"
-              />
-            </button>
-            
             {/* Like Button */}
             <button
               onClick={handleLike}
-              className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              className="w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Like"
             >
               <img 
@@ -280,10 +264,26 @@ export const VerticalOutfitFeed = ({
               />
             </button>
             
+            {/* Details Button */}
+            <button
+              onClick={() => {
+                setShowCarousel(true);
+                setCarouselStartIndex(0);
+              }}
+              className="w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              aria-label="Details"
+            >
+              <img 
+                src={showCarousel ? detailsActive : detailsDefault} 
+                alt="Details" 
+                className="w-full h-full"
+              />
+            </button>
+            
             {/* Share Button */}
             <button
               onClick={handleShare}
-              className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              className="w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Share"
             >
               <img 
