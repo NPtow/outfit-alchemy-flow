@@ -307,9 +307,27 @@ export const VerticalOutfitFeed = ({
                 const topFraction = parseFloat(item.position.top) / 100;
                 const leftFraction = parseFloat(item.position.left) / 100;
                 
-                // Calculate dimensions (assuming 20% width/height for each item)
-                const width = 0.2;
-                const height = 0.2;
+                // Set appropriate dimensions based on item category
+                let width = 0.25;  // Default width
+                let height = 0.28; // Default height
+                
+                // Adjust sizes for different item types
+                if (item.category.includes('пиджак') || item.category.includes('футболка')) {
+                  width = 0.28;
+                  height = 0.35;
+                } else if (item.category.includes('брюки')) {
+                  width = 0.22;
+                  height = 0.38;
+                } else if (item.category.includes('топ')) {
+                  width = 0.22;
+                  height = 0.32;
+                } else if (item.category.includes('обувь') || item.category.includes('туфли')) {
+                  width = 0.22;
+                  height = 0.15;
+                } else if (item.category.includes('сумка')) {
+                  width = 0.20;
+                  height = 0.18;
+                }
                 
                 return {
                   id: item.id,

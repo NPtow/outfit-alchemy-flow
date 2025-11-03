@@ -343,7 +343,7 @@ const Feed = () => {
           price: 3621,
           shopUrl: "https://www.wildberries.ru/catalog/316111333/detail.aspx",
           image: "/clothing-images/blazer-black.png",
-          position: { top: "18%", left: "30%" },
+          position: { top: "15%", left: "22%" },
           placement: "above" as const,
         },
         {
@@ -355,7 +355,7 @@ const Feed = () => {
           price: 2621,
           shopUrl: "https://www.wildberries.ru/catalog/491770604/detail.aspx",
           image: "/clothing-images/top-cream.png",
-          position: { top: "28%", left: "58%" },
+          position: { top: "18%", left: "52%" },
           placement: "above" as const,
         },
         {
@@ -367,7 +367,7 @@ const Feed = () => {
           price: 5621,
           shopUrl: "https://www.wildberries.ru/catalog/298659975/detail.aspx",
           image: "/clothing-images/pants-black.png",
-          position: { top: "54%", left: "46%" },
+          position: { top: "48%", left: "42%" },
           placement: "below" as const,
         },
         {
@@ -379,7 +379,7 @@ const Feed = () => {
           price: 2721,
           shopUrl: "https://www.wildberries.ru/catalog/283783392/detail.aspx",
           image: "/clothing-images/heels-black.png",
-          position: { top: "68%", left: "50%" },
+          position: { top: "72%", left: "52%" },
           placement: "below" as const,
         },
         {
@@ -391,7 +391,7 @@ const Feed = () => {
           price: 2721,
           shopUrl: "https://www.wildberries.ru/catalog/283783392/detail.aspx",
           image: "/clothing-images/bag-black.png",
-          position: { top: "66%", left: "18%" },
+          position: { top: "58%", left: "18%" },
           placement: "below" as const,
         },
       ],
@@ -411,7 +411,7 @@ const Feed = () => {
           price: 3621,
           shopUrl: "https://www.wildberries.ru/catalog/316111333/detail.aspx",
           image: "/clothing-images/tshirt-white.png",
-          position: { top: "22%", left: "40%" },
+          position: { top: "18%", left: "38%" },
           placement: "above" as const,
         },
         {
@@ -423,7 +423,7 @@ const Feed = () => {
           price: 2621,
           shopUrl: "https://www.wildberries.ru/catalog/491770604/detail.aspx",
           image: "/clothing-images/pants-brown.png",
-          position: { top: "52%", left: "44%" },
+          position: { top: "46%", left: "40%" },
           placement: "below" as const,
         },
         {
@@ -435,7 +435,7 @@ const Feed = () => {
           price: 5621,
           shopUrl: "https://www.wildberries.ru/catalog/298659975/detail.aspx",
           image: "/clothing-images/loafers-beige.png",
-          position: { top: "66%", left: "50%" },
+          position: { top: "70%", left: "52%" },
           placement: "below" as const,
         },
         {
@@ -447,7 +447,7 @@ const Feed = () => {
           price: 5621,
           shopUrl: "https://www.wildberries.ru/catalog/298659975/detail.aspx",
           image: "/clothing-images/bag-silver.png",
-          position: { top: "66%", left: "18%" },
+          position: { top: "56%", left: "18%" },
           placement: "below" as const,
         },
       ],
