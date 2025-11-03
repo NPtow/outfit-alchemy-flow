@@ -1,12 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { User } from "lucide-react";
 import homeDefault from "@/assets/icon_home_mode_default.png";
 import homeActive from "@/assets/icon_home_mode_active.svg";
 import bookmarkIcon from "@/assets/icon_saving_mode_default.png";
 import bookmarkActiveIcon from "@/assets/icon_saving_mode_active.svg";
 import basketDefault from "@/assets/icon_basket_mode_default.png";
 import basketActive from "@/assets/icon_basket_mode_active.svg";
+import avatarDefault from "@/assets/icon_avatar_mode_default.png";
+import avatarActive from "@/assets/icon_avatar_mode_active.svg";
 
 export const BottomNavigation = () => {
   const location = useLocation();
@@ -32,7 +33,8 @@ export const BottomNavigation = () => {
     },
     {
       name: "Профиль",
-      icon: null, // Will use lucide icon
+      icon: avatarDefault,
+      activeIcon: avatarActive,
       path: "/auth",
     },
   ];
@@ -50,11 +52,7 @@ export const BottomNavigation = () => {
               to={item.path}
               className="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-200 relative"
             >
-              {item.icon ? (
-                <img src={iconSrc} alt={item.name} className="w-[52px] h-[52px]" />
-              ) : (
-                <User className={cn("w-6 h-6", isActive ? "text-[#C8E871]" : "text-white/50")} />
-              )}
+              <img src={iconSrc} alt={item.name} className="w-[52px] h-[52px]" />
             </Link>
           );
         })}
