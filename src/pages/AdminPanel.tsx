@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Plus, Upload } from 'lucide-react';
+import { Loader2, Plus, Upload, Crop } from 'lucide-react';
+import { cropClothingImage } from '@/lib/imageCrop';
 
 const AdminPanel = () => {
   const { toast } = useToast();
@@ -13,6 +14,54 @@ const AdminPanel = () => {
   const [brand, setBrand] = useState('');
   const [productName, setProductName] = useState('');
   const [category, setCategory] = useState('');
+  const [isCropping, setIsCropping] = useState(false);
+  const [cropImageUrl, setCropImageUrl] = useState('');
+
+  const handleCropImage = async () => {
+    if (!cropImageUrl) {
+      toast({
+        title: 'Ошибка',
+        description: 'Введите URL изображения для обрезки',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsCropping(true);
+
+    try {
+      toast({
+        title: 'Обработка',
+        description: 'Обрезаем изображение...',
+      });
+
+      const croppedUrl = await cropClothingImage(cropImageUrl);
+
+      toast({
+        title: 'Готово!',
+        description: 'Изображение обрезано. Скачайте результат.',
+      });
+
+      // Download the cropped image
+      const link = document.createElement('a');
+      link.href = croppedUrl;
+      link.download = 'cropped-image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setCropImageUrl('');
+    } catch (error: any) {
+      console.error('Error cropping image:', error);
+      toast({
+        title: 'Ошибка',
+        description: error.message || 'Не удалось обрезать изображение',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsCropping(false);
+    }
+  };
 
   const handleProcessItem = async () => {
     if (!imageUrl || !category) {
@@ -99,12 +148,61 @@ const AdminPanel = () => {
 
   return (
     <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto max-w-2xl">
-        <h1 className="text-3xl font-stolzl font-bold text-primary mb-6">
-          Админ-панель: добавление товаров
+      <div className="container mx-auto max-w-2xl space-y-6">
+        <h1 className="text-3xl font-stolzl font-bold text-primary">
+          Админ-панель
         </h1>
 
+        {/* Image Cropping Section */}
         <Card className="p-6 space-y-4">
+          <h2 className="text-xl font-stolzl font-semibold">Обрезка изображений</h2>
+          <p className="text-sm text-muted-foreground">
+            Автоматически обрезает изображение по границам одежды, убирая лишние поля
+          </p>
+
+          <div>
+            <label className="text-sm font-semibold mb-2 block">URL изображения</label>
+            <Input
+              type="url"
+              placeholder="https://example.com/clothing-image.png или /clothing-images/pants.png"
+              value={cropImageUrl}
+              onChange={(e) => setCropImageUrl(e.target.value)}
+            />
+          </div>
+
+          <Button
+            onClick={handleCropImage}
+            disabled={isCropping}
+            className="w-full"
+          >
+            {isCropping ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Обрезаем...
+              </>
+            ) : (
+              <>
+                <Crop className="mr-2 h-4 w-4" />
+                Обрезать изображение
+              </>
+            )}
+          </Button>
+
+          <div className="mt-4 p-4 bg-primary/5 rounded-lg">
+            <h3 className="text-sm font-semibold mb-2">Как использовать:</h3>
+            <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+              <li>Вставьте URL изображения (внешний или локальный)</li>
+              <li>Нажмите "Обрезать изображение"</li>
+              <li>AI автоматически обрежет по границам одежды</li>
+              <li>Обрезанное изображение скачается автоматически</li>
+              <li>Замените старый файл в папке public/clothing-images/</li>
+            </ol>
+          </div>
+        </Card>
+
+        {/* Add Product Section */}
+        <Card className="p-6 space-y-4">
+          <h2 className="text-xl font-stolzl font-semibold">Добавление товаров</h2>
           <div>
             <label className="text-sm font-semibold mb-2 block">URL изображения</label>
             <Input
