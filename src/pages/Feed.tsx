@@ -349,7 +349,7 @@ const Feed = () => {
         {
           id: "8ed90a53-a5dc-4cda-ac19-90b790dd83a3",
           name: "Топ с высоким воротом",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "топ",
           itemNumber: "491770604",
           price: 2621,
@@ -361,7 +361,7 @@ const Feed = () => {
         {
           id: "5cbe2ee7-1711-47ae-b6d5-bfea7408fa32",
           name: "Черные брюки клеш",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "брюки",
           itemNumber: "298659975",
           price: 5621,
@@ -373,7 +373,7 @@ const Feed = () => {
         {
           id: "61ff4d4d-e95b-46e7-b880-a77baa508f15",
           name: "Черные туфли-лодочки",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "туфли",
           itemNumber: "283783392",
           price: 2721,
@@ -385,7 +385,7 @@ const Feed = () => {
         {
           id: "929778d8-62ff-471e-96ad-4f1b44f56537",
           name: "Черная сумка-седло",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "сумка",
           itemNumber: "283783392",
           price: 2721,
@@ -405,7 +405,7 @@ const Feed = () => {
         {
           id: "b5a6b0f5-a575-435e-9358-9f9c7fb80cdd",
           name: "Футболка LEGENDS ONLY",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "футболка",
           itemNumber: "316111333",
           price: 3621,
@@ -417,7 +417,7 @@ const Feed = () => {
         {
           id: "d6108f29-5ff5-4495-8e0e-7b827e0a6cd7",
           name: "Кожаные брюки прямого кроя",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "брюки",
           itemNumber: "491770604",
           price: 2621,
@@ -429,19 +429,19 @@ const Feed = () => {
         {
           id: "86152716-7f40-4046-ab38-83ba23b773f0",
           name: "Замшевые лоферы",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "обувь",
           itemNumber: "298659975",
           price: 5621,
           shopUrl: "https://www.wildberries.ru/catalog/298659975/detail.aspx",
           image: "/clothing-images/loafers-beige.png",
-          position: { top: "68%", left: "48%" },
+          position: { top: "66%", left: "50%" },
           placement: "below" as const,
         },
         {
           id: "1da701f9-9a0f-4477-9b41-5fa5e87aa636",
           name: "Серебристая сумка-хобо",
-          brand: "Wildberries",
+          brand: "пусто",
           category: "сумка",
           itemNumber: "298659975",
           price: 5621,
