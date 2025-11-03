@@ -146,28 +146,28 @@ export const ItemCarousel = ({
         </div>
 
         {/* Item details */}
-        <div className="bg-[#2a2a2a] rounded-t-3xl px-6 pt-6 pb-8 space-y-4">
-          <div className="bg-[#1a1a1a] rounded-2xl p-5 flex items-center justify-between">
+        <div className="bg-[#2a2a2a] rounded-t-3xl px-6 pt-5 pb-6">
+          <div className="bg-[#1a1a1a] rounded-2xl p-4 flex items-center justify-between mb-4">
             <div className="flex-1">
-              <h3 className="text-lg font-stolzl font-semibold text-white mb-1">
+              <h3 className="text-base font-stolzl font-semibold text-white mb-0.5">
                 Название
               </h3>
-              <p className="text-sm text-white/50 font-stolzl mb-2">
+              <p className="text-xs text-white/50 font-stolzl mb-1.5">
                 Артикул
               </p>
-              <p className="text-xl font-stolzl font-bold text-[#C8E871]">
+              <p className="text-lg font-stolzl font-bold text-[#C8E871]">
                 {currentItem.price.toLocaleString()} ₽
               </p>
             </div>
 
             <button
-              className="w-12 h-12 flex items-center justify-center flex-shrink-0 bg-transparent border-2 border-white rounded-full transition-colors hover:bg-white/10 ml-4"
+              className="w-11 h-11 flex items-center justify-center flex-shrink-0 bg-transparent border-2 border-white rounded-full transition-colors hover:bg-white/10 ml-3"
               onClick={() => handleLike(currentItem.id)}
             >
               <img
                 src={liked[currentItem.id] || isInBasket(currentItem.id) ? likeActive : likeDefault}
                 alt="Like"
-                className="w-6 h-6"
+                className="w-5 h-5"
               />
             </button>
           </div>
@@ -175,7 +175,7 @@ export const ItemCarousel = ({
           {/* Shop button */}
           <button
             onClick={() => window.open(currentItem.shopUrl, '_blank')}
-            className="w-full bg-white text-black font-stolzl font-semibold py-4 px-6 rounded-full hover:bg-white/90 transition-colors mt-4"
+            className="w-auto mx-auto block bg-white text-black font-stolzl font-semibold py-2.5 px-8 rounded-full hover:bg-white/90 transition-colors text-sm"
           >
             Перейти
           </button>
