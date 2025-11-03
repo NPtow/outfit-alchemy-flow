@@ -93,66 +93,65 @@ export const ItemCarousel = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#1a1a1a]">
-      {/* Close button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute top-4 right-4 z-10 text-white"
-        onClick={onClose}
-      >
-        <X className="w-6 h-6" />
-      </Button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      
+      {/* Modal content */}
+      <div className="relative w-full max-w-md bg-[#808080] rounded-3xl overflow-hidden">
+        {/* Close button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 right-4 z-10 text-white"
+          onClick={onClose}
+        >
+          <X className="w-6 h-6" />
+        </Button>
 
-      <div className="h-full flex flex-col">
+        {/* Dots indicator */}
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {items.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className="transition-all"
+            >
+              <div 
+                className={`rounded-full transition-all ${
+                  index === currentIndex 
+                    ? 'w-2 h-2 bg-[#C8E871]' 
+                    : 'w-2 h-2 bg-[#1a1a1a]'
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+
         {/* Item image */}
         <div 
-          className="flex-1 flex items-center justify-center p-6"
+          className="w-full aspect-square flex items-center justify-center p-12 pt-16"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="relative w-full max-w-md">
-            {/* Dots indicator - above image */}
-            <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-              {items.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className="transition-all"
-                >
-                  <div 
-                    className={`rounded-full transition-all ${
-                      index === currentIndex 
-                        ? 'w-2 h-2 bg-[#C8E871]' 
-                        : 'w-2 h-2 bg-[#4a4a4a]'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-
-            {/* Image container */}
-            <div className="w-full aspect-square bg-[#808080] rounded-3xl overflow-hidden flex items-center justify-center p-8">
-              {currentItem.image && (
-                <img
-                  src={currentItem.image}
-                  alt={currentItem.name}
-                  className="w-full h-full object-contain"
-                />
-              )}
-            </div>
-          </div>
+          {currentItem.image && (
+            <img
+              src={currentItem.image}
+              alt={currentItem.name}
+              className="w-full h-full object-contain"
+            />
+          )}
         </div>
 
         {/* Item details */}
-        <div className="bg-[#2a2a2a] rounded-t-3xl px-6 pt-5 pb-6">
-          <div className="bg-[#1a1a1a] rounded-2xl p-4 flex items-center justify-between mb-4">
+        <div className="bg-[#1a1a1a] rounded-t-3xl px-5 pt-4 pb-5">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex-1">
               <h3 className="text-base font-stolzl font-semibold text-white mb-0.5">
                 Название
               </h3>
-              <p className="text-xs text-white/50 font-stolzl mb-1.5">
+              <p className="text-xs text-white/50 font-stolzl mb-1">
                 Артикул
               </p>
               <p className="text-lg font-stolzl font-bold text-[#C8E871]">
@@ -175,7 +174,7 @@ export const ItemCarousel = ({
           {/* Shop button */}
           <button
             onClick={() => window.open(currentItem.shopUrl, '_blank')}
-            className="w-auto mx-auto block bg-white text-black font-stolzl font-semibold py-2.5 px-8 rounded-full hover:bg-white/90 transition-colors text-sm"
+            className="w-auto mx-auto block bg-white text-black font-stolzl font-semibold py-2 px-8 rounded-full hover:bg-white/90 transition-colors text-sm"
           >
             Перейти
           </button>
