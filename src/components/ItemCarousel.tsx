@@ -65,7 +65,7 @@ export const ItemCarousel = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 bg-[#1a1a1a]">
       {/* Close button */}
       <Button
         variant="ghost"
@@ -78,27 +78,49 @@ export const ItemCarousel = ({
 
       <div className="h-full flex flex-col">
         {/* Item image */}
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="relative w-full max-w-md aspect-square bg-[#808080] rounded-2xl overflow-hidden">
-            {currentItem.image && (
-              <img
-                src={currentItem.image}
-                alt={currentItem.name}
-                className="w-full h-full object-contain"
-              />
-            )}
+        <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-8">
+          <div className="relative w-full max-w-md">
+            {/* Dots indicator - above image */}
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+              {items.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className="transition-all"
+                >
+                  <div 
+                    className={`rounded-full transition-all ${
+                      index === currentIndex 
+                        ? 'w-2.5 h-2.5 bg-[#C8E871]' 
+                        : 'w-2.5 h-2.5 bg-[#4a4a4a]'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+
+            {/* Image container */}
+            <div className="w-full aspect-square bg-[#808080] rounded-2xl overflow-hidden flex items-center justify-center">
+              {currentItem.image && (
+                <img
+                  src={currentItem.image}
+                  alt={currentItem.name}
+                  className="w-full h-full object-contain"
+                />
+              )}
+            </div>
           </div>
         </div>
 
         {/* Item details */}
         <div className="bg-[#2a2a2a] rounded-t-3xl p-6 space-y-4">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               <h3 className="text-xl font-stolzl font-bold text-white mb-1">
-                {currentItem.name}
+                Название
               </h3>
-              <p className="text-sm text-white/60 font-stolzl mb-3">
-                {currentItem.category}
+              <p className="text-sm text-white/60 font-stolzl mb-2">
+                Артикул
               </p>
               <p className="text-2xl font-stolzl font-bold text-[#C8E871]">
                 {currentItem.price.toLocaleString()} ₽
@@ -106,33 +128,24 @@ export const ItemCarousel = ({
             </div>
 
             <button
-              className="w-[52px] h-[52px] flex items-center justify-center flex-shrink-0"
+              className="w-12 h-12 flex items-center justify-center flex-shrink-0 bg-transparent border-2 border-white rounded-full"
               onClick={() => handleLike(currentItem.id)}
             >
               <img
                 src={liked[currentItem.id] || isInBasket(currentItem.id) ? likeActive : likeDefault}
                 alt="Like"
-                className="w-full h-full"
+                className="w-6 h-6"
               />
             </button>
           </div>
 
-          {/* Dots indicator */}
-          <div className="flex justify-center gap-2 pt-2">
-            {items.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className="w-3 h-3 flex items-center justify-center"
-              >
-                <img
-                  src={index === currentIndex ? dotActive : dotDefault}
-                  alt=""
-                  className="w-full h-full"
-                />
-              </button>
-            ))}
-          </div>
+          {/* Shop button */}
+          <button
+            onClick={() => window.open(currentItem.shopUrl, '_blank')}
+            className="w-full bg-white text-black font-stolzl font-semibold py-3 px-6 rounded-full hover:bg-white/90 transition-colors"
+          >
+            Перейти
+          </button>
         </div>
       </div>
     </div>
