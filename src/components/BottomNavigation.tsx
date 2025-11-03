@@ -56,7 +56,7 @@ export const BottomNavigation = () => {
                   isActive && "bg-[#C8E871]"
                 )}
               >
-                <img src={iconSrc} alt={item.name} className="w-6 h-6" />
+                <img src={iconSrc} alt={item.name} className="w-8 h-8" />
               </Link>
             );
           })}
