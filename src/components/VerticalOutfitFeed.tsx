@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { ShoppingBag, ChevronDown, Grid3x3 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorage";
 import { useToast } from "@/hooks/use-toast";
 import { mlApi } from '@/lib/mlApi';
 import { getUserId } from '@/lib/userStorage';
-import heartLike from "@/assets/heart-like.png";
+import heartDefault from "@/assets/icon_for_art_mode_default.svg";
+import heartActive from "@/assets/icon_for_art_mode_active.svg";
 import shareIcon from "@/assets/share-icon.png";
+import detailsIcon from "@/assets/icon_art_mode_default.svg";
+import detailsActiveIcon from "@/assets/icon_art_mode_active.svg";
 import { ItemCarousel } from "./ItemCarousel";
 
 interface ShoppableItem {
@@ -255,30 +256,26 @@ export const VerticalOutfitFeed = ({
                 setShowCarousel(true);
                 setCarouselStartIndex(0);
               }}
-              className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Details"
             >
-              <Grid3x3 className="w-6 h-6 text-pink-400" />
+              <img 
+                src={detailsIcon} 
+                alt="Details" 
+                className="w-full h-full"
+              />
             </button>
             
             {/* Like Button */}
             <button
               onClick={handleLike}
-              className={cn(
-                "w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95",
-                isLiked 
-                  ? "bg-pink-400/30 shadow-[0_0_20px_rgba(236,72,153,0.5)]" 
-                  : "bg-white/10 hover:bg-pink-400/20"
-              )}
+              className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Like"
             >
               <img 
-                src={heartLike} 
+                src={isLiked ? heartActive : heartDefault} 
                 alt="Like" 
-                className={cn(
-                  "w-8 h-8 transition-all duration-200",
-                  isLiked && "scale-110 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]"
-                )} 
+                className="w-full h-full"
               />
             </button>
             

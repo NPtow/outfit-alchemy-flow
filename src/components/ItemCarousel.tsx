@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { X, Heart } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { addToBasket, isInBasket } from "@/lib/basketStorage";
 import { useToast } from "@/hooks/use-toast";
+import heartDefault from "@/assets/icon_for_art_mode_default.svg";
+import heartActive from "@/assets/icon_for_art_mode_active.svg";
+import dotActive from "@/assets/icon_dot_mode_active.svg";
+import dotDefault from "@/assets/icon_dot_mode_default.svg";
 
 interface CarouselItem {
   id: string;
@@ -93,20 +97,16 @@ export const ItemCarousel = ({
               </p>
             </div>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="flex-shrink-0"
+            <button
+              className="w-[52px] h-[52px] flex items-center justify-center flex-shrink-0"
               onClick={() => handleLike(currentItem.id)}
             >
-              <Heart
-                className={`w-8 h-8 ${
-                  liked[currentItem.id] || isInBasket(currentItem.id)
-                    ? "fill-pink-400 text-pink-400"
-                    : "text-white"
-                }`}
+              <img
+                src={liked[currentItem.id] || isInBasket(currentItem.id) ? heartActive : heartDefault}
+                alt="Like"
+                className="w-full h-full"
               />
-            </Button>
+            </button>
           </div>
 
           {/* Dots indicator */}
@@ -115,12 +115,14 @@ export const ItemCarousel = ({
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all ${
-                  index === currentIndex
-                    ? "w-8 bg-[#C8E871]"
-                    : "w-2 bg-white/30"
-                }`}
-              />
+                className="w-3 h-3 flex items-center justify-center"
+              >
+                <img
+                  src={index === currentIndex ? dotActive : dotDefault}
+                  alt=""
+                  className="w-full h-full"
+                />
+              </button>
             ))}
           </div>
         </div>
