@@ -326,9 +326,6 @@ export const VerticalOutfitFeed = ({
               })}
               outfitId={currentOutfit.id}
             />
-            
-            {/* Bottom gradient overlay */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-gray-400/20 to-gray-800/60 pointer-events-none" />
           </div>
 
           {/* Scroll Indicator */}
