@@ -424,10 +424,10 @@ const Feed = () => {
   const userPhase = mlData?.user_phase || 'cold_start';
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-screen w-full bg-black">
       {/* Сообщение о пустой базе данных */}
       {generateError && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-yellow-500 text-white px-6 py-3 rounded-lg text-sm animate-fade-in max-w-md text-center">
+        <div className="fixed top-32 left-1/2 -translate-x-1/2 z-50 bg-yellow-500 text-white px-6 py-3 rounded-lg text-sm animate-fade-in max-w-md text-center">
           <div className="font-semibold mb-1">⚠️ База данных пуста</div>
           <div className="text-xs">Добавьте товары через <a href="/admin" className="underline font-bold">админ-панель</a></div>
         </div>
@@ -435,7 +435,7 @@ const Feed = () => {
       
       {/* Индикатор фазы персонализации */}
       {useML && userPhase === 'cold_start' && !generateError && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-4 py-2 rounded-full text-sm animate-fade-in">
+        <div className="fixed top-32 left-1/2 -translate-x-1/2 z-50 bg-pink-400 text-white px-4 py-2 rounded-full text-sm animate-fade-in">
           👋 Лайкни 5+ образов для ML персонализации
         </div>
       )}

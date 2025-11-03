@@ -17,23 +17,25 @@ export const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsP
   ];
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-b border-border">
-      <div className="flex overflow-x-auto hide-scrollbar py-3 px-4 gap-2">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => onCategoryChange(category.id)}
-            className={cn(
-              "px-8 py-3 rounded-full whitespace-nowrap font-semibold text-lg transition-all duration-200 flex-shrink-0 font-stolzl",
-              activeCategory === category.id
-                ? "bg-secondary text-secondary-foreground"
-                : "bg-card border-2 border-border hover:border-primary"
-            )}
-            style={{ color: '#A88AED' }}
-          >
-            {category.label}
-          </button>
-        ))}
+    <div className="fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-md border-b border-white/10">
+      <div className="px-4 py-4">
+        <h1 className="text-2xl font-stolzl font-bold text-white mb-4">Главная</h1>
+        <div className="flex overflow-x-auto hide-scrollbar gap-2">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => onCategoryChange(category.id)}
+              className={cn(
+                "px-6 py-2 rounded-full whitespace-nowrap font-semibold text-sm transition-all duration-200 flex-shrink-0 font-stolzl",
+                activeCategory === category.id
+                  ? "bg-white text-black"
+                  : "bg-[#2a2a2a] text-white/70"
+              )}
+            >
+              {category.label}
+            </button>
+          ))}
+        </div>
       </div>
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
