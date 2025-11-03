@@ -367,20 +367,7 @@ const Feed = () => {
           occasion: generatedOutfit.occasion || fallback.occasion,
           category: (generatedOutfit.occasion?.toLowerCase() || 'casual') as Category,
           image: generatedOutfit.image || fallback.image,
-          items: generatedOutfit.items.map((item: any, idx: number) => {
-            const placement = idx < 2 ? 'above' : 'below';
-            return {
-              id: item.id || `${index}-${idx}`,
-              name: item.name || '',
-              brand: item.brand || '',
-              category: item.category || '',
-              itemNumber: item.id || '',
-              price: 0,
-              shopUrl: '#',
-              position: { top: `${20 + idx * 15}%`, left: `${40 + (idx % 2) * 20}%` },
-              placement: placement as 'above' | 'below',
-            };
-          }),
+          items: generatedOutfit.items,
           mlScore: mlOutfit.score,
           mlAttributes: mlOutfit.attributes,
           mlPhase: mlOutfit.phase

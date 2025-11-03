@@ -12,6 +12,7 @@ import shareActive from "@/assets/icon_share_mode_active.svg";
 import detailsDefault from "@/assets/icon_details_mode_default.svg";
 import detailsActive from "@/assets/icon_details_mode_active.svg";
 import { ItemCarousel } from "./ItemCarousel";
+import { OutfitCollage, CollageItem } from "./OutfitCollage";
 
 interface ShoppableItem {
   id: string;
@@ -299,10 +300,34 @@ export const VerticalOutfitFeed = ({
 
           {/* Outfit Image */}
           <div className="relative w-full h-full flex items-center justify-center bg-[#2a2a2a] rounded-3xl mx-4 my-20">
-            <img
-              src={currentOutfit.image}
-              alt={currentOutfit.occasion}
-              className="w-full h-full object-contain"
+            <OutfitCollage 
+              items={currentOutfit.items.map(item => {
+                // Convert position strings to fractions
+                const topFraction = parseFloat(item.position.top) / 100;
+                const leftFraction = parseFloat(item.position.left) / 100;
+                
+                // Calculate dimensions (assuming 20% width/height for each item)
+                const width = 0.2;
+                const height = 0.2;
+                
+                return {
+                  id: item.id,
+                  name: item.name,
+                  brand: item.brand,
+                  category: item.category,
+                  itemNumber: item.itemNumber,
+                  price: item.price,
+                  shopUrl: item.shopUrl,
+                  image: (item as any).image || `/clothing-images/${item.category.toLowerCase()}.png`,
+                  position: {
+                    left: leftFraction,
+                    top: topFraction,
+                    right: leftFraction + width,
+                    bottom: topFraction + height,
+                  }
+                } as CollageItem;
+              })}
+              outfitId={currentOutfit.id}
             />
           </div>
 

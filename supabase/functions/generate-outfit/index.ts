@@ -147,21 +147,34 @@ Select items that work well together in terms of colors, styles, and occasion.`;
       throw new Error('No valid items selected');
     }
 
+    // Generate positions for items in collage
+    const positions = [
+      { top: "22%", left: "35%", placement: "above" },
+      { top: "25%", left: "62%", placement: "above" },
+      { top: "58%", left: "68%", placement: "below" },
+      { top: "68%", left: "58%", placement: "below" },
+      { top: "68%", left: "18%", placement: "below" },
+    ];
+
     const completeOutfit = {
       id: `outfit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       style: outfit.style,
       vibe: outfit.vibe,
       occasion: outfit.occasion,
       description: outfit.description,
-      items: selectedItems.map((item: any) => ({
-        id: item.id,
+      items: selectedItems.map((item: any, idx: number) => ({
+        id: item.id.toString(),
         name: item.product_name,
-        brand: item.brand,
+        brand: item.brand || "Wildberries",
         category: item.category,
-        imageUrl: item.processed_image_url,
-        article: `${item.brand} ${item.product_name}`,
+        itemNumber: item.id.toString(),
+        price: 0,
+        shopUrl: item.shop_url || "#",
+        image: item.original_image_url, // Use the actual image URL from database
+        position: positions[idx] || positions[0],
+        placement: positions[idx]?.placement || "above",
       })),
-      image: selectedItems[0]?.processed_image_url || '', // Use first item as main image for now
+      image: '', // Collage doesn't use this
     };
 
     return new Response(
