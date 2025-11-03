@@ -51,10 +51,7 @@ export const BottomNavigation = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={cn(
-                  "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200",
-                  isActive && "shadow-[0_0_20px_rgba(200,232,113,0.6)]"
-                )}
+                className="flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
               >
                 <img src={iconSrc} alt={item.name} className="w-10 h-10" />
               </Link>
