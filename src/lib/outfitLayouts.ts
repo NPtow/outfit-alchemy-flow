@@ -19,7 +19,7 @@ export const topBottomBagShoesLayout: LayoutPattern = {
   топ: { left: 0.30, top: 0.10, right: 0.82, bottom: 0.60 },
   брюки: { left: 0.42, top: 0.42, right: 0.85, bottom: 0.88 },
   юбка: { left: 0.42, top: 0.42, right: 0.85, bottom: 0.88 },
-  туфли: { left: 0.62, top: 0.57, right: 0.91, bottom: 0.9 },
+  туфли: { left: 0.62, top: 0.65, right: 0.91, bottom: 0.94 },
   сумка: { left: 0.15, top: 0.5, right: 0.44, bottom: 0.79 },
 };
 
