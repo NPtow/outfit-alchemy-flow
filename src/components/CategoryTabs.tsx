@@ -28,7 +28,7 @@ export const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsP
               className={cn(
                 "px-6 py-2 rounded-full whitespace-nowrap font-semibold text-sm transition-all duration-200 flex-shrink-0 font-stolzl",
                 activeCategory === category.id
-                  ? "bg-white text-black"
+                  ? "bg-white text-black shadow-[0_0_20px_rgba(200,232,113,0.6)]"
                   : "bg-[#2a2a2a] text-white/70"
               )}
             >
