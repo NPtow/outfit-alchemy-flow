@@ -13,6 +13,7 @@ import detailsDefault from "@/assets/icon_details_mode_default.svg";
 import detailsActive from "@/assets/icon_details_mode_active.svg";
 import { ItemCarousel } from "./ItemCarousel";
 import { OutfitCollage, CollageItem } from "./OutfitCollage";
+import { getOutfitLayout, getCategoryPosition } from "@/lib/outfitLayouts";
 
 interface ShoppableItem {
   id: string;
@@ -303,34 +304,13 @@ export const VerticalOutfitFeed = ({
           <div className="relative w-full h-full flex items-center justify-center bg-[#2a2a2a] rounded-3xl mx-4 my-20">
             <OutfitCollage 
               items={currentOutfit.items.map(item => {
-                // Convert position strings to fractions
-                const topFraction = parseFloat(item.position.top) / 100;
-                const leftFraction = parseFloat(item.position.left) / 100;
+                // Get layout pattern for this outfit composition
+                const layout = getOutfitLayout(currentOutfit.items);
+                const position = getCategoryPosition(item.category, layout);
                 
-                // Set larger dimensions for overlapping effect
-                let width = 0.35;  // Bigger default width
-                let height = 0.38; // Bigger default height
-                
-                // Adjust sizes for different item types to create overlap
-                if (item.category.includes('пиджак')) {
-                  width = 0.38;
-                  height = 0.48;
-                } else if (item.category.includes('футболка')) {
-                  width = 0.36;
-                  height = 0.42;
-                } else if (item.category.includes('брюки')) {
-                  width = 0.28;
-                  height = 0.50;
-                } else if (item.category.includes('топ')) {
-                  width = 0.28;
-                  height = 0.40;
-                } else if (item.category.includes('обувь') || item.category.includes('туфли')) {
-                  width = 0.28;
-                  height = 0.18;
-                } else if (item.category.includes('сумка')) {
-                  width = 0.26;
-                  height = 0.24;
-                }
+                // If position not found in layout, use a default
+                const defaultPosition = { left: 0.3, top: 0.3, right: 0.7, bottom: 0.7 };
+                const pos = position || defaultPosition;
                 
                 return {
                   id: item.id,
@@ -341,12 +321,7 @@ export const VerticalOutfitFeed = ({
                   price: item.price,
                   shopUrl: item.shopUrl,
                   image: item.image || `/clothing-images/${item.category.toLowerCase()}.png`,
-                  position: {
-                    left: leftFraction,
-                    top: topFraction,
-                    right: leftFraction + width,
-                    bottom: topFraction + height,
-                  }
+                  position: pos
                 } as CollageItem;
               })}
               outfitId={currentOutfit.id}
