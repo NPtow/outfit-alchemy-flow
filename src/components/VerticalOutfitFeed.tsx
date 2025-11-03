@@ -5,11 +5,12 @@ import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorag
 import { useToast } from "@/hooks/use-toast";
 import { mlApi } from '@/lib/mlApi';
 import { getUserId } from '@/lib/userStorage';
-import heartDefault from "@/assets/icon_for_art_mode_default.svg";
-import heartActive from "@/assets/icon_for_art_mode_active.svg";
-import shareIcon from "@/assets/share-icon.png";
-import detailsIcon from "@/assets/icon_art_mode_default.svg";
-import detailsActiveIcon from "@/assets/icon_art_mode_active.svg";
+import likeDefault from "@/assets/icon_like_mode_default.svg";
+import likeActive from "@/assets/icon_like_mode_active.svg";
+import shareDefault from "@/assets/icon_share_mode_default.svg";
+import shareActive from "@/assets/icon_share_mode_active.svg";
+import detailsDefault from "@/assets/icon_details_mode_default.svg";
+import detailsActive from "@/assets/icon_details_mode_active.svg";
 import { ItemCarousel } from "./ItemCarousel";
 
 interface ShoppableItem {
@@ -260,7 +261,7 @@ export const VerticalOutfitFeed = ({
               aria-label="Details"
             >
               <img 
-                src={detailsIcon} 
+                src={detailsDefault} 
                 alt="Details" 
                 className="w-full h-full"
               />
@@ -273,7 +274,7 @@ export const VerticalOutfitFeed = ({
               aria-label="Like"
             >
               <img 
-                src={isLiked ? heartActive : heartDefault} 
+                src={isLiked ? likeActive : likeDefault} 
                 alt="Like" 
                 className="w-full h-full"
               />
@@ -282,21 +283,13 @@ export const VerticalOutfitFeed = ({
             {/* Share Button */}
             <button
               onClick={handleShare}
-              className={cn(
-                "w-14 h-14 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95",
-                isShared 
-                  ? "bg-pink-400/30 shadow-[0_0_20px_rgba(236,72,153,0.5)]" 
-                  : "bg-white/10 hover:bg-pink-400/20"
-              )}
+              className="w-[52px] h-[52px] flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Share"
             >
               <img 
-                src={shareIcon} 
+                src={isShared ? shareActive : shareDefault} 
                 alt="Share" 
-                className={cn(
-                  "w-8 h-8 transition-all duration-200",
-                  isShared && "scale-110 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]"
-                )} 
+                className="w-full h-full"
               />
             </button>
           </div>

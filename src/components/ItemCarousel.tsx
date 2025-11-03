@@ -3,8 +3,8 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { addToBasket, isInBasket } from "@/lib/basketStorage";
 import { useToast } from "@/hooks/use-toast";
-import heartDefault from "@/assets/icon_for_art_mode_default.svg";
-import heartActive from "@/assets/icon_for_art_mode_active.svg";
+import likeDefault from "@/assets/icon_like_mode_default.svg";
+import likeActive from "@/assets/icon_like_mode_active.svg";
 import dotActive from "@/assets/icon_dot_mode_active.svg";
 import dotDefault from "@/assets/icon_dot_mode_default.svg";
 
@@ -102,7 +102,7 @@ export const ItemCarousel = ({
               onClick={() => handleLike(currentItem.id)}
             >
               <img
-                src={liked[currentItem.id] || isInBasket(currentItem.id) ? heartActive : heartDefault}
+                src={liked[currentItem.id] || isInBasket(currentItem.id) ? likeActive : likeDefault}
                 alt="Like"
                 className="w-full h-full"
               />
