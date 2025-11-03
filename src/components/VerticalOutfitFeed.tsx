@@ -261,7 +261,7 @@ export const VerticalOutfitFeed = ({
               aria-label="Details"
             >
               <img 
-                src={detailsDefault} 
+                src={showCarousel ? detailsActive : detailsDefault} 
                 alt="Details" 
                 className="w-full h-full"
               />
