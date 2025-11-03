@@ -326,30 +326,69 @@ const Feed = () => {
     },
   ];
 
-  // Генерируем образы из базы данных
-  const { data: generatedOutfits, isLoading: isGenerating, error: generateError } = useQuery({
-    queryKey: ['generated-outfits', userId],
-    queryFn: async () => {
-      // Генерируем несколько образов
-      const outfitPromises = Array.from({ length: 10 }, async () => {
-        const { data, error } = await supabase.functions.invoke('generate-outfit', {
-          body: { userId }
-        });
-        if (error) {
-          console.warn('Failed to generate outfit:', error);
-          return null;
-        }
-        return data?.outfit;
-      });
-      
-      const outfits = await Promise.all(outfitPromises);
-      return outfits.filter(Boolean);
+  // Статические образы из базы данных
+  const staticOutfits = [
+    {
+      id: "outfit-from-db-1",
+      occasion: "Casual Look",
+      category: "casual" as Category,
+      image: "",
+      items: [
+        {
+          id: "b5a6b0f5-a575-435e-9358-9f9c7fb80cdd",
+          name: "Футболка LEGENDS ONLY",
+          brand: "Wildberries",
+          category: "футболка",
+          itemNumber: "316111333",
+          price: 3621,
+          shopUrl: "https://www.wildberries.ru/catalog/316111333/detail.aspx",
+          image: "/clothing-images/tshirt-white.png",
+          position: { top: "22%", left: "35%" },
+          placement: "above" as const,
+        },
+        {
+          id: "d6108f29-5ff5-4495-8e0e-7b827e0a6cd7",
+          name: "Кожаные брюки прямого кроя",
+          brand: "Wildberries",
+          category: "брюки",
+          itemNumber: "491770604",
+          price: 2621,
+          shopUrl: "https://www.wildberries.ru/catalog/491770604/detail.aspx",
+          image: "/clothing-images/pants-brown.png",
+          position: { top: "52%", left: "42%" },
+          placement: "below" as const,
+        },
+        {
+          id: "86152716-7f40-4046-ab38-83ba23b773f0",
+          name: "Замшевые лоферы",
+          brand: "Wildberries",
+          category: "обувь",
+          itemNumber: "298659975",
+          price: 5621,
+          shopUrl: "https://www.wildberries.ru/catalog/298659975/detail.aspx",
+          image: "/clothing-images/loafers-beige.png",
+          position: { top: "68%", left: "48%" },
+          placement: "below" as const,
+        },
+        {
+          id: "1da701f9-9a0f-4477-9b41-5fa5e87aa636",
+          name: "Серебристая сумка-хобо",
+          brand: "Wildberries",
+          category: "сумка",
+          itemNumber: "298659975",
+          price: 5621,
+          shopUrl: "https://www.wildberries.ru/catalog/298659975/detail.aspx",
+          image: "/clothing-images/bag-silver.png",
+          position: { top: "68%", left: "18%" },
+          placement: "below" as const,
+        },
+      ],
     },
-    enabled: true,
-    refetchOnWindowFocus: false,
-    retry: false,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-  });
+  ];
+
+  const generatedOutfits = staticOutfits;
+  const isGenerating = false;
+  const generateError = null;
 
   // ML-персонализированная лента
   const { data: mlData, isLoading: isLoadingML, error, refetch } = useQuery({
