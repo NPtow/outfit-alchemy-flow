@@ -26,12 +26,12 @@ export const topBottomBagShoesLayout: LayoutPattern = {
 // Pattern 2: Atomic Top + Any Bottom + Bag + Light Shoes
 // AtomicTopAnyBottomBagLightShoesFramework (увеличенные TOP и BOTTOM с наслоением)
 export const atomicTopBottomBagShoesLayout: LayoutPattern = {
-  футболка: { left: 0.22, top: 0.04, right: 0.78, bottom: 0.55 },
-  брюки: { left: 0.18, top: 0.25, right: 0.85, bottom: 0.99 },
-  джинсы: { left: 0.18, top: 0.25, right: 0.85, bottom: 0.99 },
-  обувь: { left: 0.54, top: 0.54, right: 0.86, bottom: 0.9 },
-  кроссовки: { left: 0.54, top: 0.54, right: 0.86, bottom: 0.9 },
-  сумка: { left: 0.1, top: 0.4, right: 0.37, bottom: 0.68 },
+  футболка: { left: 0.22, top: 0.08, right: 0.78, bottom: 0.58 },
+  брюки: { left: 0.18, top: 0.30, right: 0.85, bottom: 0.96 },
+  джинсы: { left: 0.18, top: 0.30, right: 0.85, bottom: 0.96 },
+  обувь: { left: 0.54, top: 0.60, right: 0.86, bottom: 0.94 },
+  кроссовки: { left: 0.54, top: 0.60, right: 0.86, bottom: 0.94 },
+  сумка: { left: 0.1, top: 0.45, right: 0.37, bottom: 0.72 },
 };
 
 // Pattern 3: Dress + Midwear + Bag + Light Shoes
