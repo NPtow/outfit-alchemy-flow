@@ -34,9 +34,37 @@ export const ItemCarousel = ({
 }: ItemCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [liked, setLiked] = useState<Record<string, boolean>>({});
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
   const { toast } = useToast();
 
   const currentItem = items[currentIndex];
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && currentIndex < items.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+    if (isRightSwipe && currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
 
   const handleLike = (itemId: string) => {
     const item = items.find((i) => i.id === itemId);
@@ -78,7 +106,12 @@ export const ItemCarousel = ({
 
       <div className="h-full flex flex-col">
         {/* Item image */}
-        <div className="flex-1 flex items-center justify-center px-4 pt-16 pb-8">
+        <div 
+          className="flex-1 flex items-center justify-center px-4 pt-16 pb-8"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="relative w-full max-w-md">
             {/* Dots indicator - above image */}
             <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex gap-2 z-10">

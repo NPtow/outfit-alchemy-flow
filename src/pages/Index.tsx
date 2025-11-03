@@ -7,6 +7,13 @@ import outfit3 from "@/assets/outfit-3.png";
 import outfit4 from "@/assets/outfit-4.png";
 import outfit5 from "@/assets/outfit-5.png";
 
+// Import item images
+import itemTurtleneck from "@/assets/item-turtleneck.png";
+import itemPants from "@/assets/item-pants.png";
+import itemJacket from "@/assets/item-jacket.png";
+import itemShoes from "@/assets/item-shoes.png";
+import itemBag from "@/assets/item-bag.png";
+
 const Index = () => {
   const outfits = [
     {
@@ -16,58 +23,63 @@ const Index = () => {
       items: [
         {
           id: "1",
-          name: "Худи",
+          name: "Водолазка без рукавов",
           brand: "Wildberries",
-          category: "Худи",
-          itemNumber: "500291576",
-          price: 2929,
-          shopUrl: "https://www.wildberries.ru/catalog/500291576/detail.aspx",
-          position: { top: "22%", left: "35%" },
-          placement: "above" as const,
-        },
-        {
-          id: "2",
-          name: "Майка",
-          brand: "Wildberries",
-          category: "Майка",
+          category: "Топ",
           itemNumber: "425380572",
-          price: 782,
+          price: 9410,
           shopUrl: "https://www.wildberries.ru/catalog/425380572/detail.aspx",
           position: { top: "25%", left: "62%" },
           placement: "above" as const,
+          image: itemTurtleneck,
         },
         {
-          id: "3",
-          name: "Брюки",
+          id: "2",
+          name: "Брюки классические",
           brand: "Wildberries",
           category: "Брюки",
           itemNumber: "476090600",
-          price: 2152,
+          price: 9410,
           shopUrl: "https://www.wildberries.ru/catalog/476090600/detail.aspx",
           position: { top: "58%", left: "68%" },
           placement: "below" as const,
+          image: itemPants,
+        },
+        {
+          id: "3",
+          name: "Жакет классический",
+          brand: "Wildberries",
+          category: "Жакет",
+          itemNumber: "500291576",
+          price: 9410,
+          shopUrl: "https://www.wildberries.ru/catalog/500291576/detail.aspx",
+          position: { top: "22%", left: "35%" },
+          placement: "above" as const,
+          image: itemJacket,
         },
         {
           id: "4",
-          name: "Кроссовки",
+          name: "Туфли лодочки",
           brand: "Wildberries",
-          category: "Кроссовки",
+          category: "Обувь",
           itemNumber: "301698003",
-          price: 1630,
+          price: 9410,
           shopUrl: "https://www.wildberries.ru/catalog/301698003/detail.aspx",
           position: { top: "68%", left: "58%" },
           placement: "below" as const,
+          image: itemShoes,
         },
         {
           id: "5",
-          name: "Сумка",
+          name: "Сумка черная",
           brand: "Wildberries",
           category: "Сумка",
           itemNumber: "360419398",
-          price: 793,
+          price: 9410,
           shopUrl: "https://www.wildberries.ru/catalog/360419398/detail.aspx",
           position: { top: "68%", left: "18%" },
           placement: "below" as const,
+          image: itemBag,
         },
       ],
     },
