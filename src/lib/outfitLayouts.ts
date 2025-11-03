@@ -19,7 +19,7 @@ export const topBottomBagShoesLayout: LayoutPattern = {
   топ: { left: 0.30, top: 0.10, right: 0.82, bottom: 0.60 },
   брюки: { left: 0.42, top: 0.42, right: 0.85, bottom: 0.88 },
   юбка: { left: 0.42, top: 0.42, right: 0.85, bottom: 0.88 },
-  туфли: { left: 0.62, top: 0.65, right: 0.91, bottom: 0.94 },
+  туфли: { left: 0.65, top: 0.70, right: 0.88, bottom: 0.92 },
   сумка: { left: 0.15, top: 0.5, right: 0.44, bottom: 0.79 },
 };
 
@@ -29,8 +29,8 @@ export const atomicTopBottomBagShoesLayout: LayoutPattern = {
   футболка: { left: 0.22, top: 0.08, right: 0.78, bottom: 0.58 },
   брюки: { left: 0.18, top: 0.30, right: 0.85, bottom: 0.96 },
   джинсы: { left: 0.18, top: 0.30, right: 0.85, bottom: 0.96 },
-  обувь: { left: 0.54, top: 0.60, right: 0.86, bottom: 0.94 },
-  кроссовки: { left: 0.54, top: 0.60, right: 0.86, bottom: 0.94 },
+  обувь: { left: 0.58, top: 0.66, right: 0.82, bottom: 0.90 },
+  кроссовки: { left: 0.58, top: 0.66, right: 0.82, bottom: 0.90 },
   сумка: { left: 0.1, top: 0.45, right: 0.37, bottom: 0.72 },
 };
 
