@@ -301,7 +301,7 @@ export const VerticalOutfitFeed = ({
           </div>
 
           {/* Outfit Image */}
-          <div className="relative w-[280px] h-[434px] sm:w-[320px] sm:h-[496px] md:w-[360px] md:h-[558px] mx-auto bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
+          <div className="relative w-[340px] h-[527px] sm:w-[380px] sm:h-[589px] md:w-[420px] md:h-[651px] mx-auto bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
             <OutfitCollage 
               items={currentOutfit.items.map(item => {
                 // Get layout pattern for this outfit composition
