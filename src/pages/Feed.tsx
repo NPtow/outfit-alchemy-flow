@@ -8,13 +8,6 @@ import { getUserId } from "@/lib/userStorage";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-// Import outfit images
-import outfit1 from "@/assets/outfit-1.png";
-import outfit2 from "@/assets/outfit-2.png";
-import outfit3 from "@/assets/outfit-3.png";
-import outfit4 from "@/assets/outfit-4.png";
-import outfit5 from "@/assets/outfit-5.png";
-
 const Feed = () => {
   const [activeCategory, setActiveCategory] = useState<Category>("all");
   const [useML, setUseML] = useState(false);
@@ -42,7 +35,7 @@ const Feed = () => {
       id: "outfit-1",
       occasion: "Outfit 1",
       category: "casual" as Category,
-      image: outfit1,
+      image: "",
       items: [
         {
           id: "1",
@@ -105,7 +98,7 @@ const Feed = () => {
       id: "outfit-2",
       occasion: "Outfit 2",
       category: "evening" as Category,
-      image: outfit2,
+      image: "",
       items: [
         {
           id: "6",
@@ -168,7 +161,7 @@ const Feed = () => {
       id: "outfit-3",
       occasion: "Outfit 3",
       category: "work" as Category,
-      image: outfit3,
+      image: "",
       items: [
         {
           id: "11",
@@ -220,7 +213,7 @@ const Feed = () => {
       id: "outfit-4",
       occasion: "Outfit 4",
       category: "casual" as Category,
-      image: outfit4,
+      image: "",
       items: [
         {
           id: "15",
@@ -272,7 +265,7 @@ const Feed = () => {
       id: "outfit-5",
       occasion: "Outfit 5",
       category: "work" as Category,
-      image: outfit5,
+      image: "",
       items: [
         {
           id: "19",
