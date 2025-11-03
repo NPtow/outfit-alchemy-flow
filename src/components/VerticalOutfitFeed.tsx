@@ -255,11 +255,11 @@ export const VerticalOutfitFeed = ({
           className="relative w-full h-full flex items-center justify-center animate-fade-in"
         >
           {/* Action Buttons - Right Side */}
-          <div className="absolute right-6 bottom-52 z-20 flex flex-col gap-4">
+          <div className="absolute right-3 sm:right-6 bottom-40 sm:bottom-52 z-20 flex flex-col gap-3 sm:gap-4">
             {/* Like Button */}
             <button
               onClick={handleLike}
-              className="w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Like"
             >
               <img 
@@ -276,7 +276,7 @@ export const VerticalOutfitFeed = ({
                 setCarouselStartIndex(0);
                 setDetailsViewed(true);
               }}
-              className="w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Details"
             >
               <img 
@@ -289,7 +289,7 @@ export const VerticalOutfitFeed = ({
             {/* Share Button */}
             <button
               onClick={handleShare}
-              className="w-10 h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Share"
             >
               <img 
@@ -301,7 +301,7 @@ export const VerticalOutfitFeed = ({
           </div>
 
           {/* Outfit Image */}
-          <div className="relative w-[320px] h-[496px] mx-auto bg-white rounded-[32px] flex items-center justify-center overflow-hidden">
+          <div className="relative w-[280px] h-[434px] sm:w-[320px] sm:h-[496px] md:w-[360px] md:h-[558px] mx-auto bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
             <OutfitCollage 
               items={currentOutfit.items.map(item => {
                 // Get layout pattern for this outfit composition
@@ -330,21 +330,21 @@ export const VerticalOutfitFeed = ({
 
           {/* Scroll Indicator */}
           {currentIndex < outfits.length - 1 && (
-            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 animate-bounce">
-              <ChevronDown className="w-8 h-8 text-white/40" />
+            <div className="absolute bottom-20 sm:bottom-24 left-1/2 -translate-x-1/2 z-10 animate-bounce">
+              <ChevronDown className="w-6 h-6 sm:w-8 sm:h-8 text-white/40" />
             </div>
           )}
 
           {/* Progress Indicators */}
-          <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-20">
             {outfits.map((_, index) => (
               <div
                 key={index}
                 className={cn(
-                  "h-1 rounded-full transition-all duration-300",
+                  "h-0.5 sm:h-1 rounded-full transition-all duration-300",
                   index === currentIndex
-                    ? "w-8 bg-[#C8E871]"
-                    : "w-1 bg-white/20"
+                    ? "w-6 sm:w-8 bg-[#C8E871]"
+                    : "w-0.5 sm:w-1 bg-white/20"
                 )}
               />
             ))}

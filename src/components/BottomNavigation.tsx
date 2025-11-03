@@ -40,9 +40,9 @@ export const BottomNavigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4">
-      <div className="relative rounded-full px-6 py-3 bg-gradient-to-r from-white/[0.32] to-black/[0.32] backdrop-blur-md shadow-lg">
-        <div className="flex items-center justify-center gap-8">
+    <nav className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 px-3 sm:px-4">
+      <div className="relative rounded-full px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-white/[0.32] to-black/[0.32] backdrop-blur-md shadow-lg">
+        <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             const iconSrc = isActive && item.activeIcon ? item.activeIcon : item.icon;
@@ -51,9 +51,9 @@ export const BottomNavigation = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className="flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200"
+                className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full transition-all duration-200"
               >
-                <img src={iconSrc} alt={item.name} className="w-10 h-10" />
+                <img src={iconSrc} alt={item.name} className="w-8 h-8 sm:w-10 sm:h-10" />
               </Link>
             );
           })}
