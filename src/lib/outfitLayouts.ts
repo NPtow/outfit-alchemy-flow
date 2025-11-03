@@ -27,8 +27,8 @@ export const topBottomBagShoesLayout: LayoutPattern = {
 // AtomicTopAnyBottomBagLightShoesFramework (увеличенные TOP и BOTTOM с наслоением)
 export const atomicTopBottomBagShoesLayout: LayoutPattern = {
   футболка: { left: 0.22, top: 0.04, right: 0.78, bottom: 0.55 },
-  брюки: { left: 0.22, top: 0.28, right: 0.80, bottom: 0.96 },
-  джинсы: { left: 0.22, top: 0.28, right: 0.80, bottom: 0.96 },
+  брюки: { left: 0.22, top: 0.28, right: 0.82, bottom: 0.98 },
+  джинсы: { left: 0.22, top: 0.28, right: 0.82, bottom: 0.98 },
   обувь: { left: 0.54, top: 0.54, right: 0.86, bottom: 0.9 },
   кроссовки: { left: 0.54, top: 0.54, right: 0.86, bottom: 0.9 },
   сумка: { left: 0.1, top: 0.4, right: 0.37, bottom: 0.68 },
