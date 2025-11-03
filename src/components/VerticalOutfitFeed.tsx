@@ -307,26 +307,29 @@ export const VerticalOutfitFeed = ({
                 const topFraction = parseFloat(item.position.top) / 100;
                 const leftFraction = parseFloat(item.position.left) / 100;
                 
-                // Set appropriate dimensions based on item category
-                let width = 0.25;  // Default width
-                let height = 0.28; // Default height
+                // Set larger dimensions for overlapping effect
+                let width = 0.35;  // Bigger default width
+                let height = 0.38; // Bigger default height
                 
-                // Adjust sizes for different item types
-                if (item.category.includes('пиджак') || item.category.includes('футболка')) {
-                  width = 0.28;
-                  height = 0.35;
+                // Adjust sizes for different item types to create overlap
+                if (item.category.includes('пиджак')) {
+                  width = 0.38;
+                  height = 0.48;
+                } else if (item.category.includes('футболка')) {
+                  width = 0.36;
+                  height = 0.42;
                 } else if (item.category.includes('брюки')) {
-                  width = 0.22;
-                  height = 0.38;
+                  width = 0.28;
+                  height = 0.50;
                 } else if (item.category.includes('топ')) {
-                  width = 0.22;
-                  height = 0.32;
+                  width = 0.28;
+                  height = 0.40;
                 } else if (item.category.includes('обувь') || item.category.includes('туфли')) {
-                  width = 0.22;
-                  height = 0.15;
-                } else if (item.category.includes('сумка')) {
-                  width = 0.20;
+                  width = 0.28;
                   height = 0.18;
+                } else if (item.category.includes('сумка')) {
+                  width = 0.26;
+                  height = 0.24;
                 }
                 
                 return {
