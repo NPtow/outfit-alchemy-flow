@@ -79,7 +79,15 @@ export const ItemCarousel = ({
       <div className="h-full flex flex-col">
         {/* Item image */}
         <div className="flex-1 flex items-center justify-center p-8">
-          <div className="relative w-full max-w-md aspect-square bg-[#3a3a3a] rounded-2xl" />
+          <div className="relative w-full max-w-md aspect-square bg-[#808080] rounded-2xl overflow-hidden">
+            {currentItem.image && (
+              <img
+                src={currentItem.image}
+                alt={currentItem.name}
+                className="w-full h-full object-contain"
+              />
+            )}
+          </div>
         </div>
 
         {/* Item details */}
@@ -87,7 +95,7 @@ export const ItemCarousel = ({
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="text-xl font-stolzl font-bold text-white mb-1">
-                Название
+                {currentItem.name}
               </h3>
               <p className="text-sm text-white/60 font-stolzl mb-3">
                 {currentItem.category}
