@@ -14,11 +14,11 @@ export type LayoutPattern = {
 // Pattern 1: Top + Any Bottom + Midwear + Bag + Light Shoes
 // TopAnyBottomMidwearBagLightShoesFramework
 export const topBottomBagShoesLayout: LayoutPattern = {
-  пиджак: { left: 0.155, top: 0.12, right: 0.58, bottom: 0.58 },
-  жакет: { left: 0.155, top: 0.12, right: 0.58, bottom: 0.58 },
-  топ: { left: 0.35, top: 0.12, right: 0.79, bottom: 0.58 },
-  брюки: { left: 0.46, top: 0.45, right: 0.8, bottom: 0.83 },
-  юбка: { left: 0.46, top: 0.45, right: 0.8, bottom: 0.83 },
+  пиджак: { left: 0.12, top: 0.10, right: 0.65, bottom: 0.60 },
+  жакет: { left: 0.12, top: 0.10, right: 0.65, bottom: 0.60 },
+  топ: { left: 0.30, top: 0.10, right: 0.82, bottom: 0.60 },
+  брюки: { left: 0.42, top: 0.42, right: 0.85, bottom: 0.88 },
+  юбка: { left: 0.42, top: 0.42, right: 0.85, bottom: 0.88 },
   туфли: { left: 0.62, top: 0.57, right: 0.91, bottom: 0.9 },
   сумка: { left: 0.15, top: 0.5, right: 0.44, bottom: 0.79 },
 };
