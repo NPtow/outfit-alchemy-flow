@@ -22,6 +22,7 @@ interface ShoppableItem {
   itemNumber: string;
   price: number;
   shopUrl: string;
+  image?: string; // Add image field
   position: {
     top: string;
     left: string;
@@ -318,7 +319,7 @@ export const VerticalOutfitFeed = ({
                   itemNumber: item.itemNumber,
                   price: item.price,
                   shopUrl: item.shopUrl,
-                  image: (item as any).image || `/clothing-images/${item.category.toLowerCase()}.png`,
+                  image: item.image || `/clothing-images/${item.category.toLowerCase()}.png`,
                   position: {
                     left: leftFraction,
                     top: topFraction,

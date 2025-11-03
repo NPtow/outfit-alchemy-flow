@@ -505,8 +505,8 @@ const Feed = () => {
         ? mlData.outfits 
         : mlData.outfits.filter(outfit => outfit.category === activeCategory))
     : (activeCategory === "all" 
-        ? allOutfits 
-        : allOutfits.filter(outfit => outfit.category === activeCategory));
+        ? generatedOutfits 
+        : generatedOutfits.filter(outfit => outfit.category === activeCategory));
 
   const userPhase = mlData?.user_phase || 'cold_start';
 
