@@ -3,13 +3,6 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { getSavedOutfits } from "@/lib/outfitStorage";
 import { Heart } from "lucide-react";
 
-// Import outfit images
-import outfit1 from "@/assets/outfit-1.png";
-import outfit2 from "@/assets/outfit-2.png";
-import outfit3 from "@/assets/outfit-3.png";
-import outfit4 from "@/assets/outfit-4.png";
-import outfit5 from "@/assets/outfit-5.png";
-
 const MyOutfits = () => {
   const [savedOutfitIds, setSavedOutfitIds] = useState<string[]>([]);
 
@@ -17,18 +10,7 @@ const MyOutfits = () => {
     setSavedOutfitIds(getSavedOutfits());
   }, []);
 
-  // All outfits data
-  const allOutfits = [
-    { id: "outfit-1", occasion: "Outfit 1", image: outfit1 },
-    { id: "outfit-2", occasion: "Outfit 2", image: outfit2 },
-    { id: "outfit-3", occasion: "Outfit 3", image: outfit3 },
-    { id: "outfit-4", occasion: "Outfit 4", image: outfit4 },
-    { id: "outfit-5", occasion: "Outfit 5", image: outfit5 },
-  ];
-
-  const savedOutfits = allOutfits.filter(outfit => 
-    savedOutfitIds.includes(outfit.id)
-  );
+  const savedOutfits = savedOutfitIds.map(id => ({ id }));
 
   return (
     <div className="min-h-screen w-full bg-black pb-20">
