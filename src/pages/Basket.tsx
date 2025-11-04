@@ -23,6 +23,17 @@ const Basket = () => {
 
   useEffect(() => {
     loadBasketItems();
+    
+    // Обновляем корзину при кастомном событии изменения корзины
+    const handleBasketChange = () => {
+      loadBasketItems();
+    };
+    
+    window.addEventListener('basketChanged', handleBasketChange);
+    
+    return () => {
+      window.removeEventListener('basketChanged', handleBasketChange);
+    };
   }, []);
 
   const handleRemoveItem = (itemId: string, itemName: string) => {

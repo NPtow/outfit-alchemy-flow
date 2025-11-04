@@ -27,6 +27,8 @@ export const addToBasket = (item: BasketItem): void => {
     if (!items.find((i) => i.id === item.id)) {
       items.push(item);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      // Отправляем событие для обновления UI
+      window.dispatchEvent(new Event('basketChanged'));
     }
   } catch (error) {
     console.error("Error adding to basket:", error);
@@ -38,6 +40,8 @@ export const removeFromBasket = (itemId: string): void => {
     const items = getBasketItems();
     const filtered = items.filter((item) => item.id !== itemId);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    // Отправляем событие для обновления UI
+    window.dispatchEvent(new Event('basketChanged'));
   } catch (error) {
     console.error("Error removing from basket:", error);
   }
