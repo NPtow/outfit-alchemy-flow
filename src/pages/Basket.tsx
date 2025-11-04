@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
-import { ShoppingCart } from "lucide-react";
-import { getBasketItems } from "@/lib/basketStorage";
+import { ShoppingCart, Trash2 } from "lucide-react";
+import { getBasketItems, removeFromBasket } from "@/lib/basketStorage";
+import { useToast } from "@/hooks/use-toast";
 
 interface BasketItem {
   id: string;
@@ -13,11 +14,25 @@ interface BasketItem {
 
 const Basket = () => {
   const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
+  const { toast } = useToast();
 
-  useEffect(() => {
+  const loadBasketItems = () => {
     const items = getBasketItems();
     setBasketItems(items);
+  };
+
+  useEffect(() => {
+    loadBasketItems();
   }, []);
+
+  const handleRemoveItem = (itemId: string, itemName: string) => {
+    removeFromBasket(itemId);
+    loadBasketItems();
+    toast({
+      title: "Удалено из корзины",
+      description: itemName,
+    });
+  };
 
   return (
     <div className="min-h-screen w-full bg-black pb-20">
@@ -75,6 +90,13 @@ const Basket = () => {
                     {item.price.toLocaleString()} ₽
                   </p>
                 </div>
+                <button
+                  onClick={() => handleRemoveItem(item.id, item.name)}
+                  className="p-2 text-white/60 hover:text-red-400 transition-colors"
+                  aria-label="Удалить"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
               </div>
             ))}
           </div>
