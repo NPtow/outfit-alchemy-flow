@@ -130,7 +130,7 @@ export const ItemCarousel = ({
 
         {/* Item image */}
         <div 
-          className="w-full aspect-square flex items-center justify-center p-8 pt-14"
+          className="w-full aspect-square flex items-center justify-center p-6 pt-12"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -139,7 +139,7 @@ export const ItemCarousel = ({
             <img
               src={currentItem.image}
               alt={currentItem.name}
-              className="w-3/4 h-3/4 object-contain"
+              className="w-full h-full object-contain"
             />
           )}
         </div>
