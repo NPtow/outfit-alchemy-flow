@@ -19,8 +19,6 @@ const Basket = () => {
     setBasketItems(items);
   }, []);
 
-  const totalPrice = basketItems.reduce((sum, item) => sum + item.price, 0);
-
   return (
     <div className="min-h-screen w-full bg-black pb-20">
       {/* Header */}
@@ -51,41 +49,35 @@ const Basket = () => {
             </p>
           </div>
         ) : (
-          <>
-            <div className="space-y-4">
-              {basketItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-[#2a2a2a] rounded-2xl p-4 flex gap-4 items-center"
-                >
-                  <div className="w-20 h-20 bg-[#3a3a3a] rounded-xl flex-shrink-0" />
-                  <div className="flex-1">
-                    <h3 className="font-stolzl font-semibold text-white mb-1">
-                      Название
-                    </h3>
-                    <p className="text-sm text-white/60 font-stolzl mb-2">
-                      {item.category}
-                    </p>
-                    <p className="text-lg font-stolzl font-bold text-[#C8E871]">
-                      {item.price.toLocaleString()} ₽
-                    </p>
-                  </div>
+          <div className="space-y-4">
+            {basketItems.map((item) => (
+              <div
+                key={item.id}
+                className="bg-[#2a2a2a] rounded-2xl p-4 flex gap-4 items-center"
+              >
+                <div className="w-20 h-20 bg-white rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  {item.image && (
+                    <img 
+                      src={item.image} 
+                      alt={item.name}
+                      className="w-full h-full object-contain"
+                    />
+                  )}
                 </div>
-              ))}
-            </div>
-
-            {/* Total */}
-            <div className="fixed bottom-20 left-0 right-0 bg-[#2a2a2a] border-t border-white/10 p-4">
-              <div className="flex items-center justify-between max-w-lg mx-auto">
-                <span className="font-stolzl font-semibold text-white">
-                  Итого:
-                </span>
-                <span className="text-2xl font-stolzl font-bold text-[#C8E871]">
-                  {totalPrice.toLocaleString()} ₽
-                </span>
+                <div className="flex-1">
+                  <h3 className="font-stolzl font-semibold text-white mb-1">
+                    Название
+                  </h3>
+                  <p className="text-sm text-white/60 font-stolzl mb-2">
+                    {item.category}
+                  </p>
+                  <p className="text-lg font-stolzl font-bold text-[#C8E871]">
+                    {item.price.toLocaleString()} ₽
+                  </p>
+                </div>
               </div>
-            </div>
-          </>
+            ))}
+          </div>
         )}
       </main>
 
