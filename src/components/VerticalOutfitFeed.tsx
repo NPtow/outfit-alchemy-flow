@@ -171,14 +171,17 @@ export const VerticalOutfitFeed = ({
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    if (showCarousel) return;
     setTouchStart(e.targetTouches[0].clientY);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (showCarousel) return;
     setTouchEnd(e.targetTouches[0].clientY);
   };
 
   const handleTouchEnd = () => {
+    if (showCarousel) return;
     if (touchStart - touchEnd > 50) {
       handleNext();
     }
@@ -188,6 +191,7 @@ export const VerticalOutfitFeed = ({
   };
 
   const handleWheel = (e: React.WheelEvent) => {
+    if (showCarousel) return;
     if (e.deltaY > 0) {
       handleNext();
     } else if (e.deltaY < 0) {
