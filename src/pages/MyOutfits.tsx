@@ -48,15 +48,7 @@ const MyOutfits = () => {
                 key={outfit.id}
                 className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
               >
-                <div className="w-full h-3/4 bg-[#3a3a3a]" />
-                <div className="absolute bottom-0 left-0 right-0 bg-[#2a2a2a] p-3">
-                  <p className="text-sm font-stolzl font-semibold text-white">
-                    Образ 1
-                  </p>
-                  <p className="text-xs text-white/60 font-stolzl">
-                    Домашнее
-                  </p>
-                </div>
+                <div className="w-full h-full bg-[#3a3a3a]" />
               </div>
             ))}
           </div>
