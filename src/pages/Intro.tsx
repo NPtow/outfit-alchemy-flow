@@ -37,7 +37,7 @@ const Intro = () => {
             </div>
             
             <h1 className="text-4xl font-stolzl font-bold text-white tracking-tight">
-              InspirationKit
+              SwipeStyle
             </h1>
             
             <p className="text-white/60 mt-2 font-inter">
