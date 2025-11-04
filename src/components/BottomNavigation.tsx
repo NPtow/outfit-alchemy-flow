@@ -60,9 +60,15 @@ export const BottomNavigation = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full transition-all duration-200"
+                className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full transition-all duration-200"
               >
-                <img src={iconSrc} alt={item.name} className="w-10 h-10 sm:w-12 sm:h-12" loading="eager" />
+                <img 
+                  src={iconSrc} 
+                  alt={item.name} 
+                  className="w-full h-full object-contain" 
+                  loading="eager"
+                  style={{ imageRendering: '-webkit-optimize-contrast' }}
+                />
               </Link>
             );
           })}
