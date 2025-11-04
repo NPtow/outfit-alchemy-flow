@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ItemCarousel } from "./ItemCarousel";
+import { Skeleton } from "./ui/skeleton";
 
 export interface CollageItem {
   id: string;
@@ -26,6 +27,24 @@ interface OutfitCollageProps {
 export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
   const [showCarousel, setShowCarousel] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoadedImages(new Set());
+    setAllImagesLoaded(false);
+  }, [items]);
+
+  const handleImageLoad = (itemId: string) => {
+    setLoadedImages(prev => {
+      const newSet = new Set(prev);
+      newSet.add(itemId);
+      if (newSet.size === items.length) {
+        setAllImagesLoaded(true);
+      }
+      return newSet;
+    });
+  };
 
   const handleItemClick = (index: number) => {
     setSelectedItemIndex(index);
@@ -46,6 +65,13 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
   return (
     <>
       <div className="relative w-full h-full">
+        {/* Loading spinner */}
+        {!allImagesLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm z-10">
+            <div className="w-12 h-12 border-4 border-[#C8E871] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        
         {items.map((item, index) => {
           const { left, top, right, bottom } = item.position;
           const width = (right - left) * 100;
@@ -66,9 +92,12 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-full h-full object-contain"
+                className={`w-full h-full object-contain transition-opacity duration-300 ${
+                  loadedImages.has(item.id) ? 'opacity-100' : 'opacity-0'
+                }`}
                 draggable={false}
                 loading="eager"
+                onLoad={() => handleImageLoad(item.id)}
               />
             </button>
           );
