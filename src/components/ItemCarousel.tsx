@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { addToBasket, isInBasket } from "@/lib/basketStorage";
+import { addToBasket, removeFromBasket, isInBasket } from "@/lib/basketStorage";
 import { useToast } from "@/hooks/use-toast";
 import likeDefault from "@/assets/icon_like_mode_default.svg";
 import likeActive from "@/assets/icon_like_mode_active.svg";
@@ -33,7 +33,6 @@ export const ItemCarousel = ({
   onClose,
 }: ItemCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [liked, setLiked] = useState<Record<string, boolean>>({});
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const { toast } = useToast();
@@ -70,7 +69,13 @@ export const ItemCarousel = ({
     const item = items.find((i) => i.id === itemId);
     if (!item) return;
 
-    if (!isInBasket(itemId)) {
+    if (isInBasket(itemId)) {
+      removeFromBasket(itemId);
+      toast({
+        title: "Удалено из корзины",
+        description: item.name,
+      });
+    } else {
       addToBasket({
         id: item.id,
         name: item.name,
@@ -79,14 +84,8 @@ export const ItemCarousel = ({
         outfitId,
         image: item.image,
       });
-      setLiked({ ...liked, [itemId]: true });
       toast({
         title: "Добавлено в корзину",
-        description: item.name,
-      });
-    } else {
-      toast({
-        title: "Уже в корзине",
         description: item.name,
       });
     }
@@ -160,13 +159,13 @@ export const ItemCarousel = ({
             </div>
 
             <button
-              className="w-11 h-11 flex items-center justify-center flex-shrink-0 bg-transparent border-2 border-white rounded-full transition-colors hover:bg-white/10 ml-3"
+              className="w-11 h-11 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110 active:scale-95 ml-3"
               onClick={() => handleLike(currentItem.id)}
             >
               <img
-                src={liked[currentItem.id] || isInBasket(currentItem.id) ? likeActive : likeDefault}
+                src={isInBasket(currentItem.id) ? likeActive : likeDefault}
                 alt="Like"
-                className="w-5 h-5"
+                className="w-full h-full"
               />
             </button>
           </div>
