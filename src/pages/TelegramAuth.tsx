@@ -16,7 +16,7 @@ const TelegramAuth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const botUsername = "YOUR_BOT_USERNAME"; // Replace with your bot username
+  const botUsername = "swipestyle_auth_bot";
 
   useEffect(() => {
     // Check if user is already logged in
