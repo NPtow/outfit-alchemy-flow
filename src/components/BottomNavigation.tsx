@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 import homeDefault from "@/assets/icon_home_mode_default.png";
 import homeActive from "@/assets/icon_home_mode_active.svg";
 import bookmarkIcon from "@/assets/icon_saving_mode_default.png";
-import bookmarkActiveIcon from "@/assets/icon_saving_mode_active.svg";
+import bookmarkActiveIcon from "@/assets/icon_saving_mode_active_new.svg";
 import basketDefault from "@/assets/icon_basket_mode_default.png";
-import basketActive from "@/assets/icon_basket_mode_active.svg";
+import basketActive from "@/assets/icon_basket_mode_active_new.svg";
 import avatarDefault from "@/assets/icon_avatar_mode_default.png";
-import avatarActive from "@/assets/icon_avatar_mode_active.svg";
+import avatarActive from "@/assets/icon_avatar_mode_active_new.svg";
 
 export const BottomNavigation = () => {
   const location = useLocation();
