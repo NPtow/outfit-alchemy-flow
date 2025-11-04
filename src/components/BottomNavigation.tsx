@@ -44,7 +44,7 @@ export const BottomNavigation = () => {
       name: "Профиль",
       icon: avatarDefault,
       activeIcon: avatarActive,
-      path: "/telegram-auth",
+      path: "/profile",
     },
   ];
 
