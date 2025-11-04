@@ -98,7 +98,7 @@ export const ItemCarousel = ({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       
       {/* Modal content */}
-      <div className="relative w-full max-w-md bg-[#808080] rounded-3xl overflow-hidden">
+      <div className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden">
         {/* Close button */}
         <Button
           variant="ghost"
@@ -130,7 +130,7 @@ export const ItemCarousel = ({
 
         {/* Item image */}
         <div 
-          className="w-full aspect-square flex items-center justify-center p-12 pt-16"
+          className="w-full aspect-square flex items-center justify-center p-8 pt-14"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -139,7 +139,7 @@ export const ItemCarousel = ({
             <img
               src={currentItem.image}
               alt={currentItem.name}
-              className="w-full h-full object-contain"
+              className="w-3/4 h-3/4 object-contain"
             />
           )}
         </div>
