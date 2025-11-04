@@ -33,7 +33,7 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
   useEffect(() => {
     setLoadedImages(new Set());
     setAllImagesLoaded(false);
-  }, [items]);
+  }, [outfitId]);
 
   const handleImageLoad = (itemId: string) => {
     setLoadedImages(prev => {
