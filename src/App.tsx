@@ -7,6 +7,7 @@ import Feed from "./pages/Feed";
 import MyOutfits from "./pages/MyOutfits";
 import Basket from "./pages/Basket";
 import Auth from "./pages/Auth";
+import TelegramAuth from "./pages/TelegramAuth";
 import MLInsights from "./pages/MLInsights";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/my-outfits" element={<MyOutfits />} />
           <Route path="/basket" element={<Basket />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/telegram-auth" element={<TelegramAuth />} />
           <Route path="/ml-insights" element={<MLInsights />} />
           <Route path="/admin" element={<AdminPanel />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
