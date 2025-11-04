@@ -22,7 +22,7 @@ const TelegramAuth = () => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/profile");
+        navigate("/feed");
       }
     });
 
@@ -60,7 +60,7 @@ const TelegramAuth = () => {
             description: `Добро пожаловать, ${user.first_name}!`,
           });
 
-          navigate("/profile");
+          navigate("/feed");
         }
       } catch (error) {
         console.error("Telegram auth error:", error);

@@ -26,7 +26,7 @@ export const BottomNavigation = () => {
       name: "Главная",
       icon: homeDefault,
       activeIcon: homeActive,
-      path: "/",
+      path: "/feed",
     },
     {
       name: "Мои образы",
