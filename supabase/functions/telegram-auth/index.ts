@@ -36,11 +36,13 @@ serve(async (req) => {
       .map(key => `${key}=${dataCheckObject[key]}`);
     const dataCheckString = dataCheckArr.join('\n');
 
-    // Create hash using Web Crypto API
+    // Create hash using Web Crypto API (Telegram Login Widget algorithm)
     const encoder = new TextEncoder();
-    const keyData = encoder.encode(botToken);
-    const secretKeyBuffer = await crypto.subtle.digest('SHA-256', encoder.encode('WebAppData'));
     
+    // Step 1: Create secret key from bot token using SHA-256
+    const secretKeyBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(botToken));
+    
+    // Step 2: Import the secret key for HMAC
     const cryptoKey = await crypto.subtle.importKey(
       'raw',
       secretKeyBuffer,
@@ -49,13 +51,14 @@ serve(async (req) => {
       ['sign']
     );
 
+    // Step 3: Sign the data check string
     const signature = await crypto.subtle.sign(
       'HMAC',
       cryptoKey,
       encoder.encode(dataCheckString)
     );
 
-    // Convert to hex
+    // Step 4: Convert to hex
     const hash = Array.from(new Uint8Array(signature))
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
