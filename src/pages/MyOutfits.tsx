@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
-import { getSavedOutfits } from "@/lib/outfitStorage";
+import { getSavedOutfits, SavedOutfit } from "@/lib/outfitStorage";
+import { OutfitCollage, CollageItem } from "@/components/OutfitCollage";
+import { getOutfitLayout, getCategoryPosition } from "@/lib/outfitLayouts";
 import { Heart } from "lucide-react";
 
 const MyOutfits = () => {
-  const [savedOutfitIds, setSavedOutfitIds] = useState<string[]>([]);
+  const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>([]);
 
   useEffect(() => {
-    setSavedOutfitIds(getSavedOutfits());
+    setSavedOutfits(getSavedOutfits());
   }, []);
-
-  const savedOutfits = savedOutfitIds.map(id => ({ id }));
 
   return (
     <div className="min-h-screen w-full bg-black pb-20">
@@ -46,9 +46,29 @@ const MyOutfits = () => {
             {savedOutfits.map((outfit) => (
               <div
                 key={outfit.id}
-                className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#2a2a2a] cursor-pointer"
+                className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-white cursor-pointer"
               >
-                <div className="w-full h-full bg-[#3a3a3a]" />
+                <OutfitCollage
+                  items={outfit.items.map(item => {
+                    const layout = getOutfitLayout(outfit.items);
+                    const position = getCategoryPosition(item.category, layout);
+                    const defaultPosition = { left: 0.3, top: 0.3, right: 0.7, bottom: 0.7 };
+                    const pos = position || defaultPosition;
+                    
+                    return {
+                      id: item.id,
+                      name: item.name,
+                      brand: item.brand,
+                      category: item.category,
+                      itemNumber: item.itemNumber,
+                      price: item.price,
+                      shopUrl: item.shopUrl,
+                      image: item.image || `/clothing-images/${item.category.toLowerCase()}.png`,
+                      position: pos
+                    } as CollageItem;
+                  })}
+                  outfitId={outfit.id}
+                />
               </div>
             ))}
           </div>

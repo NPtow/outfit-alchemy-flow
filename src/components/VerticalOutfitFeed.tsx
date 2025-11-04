@@ -208,7 +208,12 @@ export const VerticalOutfitFeed = ({
         description: "Образ удален из вашей коллекции",
       });
     } else {
-      saveOutfit(currentOutfit.id);
+      saveOutfit({
+        id: currentOutfit.id,
+        occasion: currentOutfit.occasion,
+        items: currentOutfit.items,
+        savedAt: Date.now()
+      });
       setIsLiked(true);
       
       // Записываем лайк в ML backend
