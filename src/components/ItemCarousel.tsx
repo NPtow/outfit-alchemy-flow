@@ -35,25 +35,39 @@ export const ItemCarousel = ({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [touchStartY, setTouchStartY] = useState(0);
+  const [touchEndY, setTouchEndY] = useState(0);
   const { toast } = useToast();
 
   const currentItem = items[currentIndex];
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
+    setTouchStartY(e.targetTouches[0].clientY);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     setTouchEnd(e.targetTouches[0].clientX);
+    setTouchEndY(e.targetTouches[0].clientY);
   };
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     
     const distance = touchStart - touchEnd;
+    const distanceY = touchStartY - touchEndY;
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
+    const isUpSwipe = distanceY > 80;
+    const isDownSwipe = distanceY < -80;
 
+    // Закрытие модального окна при вертикальном свайпе
+    if (isUpSwipe || isDownSwipe) {
+      onClose();
+      return;
+    }
+
+    // Переключение между товарами при горизонтальном свайпе
     if (isLeftSwipe && currentIndex < items.length - 1) {
       setCurrentIndex(currentIndex + 1);
     }
@@ -63,6 +77,8 @@ export const ItemCarousel = ({
 
     setTouchStart(0);
     setTouchEnd(0);
+    setTouchStartY(0);
+    setTouchEndY(0);
   };
 
   const handleLike = (itemId: string) => {
