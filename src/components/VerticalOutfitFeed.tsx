@@ -297,7 +297,8 @@ export const VerticalOutfitFeed = ({
             {/* Like Button */}
             <button
               onClick={handleLike}
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              disabled={showCarousel}
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Like"
             >
               <img 
@@ -318,7 +319,8 @@ export const VerticalOutfitFeed = ({
                   setShowCarousel(true);
                 }, 150);
               }}
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              disabled={showCarousel}
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Details"
             >
               <img 
@@ -332,7 +334,8 @@ export const VerticalOutfitFeed = ({
             {/* Share Button */}
             <button
               onClick={handleShare}
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+              disabled={showCarousel}
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
               aria-label="Share"
             >
               <img 
