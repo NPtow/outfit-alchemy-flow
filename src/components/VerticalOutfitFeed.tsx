@@ -311,9 +311,12 @@ export const VerticalOutfitFeed = ({
             {/* Details Button */}
             <button
               onClick={() => {
-                setShowCarousel(true);
-                setCarouselStartIndex(0);
                 setDetailsViewed(true);
+                setCarouselStartIndex(0);
+                // Показываем карусель с небольшой задержкой после смены состояния кнопки
+                setTimeout(() => {
+                  setShowCarousel(true);
+                }, 150);
               }}
               className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
               aria-label="Details"
@@ -399,7 +402,10 @@ export const VerticalOutfitFeed = ({
           items={currentOutfit.items}
           outfitId={currentOutfit.id}
           initialIndex={carouselStartIndex}
-          onClose={() => setShowCarousel(false)}
+          onClose={() => {
+            setShowCarousel(false);
+            setDetailsViewed(false);
+          }}
         />
       )}
     </>
