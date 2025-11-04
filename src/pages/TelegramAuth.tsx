@@ -26,23 +26,7 @@ const TelegramAuth = () => {
       }
     });
 
-    // Load Telegram widget script
-    const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-widget.js?22";
-    script.setAttribute("data-telegram-login", botUsername);
-    script.setAttribute("data-size", "large");
-    script.setAttribute("data-radius", "8");
-    script.setAttribute("data-request-access", "write");
-    script.setAttribute("data-userpic", "true");
-    script.setAttribute("data-onauth", "onTelegramAuth(user)");
-    script.async = true;
-
-    const container = document.getElementById("telegram-login-container");
-    if (container) {
-      container.appendChild(script);
-    }
-
-    // Define callback function
+    // Define callback function globally before loading script
     (window as any).onTelegramAuth = async (user: any) => {
       setIsLoading(true);
       console.log("Telegram auth callback:", user);
@@ -60,6 +44,7 @@ const TelegramAuth = () => {
             description: "Не удалось войти через Telegram",
             variant: "destructive",
           });
+          setIsLoading(false);
           return;
         }
 
@@ -89,10 +74,27 @@ const TelegramAuth = () => {
       }
     };
 
+    // Load Telegram widget script
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-widget.js?22";
+    script.setAttribute("data-telegram-login", botUsername);
+    script.setAttribute("data-size", "large");
+    script.setAttribute("data-radius", "8");
+    script.setAttribute("data-request-access", "write");
+    script.setAttribute("data-userpic", "true");
+    script.setAttribute("data-onauth", "onTelegramAuth(user)");
+    script.async = true;
+
+    const container = document.getElementById("telegram-login-container");
+    if (container) {
+      container.appendChild(script);
+    }
+
     return () => {
       if (container) {
         container.innerHTML = "";
       }
+      delete (window as any).onTelegramAuth;
     };
   }, [navigate, toast]);
 
