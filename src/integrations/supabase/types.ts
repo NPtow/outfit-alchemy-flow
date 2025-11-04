@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      basket_items: {
+        Row: {
+          added_at: string
+          brand: string | null
+          category: string | null
+          id: string
+          image: string | null
+          item_id: string
+          item_number: string | null
+          name: string
+          price: number | null
+          shop_url: string | null
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          brand?: string | null
+          category?: string | null
+          id?: string
+          image?: string | null
+          item_id: string
+          item_number?: string | null
+          name: string
+          price?: number | null
+          shop_url?: string | null
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          brand?: string | null
+          category?: string | null
+          id?: string
+          image?: string | null
+          item_id?: string
+          item_number?: string | null
+          name?: string
+          price?: number | null
+          shop_url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       clothing_items: {
         Row: {
           attributes: Json | null
@@ -47,6 +89,69 @@ export type Database = {
           processed_image_url?: string | null
           product_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          photo_url: string | null
+          telegram_id: number | null
+          updated_at: string
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          photo_url?: string | null
+          telegram_id?: number | null
+          updated_at?: string
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          photo_url?: string | null
+          telegram_id?: number | null
+          updated_at?: string
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      saved_outfits: {
+        Row: {
+          id: string
+          items: Json
+          occasion: string | null
+          outfit_id: string
+          saved_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          items: Json
+          occasion?: string | null
+          outfit_id: string
+          saved_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          items?: Json
+          occasion?: string | null
+          outfit_id?: string
+          saved_at?: string
+          user_id?: string
         }
         Relationships: []
       }
