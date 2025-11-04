@@ -68,6 +68,7 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
                 alt={item.name}
                 className="w-full h-full object-contain"
                 draggable={false}
+                loading="eager"
               />
             </button>
           );

@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import homeDefault from "@/assets/icon_home_mode_default.png";
 import homeActive from "@/assets/icon_home_mode_active.svg";
@@ -11,6 +12,14 @@ import avatarActive from "@/assets/icon_avatar_mode_active.svg";
 
 export const BottomNavigation = () => {
   const location = useLocation();
+
+  // Preload all icons on mount
+  useEffect(() => {
+    [homeDefault, homeActive, bookmarkIcon, bookmarkActiveIcon, basketDefault, basketActive, avatarDefault, avatarActive].forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   const navItems = [
     {
@@ -53,7 +62,7 @@ export const BottomNavigation = () => {
                 to={item.path}
                 className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full transition-all duration-200"
               >
-                <img src={iconSrc} alt={item.name} className="w-10 h-10 sm:w-12 sm:h-12" />
+                <img src={iconSrc} alt={item.name} className="w-10 h-10 sm:w-12 sm:h-12" loading="eager" />
               </Link>
             );
           })}

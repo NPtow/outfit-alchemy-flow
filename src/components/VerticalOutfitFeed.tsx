@@ -88,6 +88,39 @@ export const VerticalOutfitFeed = ({
     }
   }, [currentIndex, useML, currentOutfit, userId]);
 
+  // Preload adjacent outfit images
+  useEffect(() => {
+    const preloadImages = () => {
+      // Preload next outfit
+      if (currentIndex < outfits.length - 1) {
+        const nextOutfit = outfits[currentIndex + 1];
+        nextOutfit.items.forEach(item => {
+          const img = new Image();
+          img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
+        });
+      }
+      
+      // Preload previous outfit
+      if (currentIndex > 0) {
+        const prevOutfit = outfits[currentIndex - 1];
+        prevOutfit.items.forEach(item => {
+          const img = new Image();
+          img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
+        });
+      }
+    };
+
+    preloadImages();
+  }, [currentIndex, outfits]);
+
+  // Preload all icons on mount
+  useEffect(() => {
+    [likeDefault, likeActive, shareDefault, shareActive, detailsDefault, detailsActive].forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   // Show empty state if no outfits
   if (!outfits || outfits.length === 0) {
     return (
@@ -266,6 +299,7 @@ export const VerticalOutfitFeed = ({
                 src={isLiked ? likeActive : likeDefault} 
                 alt="Like" 
                 className="w-full h-full"
+                loading="eager"
               />
             </button>
             
@@ -283,6 +317,7 @@ export const VerticalOutfitFeed = ({
                 src={detailsViewed ? detailsActive : detailsDefault} 
                 alt="Details" 
                 className="w-full h-full"
+                loading="eager"
               />
             </button>
             
@@ -296,6 +331,7 @@ export const VerticalOutfitFeed = ({
                 src={isShared ? shareActive : shareDefault} 
                 alt="Share" 
                 className="w-full h-full"
+                loading="eager"
               />
             </button>
           </div>
