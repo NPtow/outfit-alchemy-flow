@@ -26,9 +26,21 @@ export interface SavedOutfit {
 export const getSavedOutfits = (): SavedOutfit[] => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    if (!saved) return [];
+    
+    const parsed = JSON.parse(saved);
+    
+    // Миграция старого формата (массив строк) к новому (массив объектов)
+    if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+      console.log('Migrating old outfit storage format, clearing old data');
+      localStorage.removeItem(STORAGE_KEY);
+      return [];
+    }
+    
+    return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     console.error("Error reading saved outfits:", error);
+    localStorage.removeItem(STORAGE_KEY);
     return [];
   }
 };
