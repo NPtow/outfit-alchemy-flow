@@ -36,10 +36,13 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
   }, [outfitId]);
 
   const handleImageLoad = (itemId: string) => {
+    console.log(`Image loaded: ${itemId} for outfit ${outfitId}`);
     setLoadedImages(prev => {
       const newSet = new Set(prev);
       newSet.add(itemId);
+      console.log(`Loaded ${newSet.size}/${items.length} images for outfit ${outfitId}`);
       if (newSet.size === items.length) {
+        console.log(`All images loaded for outfit ${outfitId}`);
         setAllImagesLoaded(true);
       }
       return newSet;

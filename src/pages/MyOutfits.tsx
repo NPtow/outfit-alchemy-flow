@@ -9,7 +9,9 @@ const MyOutfits = () => {
   const [savedOutfits, setSavedOutfits] = useState<SavedOutfit[]>([]);
 
   useEffect(() => {
-    setSavedOutfits(getSavedOutfits());
+    const outfits = getSavedOutfits();
+    console.log('Loaded saved outfits:', outfits.length, outfits);
+    setSavedOutfits(outfits);
   }, []);
 
   return (
