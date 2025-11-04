@@ -51,6 +51,7 @@ const MyOutfits = () => {
                 className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-white cursor-pointer"
               >
                 <OutfitCollage
+                  key={`collage-${outfit.id}-${outfit.items.length}`}
                   items={outfit.items.map(item => {
                     const layout = getOutfitLayout(outfit.items);
                     const position = getCategoryPosition(item.category, layout);

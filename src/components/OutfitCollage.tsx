@@ -31,9 +31,10 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
 
   useEffect(() => {
+    console.log('Resetting loading state for outfit:', outfitId, 'items:', items.length);
     setLoadedImages(new Set());
     setAllImagesLoaded(false);
-  }, [outfitId]);
+  }, [outfitId, items.length]);
 
   const handleImageLoad = (itemId: string) => {
     console.log(`Image loaded: ${itemId} for outfit ${outfitId}`);
@@ -43,7 +44,8 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
       console.log(`Loaded ${newSet.size}/${items.length} images for outfit ${outfitId}`);
       if (newSet.size === items.length) {
         console.log(`All images loaded for outfit ${outfitId}`);
-        setAllImagesLoaded(true);
+        // Небольшая задержка для плавности
+        setTimeout(() => setAllImagesLoaded(true), 50);
       }
       return newSet;
     });
