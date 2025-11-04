@@ -26,9 +26,9 @@ export const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsP
               key={category.id}
               onClick={() => onCategoryChange(category.id)}
               className={cn(
-                "px-4 sm:px-6 py-1.5 sm:py-2 rounded-full whitespace-nowrap font-semibold text-xs sm:text-sm transition-all duration-200 flex-shrink-0 font-stolzl",
+                "px-4 sm:px-6 py-1.5 sm:py-2 rounded-full whitespace-nowrap font-semibold text-xs sm:text-sm transition-all duration-200 flex-shrink-0 font-stolzl relative",
                 activeCategory === category.id
-                  ? "bg-white text-black"
+                  ? "bg-[#F8F8F8] text-[#1E1E1E] shadow-[2px_2px_4px_rgba(207,255,0,0.3),-2px_-2px_4px_rgba(207,255,0,0.3)] before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-br before:from-transparent before:to-[#1E1E1E] before:opacity-[0.14] before:pointer-events-none"
                   : "bg-[#2a2a2a] text-white/70"
               )}
             >
