@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { isProductsTableEmpty, autoImportProducts } from "@/lib/importProducts";
 
 const Feed = () => {
+  console.log('🎬 Feed component rendered');
+  
   const [activeCategory, setActiveCategory] = useState<Category>("all");
   const [outfits, setOutfits] = useState<any[]>([]);
   const { toast } = useToast();
@@ -15,6 +17,9 @@ const Feed = () => {
   const [isImporting, setIsImporting] = useState(false);
   const [importComplete, setImportComplete] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<Error | null>(null);
+  
+  console.log('Feed state:', { outfitsCount: outfits.length, isGenerating, isImporting });
   
   // Check if we need to auto-import
   const { data: needsImport, isLoading: checkingDB } = useQuery({
@@ -22,6 +27,8 @@ const Feed = () => {
     queryFn: isProductsTableEmpty,
     staleTime: Infinity,
   });
+
+  console.log('Feed state:', { needsImport, checkingDB, isImporting, outfitsLength: outfits.length, isGenerating });
 
   // Auto-import if needed
   useEffect(() => {
@@ -63,26 +70,32 @@ const Feed = () => {
     }
   }, [needsImport, isImporting, importComplete, toast]);
 
-  // Generate outfits (only when DB is ready)
-  const { data: aiGeneratedOutfits, isLoading, error: generationError } = useQuery({
-    queryKey: ['generated-outfits'],
-    queryFn: async () => {
-      console.log('Generating initial outfit batch...');
-      const outfits = await outfitGenerationApi.generateBatch(5);
-      return outfits;
-    },
-    staleTime: Infinity,
-    retry: 1,
-    enabled: !isImporting && !checkingDB && (needsImport === false || importComplete),
-  });
-
-  // Set initial outfits when loaded
+  // TEMPORARY: Force generation on mount for testing
   useEffect(() => {
-    if (aiGeneratedOutfits && outfits.length === 0) {
-      console.log('Setting initial outfits:', aiGeneratedOutfits.length);
-      setOutfits(aiGeneratedOutfits);
+    console.log('🔥 useEffect triggered, outfits:', outfits.length, 'isGenerating:', isGenerating);
+    
+    if (outfits.length === 0 && !isGenerating) {
+      console.log('🚀 FORCE: Starting generation NOW');
+      setIsGenerating(true);
+      
+      setTimeout(() => {
+        console.log('⏰ Timeout fired, calling generateBatch...');
+        outfitGenerationApi.generateBatch(5)
+          .then((generatedOutfits) => {
+            console.log('✅ Generated:', generatedOutfits);
+            setOutfits(generatedOutfits);
+          })
+          .catch((error) => {
+            console.error('❌ Error:', error);
+            setGenerationError(error);
+          })
+          .finally(() => {
+            console.log('🏁 Generation finished');
+            setIsGenerating(false);
+          });
+      }, 1000);
     }
-  }, [aiGeneratedOutfits]);
+  }, []); // Run once on mount
 
   // Generate and add one more outfit when user scrolls
   const handleGenerateNext = async () => {
@@ -104,19 +117,6 @@ const Feed = () => {
     }
   };
 
-  useEffect(() => {
-    if (generationError) {
-      const errorMessage = generationError instanceof Error 
-        ? generationError.message 
-        : "Не удалось сгенерировать образы";
-      
-      toast({
-        title: "Ошибка генерации",
-        description: errorMessage,
-        variant: "destructive"
-      });
-    }
-  }, [generationError, toast]);
 
   const allOutfits = outfits;
 
@@ -154,7 +154,7 @@ const Feed = () => {
         )}
 
         {/* Generating outfits */}
-        {!isImporting && isLoading && (
+        {!isImporting && isGenerating && (
           <div className="flex items-center justify-center h-[calc(100vh-8rem)]">
             <div className="text-white text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
@@ -177,7 +177,7 @@ const Feed = () => {
         )}
 
         {/* Empty category state */}
-        {!isImporting && !isLoading && !generationError && filteredOutfits.length === 0 && (
+        {!isImporting && !isGenerating && !generationError && filteredOutfits.length === 0 && (
           <div className="flex items-center justify-center h-[calc(100vh-8rem)]">
             <div className="text-white text-center max-w-md px-4">
               <p className="text-xl mb-4">😔</p>
@@ -187,7 +187,7 @@ const Feed = () => {
         )}
 
         {/* Feed ready */}
-        {!isImporting && !isLoading && filteredOutfits.length > 0 && (
+        {!isImporting && !isGenerating && filteredOutfits.length > 0 && (
           <VerticalOutfitFeed 
             outfits={filteredOutfits}
             onInteraction={handleGenerateNext}
