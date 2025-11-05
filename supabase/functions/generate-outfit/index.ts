@@ -6,14 +6,47 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Fashion styling guide content
+const STYLING_GUIDE = `The Ultimate Guide to Fashion Styling Rules:
+
+1. PROPORTION & BALANCE - The Golden Rule: Fitted + Loose = Perfection
+- Tight top → wide-leg pants or flowing skirt
+- Fitted bottom → oversized sweater or loose top
+- NEVER tight on both top and bottom
+
+2. COLOR MASTERY
+- Neutrals: black, navy, white, gray, beige work with everything
+- Classic combos: navy+white+camel, black+white+gold, gray+pink+cream
+- Warm colors (red, orange, yellow) = approachable and energetic
+- Cool colors (blue, green, purple) = calm and reliable
+
+3. PATTERN MIXING
+- Beginner: One pattern + solid colors
+- Intermediate: Mix different pattern scales (small polka dots + large plaid)
+- Advanced: Mix patterns with shared colors
+- Safety rule: Use neutral piece to calm bold patterns
+
+4. FABRIC & TEXTURE
+- Mix smooth with rough, soft with structured
+- Cotton pairs with: denim, linen, wool, leather
+- Silk pairs with: cashmere, cotton, leather
+- Denim is universal mixer
+
+5. OUTFIT BUILDING RULES
+- Create focal point: choose ONE statement piece
+- Balance proportions: fitted + loose
+- Stick to 3-4 colors maximum
+- Match metals in accessories
+- Consider occasion and season`;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { userId } = await req.json();
-    console.log('Generating outfit for user:', userId);
+    const { count = 5, excludedProductIds = [] } = await req.json();
+    console.log(`Generating ${count} outfits, excluding ${excludedProductIds.length} products`);
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
@@ -25,65 +58,59 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Get all clothing items from database
-    const { data: items, error: itemsError } = await supabase
-      .from('clothing_items')
-      .select('*')
-      .limit(50);
+    // Get products from database, excluding already shown ones
+    let query = supabase
+      .from('products')
+      .select('*');
+    
+    if (excludedProductIds.length > 0) {
+      query = query.not('product_id', 'in', `(${excludedProductIds.join(',')})`);
+    }
+    
+    const { data: products, error: productsError } = await query;
 
-    if (itemsError) throw itemsError;
-    if (!items || items.length === 0) {
-      throw new Error('No clothing items in database');
+    if (productsError) throw productsError;
+    if (!products || products.length === 0) {
+      throw new Error('No products in database. Please import products first.');
     }
 
-    console.log(`Found ${items.length} items in database`);
+    console.log(`Found ${products.length} available products`);
 
-    // Get user insights from ML backend
-    let userPreferences = '';
-    try {
-      const mlInsightsResponse = await fetch(`http://localhost:8000/api/ml/insights/${userId}`);
-      if (mlInsightsResponse.ok) {
-        const insights = await mlInsightsResponse.json();
-        if (insights.phase !== 'cold_start') {
-          const prefs = [];
-          if (insights.top_styles?.length) prefs.push(`styles: ${insights.top_styles.join(', ')}`);
-          if (insights.top_colors?.length) prefs.push(`colors: ${insights.top_colors.join(', ')}`);
-          if (insights.top_vibes?.length) prefs.push(`vibes: ${insights.top_vibes.join(', ')}`);
-          userPreferences = prefs.length ? `User preferences: ${prefs.join('; ')}. ` : '';
-        }
-      }
-    } catch (e) {
-      console.log('Could not fetch ML insights, using random selection');
-    }
-
-    // Prepare items description for LLM
-    const itemsDescription = items.map((item, idx) => {
-      const attrs = item.attributes || {};
-      return `Item ${idx}: ${item.category || 'unknown'} from ${item.brand || 'unknown brand'}
-- Colors: ${attrs.color?.join?.(', ') || 'unknown'}
-- Style: ${attrs.style || 'unknown'}
-- Pattern: ${attrs.pattern || 'unknown'}
-- Fit: ${attrs.fit || 'unknown'}
-- Vibe: ${attrs.vibe?.join?.(', ') || 'unknown'}
-- Occasion: ${attrs.occasion?.join?.(', ') || 'unknown'}`;
+    // Prepare products description for AI
+    const productsDescription = products.map((product, idx) => {
+      const attrs = product.generated_attributes || '';
+      const metadata = typeof product.metadata === 'string' ? JSON.parse(product.metadata) : product.metadata;
+      
+      return `Product ${idx} (ID: ${product.product_id}):
+- Category: ${product.category}
+- Style: ${product.style}
+- Price: ${product.price} RUB
+- Attributes: ${attrs.substring(0, 200)}`;
     }).join('\n\n');
 
-    const systemPrompt = `You are a professional fashion stylist AI. Your task is to create a complete stylish outfit by selecting 3-5 clothing items from the provided database.
+    const systemPrompt = `You are a professional fashion stylist AI. Create ${count} complete, diverse outfits using the styling guide below.
 
-${userPreferences}Create an outfit that matches the user's preferences if provided, or create a trendy, cohesive look.
+${STYLING_GUIDE}
 
-Return ONLY a JSON object with this structure:
-{
-  "items": [item_index1, item_index2, ...],
-  "style": "outfit style name",
-  "vibe": "outfit vibe/mood",
-  "occasion": "suitable occasion",
-  "description": "brief outfit description"
-}
+IMPORTANT RULES:
+1. Each outfit must have exactly 5 items from different categories
+2. All ${count} outfits must be DIFFERENT - vary styles, colors, vibes
+3. Select items that follow styling rules (proportion, color harmony, etc.)
+4. Avoid repeating the same products across multiple outfits
+5. Consider occasion, season, and style coherence
 
-Select items that work well together in terms of colors, styles, and occasion.`;
+Return ONLY a JSON array of ${count} outfits:
+[
+  {
+    "product_ids": ["product_id1", "product_id2", "product_id3", "product_id4", "product_id5"],
+    "style": "outfit style",
+    "vibe": "outfit vibe",
+    "occasion": "occasion"
+  },
+  ...
+]`;
 
-    const userPrompt = `Create a complete outfit from these items:\n\n${itemsDescription}`;
+    const userPrompt = `Available products:\n\n${productsDescription}\n\nGenerate ${count} diverse, stylish outfits.`;
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -124,27 +151,24 @@ Select items that work well together in terms of colors, styles, and occasion.`;
     const data = await response.json();
     console.log('AI response received');
     
-    const outfitText = data.choices?.[0]?.message?.content;
+    const outfitsText = data.choices?.[0]?.message?.content;
     
-    if (!outfitText) {
-      throw new Error('No outfit generated');
+    if (!outfitsText) {
+      throw new Error('No outfits generated');
     }
 
-    // Parse the outfit JSON
-    let outfit;
+    // Parse the outfits JSON
+    let generatedOutfits;
     try {
-      const cleanedText = outfitText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      outfit = JSON.parse(cleanedText);
+      const cleanedText = outfitsText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      generatedOutfits = JSON.parse(cleanedText);
     } catch (parseError) {
-      console.error('Failed to parse outfit:', outfitText);
+      console.error('Failed to parse outfits:', outfitsText);
       throw new Error('Failed to parse AI response as JSON');
     }
 
-    // Build the complete outfit with item details
-    const selectedItems = outfit.items.map((idx: number) => items[idx]).filter(Boolean);
-    
-    if (selectedItems.length === 0) {
-      throw new Error('No valid items selected');
+    if (!Array.isArray(generatedOutfits)) {
+      throw new Error('AI response is not an array of outfits');
     }
 
     // Generate positions for items in collage
@@ -156,29 +180,62 @@ Select items that work well together in terms of colors, styles, and occasion.`;
       { top: "68%", left: "18%", placement: "below" },
     ];
 
-    const completeOutfit = {
-      id: `outfit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      style: outfit.style,
-      vibe: outfit.vibe,
-      occasion: outfit.occasion,
-      description: outfit.description,
-      items: selectedItems.map((item: any, idx: number) => ({
-        id: item.id.toString(),
-        name: item.product_name,
-        brand: item.brand || "Wildberries",
-        category: item.category,
-        itemNumber: item.id.toString(),
-        price: 0,
-        shopUrl: item.shop_url || "#",
-        image: item.original_image_url, // Use the actual image URL from database
-        position: positions[idx] || positions[0],
-        placement: positions[idx]?.placement || "above",
-      })),
-      image: '', // Collage doesn't use this
-    };
+    // Build complete outfits with product details
+    const completeOutfits = [];
+    const usedProductIds = new Set();
+
+    for (const outfit of generatedOutfits) {
+      const productIds = outfit.product_ids || [];
+      
+      // Find products by their IDs
+      const outfitProducts = productIds
+        .map((pid: string) => products.find(p => p.product_id === pid))
+        .filter(Boolean);
+
+      if (outfitProducts.length < 3) {
+        console.warn('Skipping outfit with insufficient products');
+        continue;
+      }
+
+      // Track used products
+      outfitProducts.forEach((p: any) => usedProductIds.add(p.product_id));
+
+      const completeOutfit = {
+        id: `outfit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        style: outfit.style || 'Casual',
+        vibe: outfit.vibe || 'Comfortable',
+        occasion: outfit.occasion || 'Everyday',
+        category: 'all',
+        image: '',
+        items: outfitProducts.map((product: any, idx: number) => {
+          const metadata = typeof product.metadata === 'string' ? JSON.parse(product.metadata) : product.metadata;
+          return {
+            id: product.product_id,
+            name: metadata?.name || product.product_name || 'Item',
+            brand: 'Wildberries',
+            category: product.category,
+            itemNumber: product.wildberries_id || product.product_id,
+            price: parseFloat(metadata?.price || product.price || 0),
+            shopUrl: metadata?.shop_links?.[0] || product.shop_link || '#',
+            image: product.image_path || '',
+            position: positions[idx] || positions[0],
+            placement: positions[idx]?.placement || "above",
+          };
+        }),
+      };
+
+      completeOutfits.push(completeOutfit);
+    }
+
+    if (completeOutfits.length === 0) {
+      throw new Error('No valid outfits generated');
+    }
 
     return new Response(
-      JSON.stringify({ outfit: completeOutfit }),
+      JSON.stringify({ 
+        outfits: completeOutfits,
+        usedProductIds: Array.from(usedProductIds)
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {

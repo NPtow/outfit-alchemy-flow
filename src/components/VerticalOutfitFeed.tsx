@@ -159,7 +159,14 @@ export const VerticalOutfitFeed = ({
     
     if (currentIndex < outfits.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      setViewStartTime(Date.now());
       setShowPrices(false);
+      setShowCarousel(false);
+      
+      // Trigger prefetch callback when near the end
+      if (onInteraction && currentIndex >= outfits.length - 3) {
+        onInteraction();
+      }
     }
   };
 
