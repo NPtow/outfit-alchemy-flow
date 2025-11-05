@@ -7,7 +7,7 @@ const corsHeaders = {
 
 // External Supabase configuration
 const EXTERNAL_SUPABASE_URL = 'https://fdldkohnxiezccirxxfb.supabase.co';
-const EXTERNAL_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkbGRrb2hueGllemNjaXJ4eGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxMzksImV4cCI6MjA3NzkyNDEzOX0.DEcALBwNO1tkoCRzVTifrvd7nFaz_T7heDwfaEE8fJU';
+const EXTERNAL_SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkbGRrb2hueGllemNjaXJ4eGZiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjM0ODEzOSwiZXhwIjoyMDc3OTI0MTM5fQ.fy6tc4oIy-rl193AjouUlTxXN7MJJM5pF_qIwJa-mzM';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
 
   try {
     // Initialize Supabase clients
-    const externalSupabase = createClient(EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_ANON_KEY);
+    const externalSupabase = createClient(EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_SERVICE_KEY);
     const localSupabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
