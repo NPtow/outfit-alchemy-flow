@@ -8,11 +8,29 @@ const externalSupabase = createClient(EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_S
 
 /**
  * Get image URL from external Storage (SwipeStyle bucket)
- * @param path - Path within new_db folder (e.g., "AnkleBoots/176006711/176006711.png")
+ * For private buckets, we need to use signed URLs
+ * @param path - Path within new_db folder (e.g., "Skirt/324512943/324512943.png")
  */
-export function getExternalImageUrl(path: string): string {
+export async function getExternalImageUrl(path: string): Promise<string> {
   const fullPath = `new_db/${path}`;
-  return `${EXTERNAL_SUPABASE_URL}/storage/v1/object/public/SwipeStyle/${fullPath}`;
+  
+  try {
+    const { data, error } = await externalSupabase.storage
+      .from('SwipeStyle')
+      .createSignedUrl(fullPath, 604800); // 7 days
+
+    if (error) {
+      console.error('Error creating signed URL:', error);
+      // Fallback to public URL attempt
+      return `${EXTERNAL_SUPABASE_URL}/storage/v1/object/public/SwipeStyle/${fullPath}`;
+    }
+
+    return data.signedUrl;
+  } catch (error) {
+    console.error('Failed to get signed URL:', error);
+    // Fallback to public URL attempt
+    return `${EXTERNAL_SUPABASE_URL}/storage/v1/object/public/SwipeStyle/${fullPath}`;
+  }
 }
 
 /**

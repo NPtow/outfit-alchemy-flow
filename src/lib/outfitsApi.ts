@@ -2,14 +2,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { getUserId } from "./userStorage";
 import { getExternalImageUrl } from "./externalStorage";
 
-function getImageUrl(imagePath: string | null | undefined): string {
+async function getImageUrl(imagePath: string | null | undefined): Promise<string> {
   if (!imagePath) return '';
   // If already a full URL, return as is
   if (imagePath.startsWith('http')) return imagePath;
   
-  // Use external storage for images
+  // Use external storage for images with signed URLs
   // Expected format: "category/product_id/image.png"
-  return getExternalImageUrl(imagePath);
+  return await getExternalImageUrl(imagePath);
 }
 
 export interface OutfitItem {
@@ -66,16 +66,16 @@ class OutfitsApi {
 
     console.log('✅ Received outfits:', data);
     
-    // Transform image paths to full URLs
+    // Transform image paths to signed URLs asynchronously
     const transformedData = {
       ...data,
-      outfits: data.outfits.map((outfit: any) => ({
+      outfits: await Promise.all(data.outfits.map(async (outfit: any) => ({
         ...outfit,
-        products: outfit.products.map((product: any) => ({
+        products: await Promise.all(outfit.products.map(async (product: any) => ({
           ...product,
-          image_processed: getImageUrl(product.image_processed)
-        }))
-      }))
+          image_processed: await getImageUrl(product.image_processed)
+        })))
+      })))
     };
     
     return transformedData as OutfitsResponse;
