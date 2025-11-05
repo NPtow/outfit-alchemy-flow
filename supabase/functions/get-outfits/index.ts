@@ -6,6 +6,36 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// External Supabase configuration for images
+const EXTERNAL_SUPABASE_URL = 'https://fdldkohnxiezccirxxfb.supabase.co';
+const EXTERNAL_SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkbGRrb2hueGllemNjaXJ4eGZiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjM0ODEzOSwiZXhwIjoyMDc3OTI0MTM5fQ.fy6tc4oIy-rl193AjouUlTxXN7MJJM5pF_qIwJa-mzM';
+
+// Create external Supabase client for images
+const externalSupabase = createClient(EXTERNAL_SUPABASE_URL, EXTERNAL_SUPABASE_SERVICE_KEY);
+
+// Generate signed URL for image with caching
+async function getImageSignedUrl(imagePath: string): Promise<string> {
+  if (!imagePath) return '';
+  
+  const fullPath = `new_db/${imagePath}`;
+  
+  try {
+    const { data, error } = await externalSupabase.storage
+      .from('SwipeStyle')
+      .createSignedUrl(fullPath, 604800); // 7 days
+
+    if (error) {
+      console.error(`Error creating signed URL for ${imagePath}:`, error);
+      return '';
+    }
+
+    return data.signedUrl;
+  } catch (error) {
+    console.error(`Failed to get signed URL for ${imagePath}:`, error);
+    return '';
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -107,7 +137,7 @@ serve(async (req) => {
 
     console.log(`✅ Returning ${outfits?.length || 0} outfits`);
 
-    // Get product details for each outfit
+    // Get product details for each outfit with signed image URLs
     const outfitsWithProducts = await Promise.all(
       (outfits || []).map(async (outfit) => {
         const productIds = outfit.items as string[];
@@ -122,9 +152,17 @@ serve(async (req) => {
           return { ...outfit, products: [] };
         }
 
+        // Generate signed URLs for all product images in parallel
+        const productsWithSignedUrls = await Promise.all(
+          (products || []).map(async (product) => ({
+            ...product,
+            image_processed: await getImageSignedUrl(product.image_processed)
+          }))
+        );
+
         return {
           ...outfit,
-          products: products || []
+          products: productsWithSignedUrls
         };
       })
     );
