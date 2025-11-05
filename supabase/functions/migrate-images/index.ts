@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
         }
 
         // Build external image path
-        const externalPath = `new_db/${category}/${original_id}/${original_id}.png`;
+        const externalPath = `new_db/${category}/${original_id}.png`;
         const externalUrl = `${EXTERNAL_SUPABASE_URL}/storage/v1/object/public/SwipeStyle/${externalPath}`;
         
         console.log(`Downloading: ${externalUrl}`);

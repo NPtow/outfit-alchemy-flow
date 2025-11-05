@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.record-outfit-view]
 verify_jwt = false
+
+[functions.migrate-images]
+verify_jwt = false
