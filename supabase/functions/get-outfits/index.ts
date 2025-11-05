@@ -106,6 +106,10 @@ serve(async (req) => {
     }
 
     // Get unseen outfits for this user
+    // Limit viewed IDs to last 200 to avoid URL length issues
+    const recentViewedIds = viewedOutfitIds.slice(-200);
+    console.log(`🔍 Filtering out ${recentViewedIds.length} recently viewed outfits`);
+    
     let outfitsQuery = supabase
       .from('outfits')
       .select(`
@@ -123,9 +127,9 @@ serve(async (req) => {
       outfitsQuery = outfitsQuery.eq('occasion', occasion);
     }
 
-    // Exclude viewed outfits
-    if (viewedOutfitIds.length > 0) {
-      outfitsQuery = outfitsQuery.not('id', 'in', `(${viewedOutfitIds.map(id => `"${id}"`).join(',')})`);
+    // Exclude recently viewed outfits (limit to avoid URL too long error)
+    if (recentViewedIds.length > 0) {
+      outfitsQuery = outfitsQuery.not('id', 'in', `(${recentViewedIds.map(id => `"${id}"`).join(',')})`);
     }
 
     const { data: outfits, error: outfitsError } = await outfitsQuery;
