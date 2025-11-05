@@ -145,11 +145,15 @@ serve(async (req) => {
 CRITICAL INSTRUCTIONS:
 You are a professional fashion stylist. Generate EXACTLY 50 unique, stylish outfit combinations using ONLY the products provided below.
 
-RULES:
-1. Each outfit MUST have 3-5 items total
-2. ONLY use product_id values from the list below
-3. Each outfit MUST include items from different categories
-4. Follow the styling guide principles above
+MANDATORY RULES - EACH OUTFIT MUST INCLUDE:
+1. **MINIMUM 4 items** (Top OR Dress + Bottom + Shoes + Bag)
+2. **REQUIRED categories in EVERY outfit:**
+   - ONE of: Top (футболка, топ, блузка, свитер) OR Dress (платье)
+   - ONE Bottom (брюки, джинсы, юбка) - SKIP ONLY if Dress is used
+   - ONE Shoes (обувь, туфли, кроссовки, ботинки) - ALWAYS REQUIRED
+   - ONE Bag (сумка) - ALWAYS REQUIRED
+3. OPTIONAL: Outerwear (куртка, пальто, пиджак, жакет) - adds 5th item
+4. ONLY use product_id values from the list below
 5. Create diverse outfits for different occasions
 6. Distribute outfits evenly across these occasions:
    - "work" (business attire)
@@ -157,27 +161,37 @@ RULES:
    - "evening" (going out, dinner, events)
    - "home" (comfortable loungewear)
 
-AVAILABLE PRODUCTS:
+AVAILABLE PRODUCTS (${products?.length || 0} total):
+Categories available: TShirt, Top, Blouse, Dress, Pants, Jeans, Skirt, Blazer, Bag, BalletFlats, AnkleBoots, etc.
+
 ${productsDescription.substring(0, 30000)}
 
 OUTPUT FORMAT:
 Return ONLY a JSON array of exactly 50 objects. Each object must have:
 {
   "occasion": "work" | "everyday" | "evening" | "home",
-  "items": ["product_id1", "product_id2", "product_id3", ...]
+  "items": ["product_id1", "product_id2", "product_id3", "product_id4", ...]
 }
 
-Example:
+CORRECT EXAMPLES (4-5 items each):
 [
   {
     "occasion": "work",
-    "items": ["Blazer_123", "Blouse_456", "Pants_789", "Shoes_012", "Bag_345"]
+    "items": ["Blazer_123", "Top_456", "Pants_789", "Shoes_012", "Bag_345"]
   },
   {
-    "occasion": "everyday",
+    "occasion": "everyday", 
     "items": ["TShirt_111", "Jeans_222", "Sneakers_333", "Bag_444"]
+  },
+  {
+    "occasion": "evening",
+    "items": ["Dress_555", "Heels_666", "Bag_777"]
   }
 ]
+
+WRONG EXAMPLES (DO NOT CREATE):
+❌ {"items": ["Top_123", "Pants_456"]} - Missing Shoes and Bag!
+❌ {"items": ["Dress_789", "Bag_012"]} - Missing Shoes!
 
 IMPORTANT: Return ONLY the JSON array, no other text or explanation.`;
 
@@ -244,7 +258,13 @@ IMPORTANT: Return ONLY the JSON array, no other text or explanation.`;
       .filter(outfit => {
         // Validate structure
         if (!outfit.occasion || !Array.isArray(outfit.items) || outfit.items.length === 0) {
-          console.warn('Invalid outfit structure:', outfit);
+          console.warn('❌ Invalid outfit structure:', outfit);
+          return false;
+        }
+
+        // CRITICAL: Check minimum items count
+        if (outfit.items.length < 3) {
+          console.warn(`❌ Outfit has only ${outfit.items.length} items (minimum 3 required):`, outfit);
           return false;
         }
 
@@ -254,14 +274,35 @@ IMPORTANT: Return ONLY the JSON array, no other text or explanation.`;
         );
 
         if (!allProductsExist) {
-          console.warn('Outfit contains non-existent products:', outfit);
+          console.warn('❌ Outfit contains non-existent products:', outfit);
+          return false;
+        }
+
+        // Validate that outfit has required categories
+        const outfitProducts = outfit.items
+          .map((itemId: string) => products?.find(p => p.product_id === itemId))
+          .filter(Boolean);
+        
+        const categories = outfitProducts.map((p: any) => p!.category.toLowerCase());
+        const hasShoes = categories.some((c: string) => 
+          c.includes('shoe') || c.includes('boot') || c.includes('flats') || 
+          c.includes('обувь') || c.includes('туфли') || c.includes('ботинки')
+        );
+        const hasBag = categories.some((c: string) => c.includes('bag') || c.includes('сумка'));
+        
+        if (!hasShoes) {
+          console.warn('❌ Outfit missing SHOES:', outfit);
+          return false;
+        }
+        if (!hasBag) {
+          console.warn('❌ Outfit missing BAG:', outfit);
           return false;
         }
 
         // Check for duplicates
         const sortedItems = JSON.stringify(outfit.items.sort());
         if (existingItemCombinations.has(sortedItems)) {
-          console.warn('Duplicate outfit combination:', outfit);
+          console.warn('❌ Duplicate outfit combination:', outfit);
           return false;
         }
 
