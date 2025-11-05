@@ -26,6 +26,13 @@ Deno.serve(async (req) => {
 
     console.log(`Processing batch: offset=${offset}, size=${batchSize}`);
 
+    // Check storage structure first
+    const { data: storageList, error: listError } = await externalSupabase.storage
+      .from('SwipeStyle')
+      .list('new_db', { limit: 10 });
+    
+    console.log('Storage list result:', { data: storageList, error: listError });
+
     // Get products batch
     const { data: products, error: fetchError } = await localSupabase
       .from('products')
@@ -57,20 +64,21 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        // Build external image path
-        const externalPath = `new_db/${category}/${original_id}.png`;
-        const externalUrl = `${EXTERNAL_SUPABASE_URL}/storage/v1/object/public/SwipeStyle/${externalPath}`;
+        // Build external image path  
+        const externalPath = `new_db/${category}/${original_id}/${original_id}.png`;
         
-        console.log(`Downloading: ${externalUrl}`);
+        console.log(`Downloading: ${externalPath}`);
 
-        // Download image from external storage
-        const imageResponse = await fetch(externalUrl);
-        if (!imageResponse.ok) {
-          throw new Error(`Failed to download image: ${imageResponse.status}`);
+        // Download image using Supabase storage API
+        const { data: imageData, error: downloadError } = await externalSupabase.storage
+          .from('SwipeStyle')
+          .download(externalPath);
+
+        if (downloadError) {
+          throw new Error(`Failed to download image: ${downloadError.message}`);
         }
 
-        const imageBlob = await imageResponse.blob();
-        const imageBuffer = await imageBlob.arrayBuffer();
+        const imageBuffer = await imageData.arrayBuffer();
 
         // Upload to local storage
         const localPath = `${category}/${original_id}.png`;
