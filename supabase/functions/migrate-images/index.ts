@@ -7,7 +7,7 @@ const corsHeaders = {
 
 // External Supabase configuration
 const EXTERNAL_SUPABASE_URL = 'https://fdldkohnxiezccirxxfb.supabase.co';
-const EXTERNAL_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkbGRrb2hueGllemNjaXJ4eGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA3MzI0NTMsImV4cCI6MjA0NjMwODQ1M30.YFxOuYQqx5xBz2vEXQZDGm3xtB5ZRkEw9vj4-vZHLt4';
+const EXTERNAL_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkbGRrb2hueGllemNjaXJ4eGZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNDgxMzksImV4cCI6MjA3NzkyNDEzOX0.DEcALBwNO1tkoCRzVTifrvd7nFaz_T7heDwfaEE8fJU';
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
