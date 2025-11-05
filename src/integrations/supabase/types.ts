@@ -92,6 +92,30 @@ export type Database = {
         }
         Relationships: []
       }
+      outfits: {
+        Row: {
+          created_at: string | null
+          id: string
+          items: Json
+          occasion: string
+          outfit_number: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          items: Json
+          occasion: string
+          outfit_number: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          items?: Json
+          occasion?: string
+          outfit_number?: number
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string
@@ -208,6 +232,65 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_action_logs: {
+        Row: {
+          action_type: string
+          anonymous_id: string | null
+          created_at: string | null
+          details: Json | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          anonymous_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          anonymous_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_outfit_views: {
+        Row: {
+          anonymous_id: string | null
+          id: string
+          outfit_id: string
+          user_id: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          id?: string
+          outfit_id: string
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          id?: string
+          outfit_id?: string
+          user_id?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_outfit_views_outfit_id_fkey"
+            columns: ["outfit_id"]
+            isOneToOne: false
+            referencedRelation: "outfits"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

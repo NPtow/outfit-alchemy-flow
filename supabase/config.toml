@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.generate-outfit]
 verify_jwt = false
+
+[functions.generate-outfits]
+verify_jwt = false
+
+[functions.get-outfits]
+verify_jwt = false
+
+[functions.record-outfit-view]
+verify_jwt = false
