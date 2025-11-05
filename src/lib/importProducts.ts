@@ -99,20 +99,29 @@ export async function autoImportProducts(
     for (let i = 0; i < products.length; i += batchSize) {
       const batch = products.slice(i, i + batchSize);
       
-      const insertData = batch.map(p => ({
-        product_id: p.product_id,
-        original_id: p.original_id,
-        wildberries_id: p.wildberries_id,
-        category: p.category,
-        product_name: p.product_name,
-        price: parseFloat(p.price) || 0,
-        style: p.style,
-        shop_link: p.shop_link,
-        image_path: p.image_path,
-        image_processed: p.image_processed,
-        generated_attributes: p.generated_attributes,
-        metadata: JSON.parse(p.metadata)
-      }));
+      const insertData = batch.map(p => {
+        let metadata = {};
+        try {
+          metadata = JSON.parse(p.metadata);
+        } catch (e) {
+          console.warn('Failed to parse metadata for product:', p.product_id, e);
+        }
+        
+        return {
+          product_id: p.product_id,
+          original_id: p.original_id,
+          wildberries_id: p.wildberries_id,
+          category: p.category,
+          product_name: p.product_name,
+          price: parseFloat(p.price) || 0,
+          style: p.style,
+          shop_link: p.shop_link,
+          image_path: p.image_path,
+          image_processed: p.image_processed,
+          generated_attributes: p.generated_attributes,
+          metadata
+        };
+      });
       
       const { error } = await supabase
         .from('products')
@@ -205,20 +214,29 @@ export async function importProductsFromCSV(csvText: string): Promise<void> {
   for (let i = 0; i < products.length; i += batchSize) {
     const batch = products.slice(i, i + batchSize);
     
-    const insertData = batch.map(p => ({
-      product_id: p.product_id,
-      original_id: p.original_id,
-      wildberries_id: p.wildberries_id,
-      category: p.category,
-      product_name: p.product_name,
-      price: parseFloat(p.price) || 0,
-      style: p.style,
-      shop_link: p.shop_link,
-      image_path: p.image_path,
-      image_processed: p.image_processed,
-      generated_attributes: p.generated_attributes,
-      metadata: JSON.parse(p.metadata)
-    }));
+    const insertData = batch.map(p => {
+      let metadata = {};
+      try {
+        metadata = JSON.parse(p.metadata);
+      } catch (e) {
+        console.warn('Failed to parse metadata for product:', p.product_id, e);
+      }
+      
+      return {
+        product_id: p.product_id,
+        original_id: p.original_id,
+        wildberries_id: p.wildberries_id,
+        category: p.category,
+        product_name: p.product_name,
+        price: parseFloat(p.price) || 0,
+        style: p.style,
+        shop_link: p.shop_link,
+        image_path: p.image_path,
+        image_processed: p.image_processed,
+        generated_attributes: p.generated_attributes,
+        metadata
+      };
+    });
     
     const { error } = await supabase
       .from('products')
