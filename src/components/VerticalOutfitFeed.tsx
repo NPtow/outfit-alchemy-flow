@@ -15,6 +15,31 @@ import { ItemCarousel } from "./ItemCarousel";
 import { OutfitCollage, CollageItem } from "./OutfitCollage";
 import { getOutfitLayout, getCategoryPosition } from "@/lib/outfitLayouts";
 
+// Category mapping from English to Russian for layout positioning
+const categoryMapping: Record<string, string> = {
+  'TShirt': 'футболка',
+  'TankTop': 'топ',
+  'Blouse': 'топ',
+  'Sweater': 'топ',
+  'Sweatshirt': 'топ',
+  'Jumper': 'топ',
+  'TShirtPolo': 'топ',
+  'Dress': 'платье',
+  'Skirt': 'юбка',
+  'Pants': 'брюки',
+  'Jeans': 'джинсы',
+  'Shorts': 'брюки',
+  'Blazer': 'пиджак',
+  'LeatherJacket': 'куртка',
+  'DownJacket': 'куртка',
+  'WinterCoat': 'пальто',
+  'FurCoat': 'пальто',
+  'BalletFlats': 'туфли',
+  'AnkleBoots': 'туфли',
+  'HessianBoots': 'обувь',
+  'Bag': 'сумка',
+};
+
 interface ShoppableItem {
   id: string;
   name: string;
@@ -23,7 +48,7 @@ interface ShoppableItem {
   itemNumber: string;
   price: number;
   shopUrl: string;
-  image?: string; // Add image field
+  image?: string;
   position: {
     top: string;
     left: string;
@@ -369,9 +394,15 @@ export const VerticalOutfitFeed = ({
           <div className="relative w-[340px] h-[527px] sm:w-[380px] sm:h-[589px] md:w-[420px] md:h-[651px] mx-auto bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
             <OutfitCollage 
               items={currentOutfit.items.map(item => {
+                // Map English category to Russian for layout
+                const russianCategory = categoryMapping[item.category] || item.category.toLowerCase();
+                
                 // Get layout pattern for this outfit composition
-                const layout = getOutfitLayout(currentOutfit.items);
-                const position = getCategoryPosition(item.category, layout);
+                const mappedItems = currentOutfit.items.map(i => ({
+                  category: categoryMapping[i.category] || i.category.toLowerCase()
+                }));
+                const layout = getOutfitLayout(mappedItems);
+                const position = getCategoryPosition(russianCategory, layout);
                 
                 // If position not found in layout, use a default
                 const defaultPosition = { left: 0.3, top: 0.3, right: 0.7, bottom: 0.7 };

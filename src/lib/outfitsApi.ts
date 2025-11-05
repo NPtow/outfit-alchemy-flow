@@ -1,6 +1,16 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getUserId } from "./userStorage";
 
+const STORAGE_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/clothing-images`;
+
+function getImageUrl(imagePath: string | null | undefined): string {
+  if (!imagePath) return '';
+  // If already a full URL, return as is
+  if (imagePath.startsWith('http')) return imagePath;
+  // Otherwise construct full URL
+  return `${STORAGE_URL}/${imagePath}`;
+}
+
 export interface OutfitItem {
   id: string;
   product_id: string;
@@ -54,7 +64,20 @@ class OutfitsApi {
     }
 
     console.log('✅ Received outfits:', data);
-    return data as OutfitsResponse;
+    
+    // Transform image paths to full URLs
+    const transformedData = {
+      ...data,
+      outfits: data.outfits.map((outfit: any) => ({
+        ...outfit,
+        products: outfit.products.map((product: any) => ({
+          ...product,
+          image_processed: getImageUrl(product.image_processed)
+        }))
+      }))
+    };
+    
+    return transformedData as OutfitsResponse;
   }
 
   async recordView(outfitId: string, actionType?: string, actionDetails?: any): Promise<void> {

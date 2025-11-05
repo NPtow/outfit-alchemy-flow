@@ -172,9 +172,17 @@ const Feed = () => {
                 price: product.price || 0,
                 shopUrl: product.shop_link || '',
                 image: product.image_processed || '',
-                position: { top: '0%', left: '0%' },
+                position: { left: '0%', top: '0%' }, // Will be calculated in VerticalOutfitFeed
                 placement: 'below' as const
-              }))
+              })).filter(item => {
+                // Log and filter out items with no image
+                if (!item.image) {
+                  console.warn('⚠️ Product missing image:', item.itemNumber);
+                  return false;
+                }
+                console.log('✅ Product image URL:', item.image);
+                return true;
+              })
             }))}
             onView={handleOutfitView}
             useML={false}
