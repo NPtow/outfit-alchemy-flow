@@ -9,13 +9,15 @@ import { isProductsTableEmpty, autoImportProducts } from "@/lib/importProducts";
 
 const Feed = () => {
   const [activeCategory, setActiveCategory] = useState<Category>("all");
+  const [outfits, setOutfits] = useState<any[]>([]);
   const { toast } = useToast();
   const [importProgress, setImportProgress] = useState<{ current: number; total: number } | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [importComplete, setImportComplete] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   
   // Check if we need to auto-import
-  const { data: needsImport } = useQuery({
+  const { data: needsImport, isLoading: checkingDB } = useQuery({
     queryKey: ['check-products-empty'],
     queryFn: isProductsTableEmpty,
     staleTime: Infinity,
@@ -71,16 +73,34 @@ const Feed = () => {
     },
     staleTime: Infinity,
     retry: 1,
-    enabled: !isImporting && needsImport === false, // Only when DB has data
+    enabled: !isImporting && !checkingDB && (needsImport === false || importComplete),
   });
 
-  // Prefetch next batch
-  const prefetchNextBatch = async () => {
+  // Set initial outfits when loaded
+  useEffect(() => {
+    if (aiGeneratedOutfits && outfits.length === 0) {
+      console.log('Setting initial outfits:', aiGeneratedOutfits.length);
+      setOutfits(aiGeneratedOutfits);
+    }
+  }, [aiGeneratedOutfits]);
+
+  // Generate and add one more outfit when user scrolls
+  const handleGenerateNext = async () => {
+    if (isGenerating) return;
+    
     try {
-      await outfitGenerationApi.generateBatch(5);
-      console.log('Prefetched next batch');
+      setIsGenerating(true);
+      console.log('Generating next outfit...');
+      const newOutfits = await outfitGenerationApi.getNextOutfits(1);
+      
+      if (newOutfits.length > 0) {
+        setOutfits(prev => [...prev, ...newOutfits]);
+        console.log('Added 1 new outfit, total:', outfits.length + 1);
+      }
     } catch (err) {
-      console.error('Failed to prefetch:', err);
+      console.error('Failed to generate next outfit:', err);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -98,7 +118,7 @@ const Feed = () => {
     }
   }, [generationError, toast]);
 
-  const allOutfits = aiGeneratedOutfits || [];
+  const allOutfits = outfits;
 
   // Filter by category
   const filteredOutfits = activeCategory === "all" 
@@ -170,7 +190,7 @@ const Feed = () => {
         {!isImporting && !isLoading && filteredOutfits.length > 0 && (
           <VerticalOutfitFeed 
             outfits={filteredOutfits}
-            onInteraction={prefetchNextBatch}
+            onInteraction={handleGenerateNext}
             useML={false}
           />
         )}

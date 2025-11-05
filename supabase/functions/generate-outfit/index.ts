@@ -86,37 +86,36 @@ serve(async (req) => {
     console.log(`Found ${products.length} available products`);
 
     // Prepare products description for AI
-    const productsDescription = products.map((product, idx) => {
+    const productsDescription = products.map((product) => {
       const attrs = product.generated_attributes || '';
-      const metadata = typeof product.metadata === 'string' ? JSON.parse(product.metadata) : product.metadata;
       
-      return `Product ${idx} (ID: ${product.product_id}):
-- Category: ${product.category}
-- Style: ${product.style}
-- Price: ${product.price} RUB
-- Attributes: ${attrs.substring(0, 200)}`;
+      return `ID: ${product.product_id}
+Category: ${product.category}
+Style: ${product.style || 'N/A'}
+Price: ${product.price} RUB
+Attributes: ${attrs.substring(0, 150)}`;
     }).join('\n\n');
 
     const systemPrompt = `You are a professional fashion stylist AI. Create ${count} complete, diverse outfits using the styling guide below.
 
 ${STYLING_GUIDE}
 
-IMPORTANT RULES:
-1. Each outfit must have exactly 5 items from different categories
-2. All ${count} outfits must be DIFFERENT - vary styles, colors, vibes
-3. Select items that follow styling rules (proportion, color harmony, etc.)
-4. Avoid repeating the same products across multiple outfits
-5. Consider occasion, season, and style coherence
+CRITICAL RULES:
+1. Each outfit must have EXACTLY 5 items from DIFFERENT categories
+2. Use ONLY the exact product IDs provided (format: Category_Number, e.g., "Jumper_298659705")
+3. All ${count} outfits must be DIFFERENT - vary styles, colors, vibes
+4. Select items that follow styling rules (proportion, color harmony, etc.)
+5. DO NOT make up or modify product IDs - use them exactly as given
+6. Avoid repeating the same products across multiple outfits
 
 Return ONLY a JSON array of ${count} outfits:
 [
   {
-    "product_ids": ["product_id1", "product_id2", "product_id3", "product_id4", "product_id5"],
+    "product_ids": ["exact_product_id1", "exact_product_id2", "exact_product_id3", "exact_product_id4", "exact_product_id5"],
     "style": "outfit style",
     "vibe": "outfit vibe",
     "occasion": "occasion"
-  },
-  ...
+  }
 ]`;
 
     const userPrompt = `Available products:\n\n${productsDescription}\n\nGenerate ${count} diverse, stylish outfits.`;
@@ -170,7 +169,9 @@ Return ONLY a JSON array of ${count} outfits:
     let generatedOutfits;
     try {
       const cleanedText = outfitsText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      console.log('Raw AI response:', outfitsText.substring(0, 500));
       generatedOutfits = JSON.parse(cleanedText);
+      console.log('Parsed outfits:', JSON.stringify(generatedOutfits, null, 2));
     } catch (parseError) {
       console.error('Failed to parse outfits:', outfitsText);
       throw new Error('Failed to parse AI response as JSON');
@@ -195,12 +196,21 @@ Return ONLY a JSON array of ${count} outfits:
 
     for (const outfit of generatedOutfits) {
       const productIds = outfit.product_ids || [];
+      console.log(`Processing outfit with ${productIds.length} product IDs:`, productIds);
       
       // Find products by their IDs
       const outfitProducts = productIds
-        .map((pid: string) => products.find(p => p.product_id === pid))
+        .map((pid: string) => {
+          const found = products.find(p => p.product_id === pid);
+          if (!found) {
+            console.warn(`Product not found: ${pid}`);
+          }
+          return found;
+        })
         .filter(Boolean);
 
+      console.log(`Found ${outfitProducts.length} products out of ${productIds.length}`);
+      
       if (outfitProducts.length < 3) {
         console.warn('Skipping outfit with insufficient products');
         continue;
