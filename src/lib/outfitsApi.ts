@@ -1,13 +1,15 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getUserId } from "./userStorage";
-import { getExternalImageUrl } from "./externalStorage";
 
-function getImageUrl(imagePath: string | null | undefined): string {
-  if (!imagePath) return '';
-  // If already a full URL, return as is
-  if (imagePath.startsWith('http')) return imagePath;
-  // Use external storage URL for product images
-  return getExternalImageUrl(imagePath);
+const EXTERNAL_SUPABASE_URL = 'https://fdldkohnxiezccirxxfb.supabase.co';
+
+function getImageUrl(product: any): string {
+  // Build path: new_db/{Category}/{original_id}/{original_id}.png
+  const { category, original_id } = product;
+  if (!category || !original_id) return '';
+  
+  const path = `new_db/${category}/${original_id}/${original_id}.png`;
+  return `${EXTERNAL_SUPABASE_URL}/storage/v1/object/public/SwipeStyle/${path}`;
 }
 
 export interface OutfitItem {
@@ -71,7 +73,7 @@ class OutfitsApi {
         ...outfit,
         products: outfit.products.map((product: any) => ({
           ...product,
-          image_processed: getImageUrl(product.image_processed)
+          image_processed: getImageUrl(product)
         }))
       }))
     };
