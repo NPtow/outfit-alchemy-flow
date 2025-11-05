@@ -3,23 +3,17 @@ import { useQuery } from '@tanstack/react-query';
 import { VerticalOutfitFeed } from "@/components/VerticalOutfitFeed";
 import { CategoryTabs, Category } from "@/components/CategoryTabs";
 import { BottomNavigation } from "@/components/BottomNavigation";
-import { outfitGenerationApi } from "@/lib/outfitGenerationApi";
+import { outfitsApi, Outfit } from "@/lib/outfitsApi";
 import { useToast } from "@/hooks/use-toast";
 import { isProductsTableEmpty, autoImportProducts } from "@/lib/importProducts";
 
 const Feed = () => {
-  console.log('🎬 Feed component rendered');
-  
   const [activeCategory, setActiveCategory] = useState<Category>("all");
-  const [outfits, setOutfits] = useState<any[]>([]);
+  const [outfits, setOutfits] = useState<Outfit[]>([]);
   const { toast } = useToast();
   const [importProgress, setImportProgress] = useState<{ current: number; total: number } | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [importComplete, setImportComplete] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generationError, setGenerationError] = useState<Error | null>(null);
-  
-  console.log('Feed state:', { outfitsCount: outfits.length, isGenerating, isImporting });
   
   // Check if we need to auto-import
   const { data: needsImport, isLoading: checkingDB } = useQuery({
@@ -27,8 +21,6 @@ const Feed = () => {
     queryFn: isProductsTableEmpty,
     staleTime: Infinity,
   });
-
-  console.log('Feed state:', { needsImport, checkingDB, isImporting, outfitsLength: outfits.length, isGenerating });
 
   // Auto-import if needed
   useEffect(() => {
@@ -70,60 +62,51 @@ const Feed = () => {
     }
   }, [needsImport, isImporting, importComplete, toast]);
 
-  // TEMPORARY: Force generation on mount for testing
-  useEffect(() => {
-    console.log('🔥 useEffect triggered, outfits:', outfits.length, 'isGenerating:', isGenerating);
-    
-    if (outfits.length === 0 && !isGenerating) {
-      console.log('🚀 FORCE: Starting generation NOW');
-      setIsGenerating(true);
-      
-      setTimeout(() => {
-        console.log('⏰ Timeout fired, calling generateBatch...');
-        outfitGenerationApi.generateBatch(5)
-          .then((generatedOutfits) => {
-            console.log('✅ Generated:', generatedOutfits);
-            setOutfits(generatedOutfits);
-          })
-          .catch((error) => {
-            console.error('❌ Error:', error);
-            setGenerationError(error);
-          })
-          .finally(() => {
-            console.log('🏁 Generation finished');
-            setIsGenerating(false);
-          });
-      }, 1000);
-    }
-  }, []); // Run once on mount
+  // Load outfits from new API
+  const { data: outfitsData, isLoading: isLoadingOutfits, refetch } = useQuery({
+    queryKey: ['outfits', activeCategory],
+    queryFn: () => {
+      const occasion = activeCategory === 'all' ? 'general' : activeCategory;
+      return outfitsApi.getOutfits(occasion, 20);
+    },
+    enabled: !isImporting && !checkingDB && (needsImport === false || importComplete),
+    staleTime: 5000,
+  });
 
-  // Generate and add one more outfit when user scrolls
-  const handleGenerateNext = async () => {
-    if (isGenerating) return;
-    
+  useEffect(() => {
+    if (outfitsData?.outfits) {
+      console.log('✅ Loaded outfits:', outfitsData.outfits.length);
+      console.log('📊 Stats:', {
+        unseen: outfitsData.unseenCount,
+        total: outfitsData.totalCount,
+        viewed: outfitsData.viewedCount
+      });
+      setOutfits(outfitsData.outfits);
+    }
+  }, [outfitsData]);
+
+  // Record view when user sees an outfit
+  const handleOutfitView = async (outfitId: string) => {
     try {
-      setIsGenerating(true);
-      console.log('Generating next outfit...');
-      const newOutfits = await outfitGenerationApi.getNextOutfits(1);
-      
-      if (newOutfits.length > 0) {
-        setOutfits(prev => [...prev, ...newOutfits]);
-        console.log('Added 1 new outfit, total:', outfits.length + 1);
-      }
-    } catch (err) {
-      console.error('Failed to generate next outfit:', err);
-    } finally {
-      setIsGenerating(false);
+      await outfitsApi.recordView(outfitId, 'view');
+      // Refetch to update unseen count
+      refetch();
+    } catch (error) {
+      console.error('Error recording view:', error);
     }
   };
 
+  // Record interaction actions
+  const handleInteraction = async (outfitId: string, interactionType: 'like' | 'skip' | 'share' | 'view_detail') => {
+    try {
+      await outfitsApi.recordView(outfitId, interactionType);
+      await outfitsApi.recordAction(interactionType, { outfit_id: outfitId });
+    } catch (error) {
+      console.error('Error recording interaction:', error);
+    }
+  };
 
-  const allOutfits = outfits;
-
-  // Filter by category
-  const filteredOutfits = activeCategory === "all" 
-    ? allOutfits 
-    : allOutfits.filter(outfit => outfit.category === activeCategory);
+  const filteredOutfits = outfits;
 
   return (
     <div className="min-h-screen w-full bg-black">
@@ -153,44 +136,47 @@ const Feed = () => {
           </div>
         )}
 
-        {/* Generating outfits */}
-        {!isImporting && isGenerating && (
+        {/* Loading outfits */}
+        {!isImporting && isLoadingOutfits && (
           <div className="flex items-center justify-center h-[calc(100vh-8rem)]">
             <div className="text-white text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-              <p>Генерируем образы для вас...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Error state */}
-        {!isImporting && generationError && (
-          <div className="flex items-center justify-center h-[calc(100vh-8rem)]">
-            <div className="text-white text-center max-w-md px-4">
-              <p className="text-xl mb-4">😔</p>
-              <p className="mb-2">Ошибка генерации образов</p>
-              <p className="text-sm text-gray-400">
-                {generationError instanceof Error ? generationError.message : 'Попробуйте перезагрузить страницу'}
-              </p>
+              <p className="text-lg">Загружаем образы...</p>
             </div>
           </div>
         )}
 
         {/* Empty category state */}
-        {!isImporting && !isGenerating && !generationError && filteredOutfits.length === 0 && (
+        {!isImporting && !isLoadingOutfits && filteredOutfits.length === 0 && (
           <div className="flex items-center justify-center h-[calc(100vh-8rem)]">
             <div className="text-white text-center max-w-md px-4">
               <p className="text-xl mb-4">😔</p>
-              <p>Нет образов в этой категории</p>
+              <p className="text-lg">В этой категории пока нет образов</p>
             </div>
           </div>
         )}
 
         {/* Feed ready */}
-        {!isImporting && !isGenerating && filteredOutfits.length > 0 && (
+        {!isImporting && !isLoadingOutfits && filteredOutfits.length > 0 && (
           <VerticalOutfitFeed 
-            outfits={filteredOutfits}
-            onInteraction={handleGenerateNext}
+            outfits={filteredOutfits.map(outfit => ({
+              id: outfit.id,
+              image: '', // Will be generated from products
+              occasion: outfit.occasion,
+              items: outfit.products.map(product => ({
+                id: product.id,
+                name: product.product_name,
+                brand: '',
+                category: product.category,
+                itemNumber: product.product_id,
+                price: product.price || 0,
+                shopUrl: product.shop_link || '',
+                image: product.image_processed || '',
+                position: { top: '0%', left: '0%' },
+                placement: 'below' as const
+              }))
+            }))}
+            onView={handleOutfitView}
             useML={false}
           />
         )}

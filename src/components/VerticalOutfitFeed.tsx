@@ -41,13 +41,15 @@ interface OutfitSlide {
 interface VerticalOutfitFeedProps {
   outfits: OutfitSlide[];
   onInteraction?: () => void;
+  onView?: (outfitId: string) => void;
   useML?: boolean;
 }
 
 export const VerticalOutfitFeed = ({ 
   outfits, 
   onInteraction, 
-  useML = false 
+  onView,
+  useML = false
 }: VerticalOutfitFeedProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showPrices, setShowPrices] = useState(false);
@@ -145,6 +147,11 @@ export const VerticalOutfitFeed = ({
   const handleNext = () => {
     // Вычисляем длительность просмотра
     const viewDuration = (Date.now() - viewStartTime) / 1000;
+    
+    // Record view with onView callback
+    if (onView && currentOutfit) {
+      onView(currentOutfit.id);
+    }
     
     if (useML && currentOutfit) {
       // Если меньше 2 секунд = skip
