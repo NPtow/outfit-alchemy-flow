@@ -92,6 +92,60 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          category: string
+          created_at: string | null
+          generated_attributes: string | null
+          id: string
+          image_path: string | null
+          image_processed: string | null
+          metadata: Json | null
+          original_id: string | null
+          price: number | null
+          product_id: string
+          product_name: string
+          shop_link: string | null
+          style: string | null
+          updated_at: string | null
+          wildberries_id: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          generated_attributes?: string | null
+          id?: string
+          image_path?: string | null
+          image_processed?: string | null
+          metadata?: Json | null
+          original_id?: string | null
+          price?: number | null
+          product_id: string
+          product_name: string
+          shop_link?: string | null
+          style?: string | null
+          updated_at?: string | null
+          wildberries_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          generated_attributes?: string | null
+          id?: string
+          image_path?: string | null
+          image_processed?: string | null
+          metadata?: Json | null
+          original_id?: string | null
+          price?: number | null
+          product_id?: string
+          product_name?: string
+          shop_link?: string | null
+          style?: string | null
+          updated_at?: string | null
+          wildberries_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

@@ -12,6 +12,7 @@ import TelegramAuth from "./pages/TelegramAuth";
 import Profile from "./pages/Profile";
 import MLInsights from "./pages/MLInsights";
 import AdminPanel from "./pages/AdminPanel";
+import ImportProducts from "./pages/ImportProducts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/ml-insights" element={<MLInsights />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/import-products" element={<ImportProducts />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
