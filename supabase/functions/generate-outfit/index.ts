@@ -6,6 +6,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// External Supabase configuration for images
+const EXTERNAL_SUPABASE_URL = 'https://fdldkohnxiezccirxxfb.supabase.co';
+
+function getExternalImageUrl(path: string): string {
+  if (!path) return '';
+  const fullPath = `new_db/${path}`;
+  return `${EXTERNAL_SUPABASE_URL}/storage/v1/object/public/SwipeStyle/${fullPath}`;
+}
+
 // Fashion styling guide content
 const STYLING_GUIDE = `The Ultimate Guide to Fashion Styling Rules:
 
@@ -209,6 +218,9 @@ Return ONLY a JSON array of ${count} outfits:
         image: '',
         items: outfitProducts.map((product: any, idx: number) => {
           const metadata = typeof product.metadata === 'string' ? JSON.parse(product.metadata) : product.metadata;
+          // Use external Supabase storage URL for images
+          const imageUrl = getExternalImageUrl(product.image_processed || product.image_path || '');
+          
           return {
             id: product.product_id,
             name: metadata?.name || product.product_name || 'Item',
@@ -217,7 +229,7 @@ Return ONLY a JSON array of ${count} outfits:
             itemNumber: product.wildberries_id || product.product_id,
             price: parseFloat(metadata?.price || product.price || 0),
             shopUrl: metadata?.shop_links?.[0] || product.shop_link || '#',
-            image: product.image_path || '',
+            image: imageUrl,
             position: positions[idx] || positions[0],
             placement: positions[idx]?.placement || "above",
           };
