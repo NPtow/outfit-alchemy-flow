@@ -1,14 +1,15 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getUserId } from "./userStorage";
+import { getExternalImageUrl } from "./externalStorage";
 
 function getImageUrl(imagePath: string | null | undefined): string {
   if (!imagePath) return '';
   // If already a full URL, return as is
   if (imagePath.startsWith('http')) return imagePath;
   
-  // Get local storage URL
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  return `${supabaseUrl}/storage/v1/object/public/clothing-images/${imagePath}`;
+  // Use external storage for images
+  // Expected format: "category/product_id/image.png"
+  return getExternalImageUrl(imagePath);
 }
 
 export interface OutfitItem {
