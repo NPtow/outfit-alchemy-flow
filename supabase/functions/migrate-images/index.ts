@@ -22,107 +22,42 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    const { batchSize = 50, offset = 0 } = await req.json();
-
-    console.log(`Processing batch: offset=${offset}, size=${batchSize}`);
-
-    // Check storage structure first
-    const { data: storageList, error: listError } = await externalSupabase.storage
+    // First, let's explore the bucket structure
+    console.log('=== Exploring SwipeStyle bucket ===');
+    
+    // List root folders
+    const { data: rootFolders, error: rootError } = await externalSupabase.storage
       .from('SwipeStyle')
-      .list('new_db', { limit: 10 });
+      .list('', { limit: 100 });
     
-    console.log('Storage list result:', { data: storageList, error: listError });
-
-    // Get products batch
-    const { data: products, error: fetchError } = await localSupabase
-      .from('products')
-      .select('id, product_id, category, original_id, wildberries_id, image_processed')
-      .range(offset, offset + batchSize - 1);
-
-    if (fetchError) {
-      throw new Error(`Failed to fetch products: ${fetchError.message}`);
-    }
-
-    if (!products || products.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, message: 'No more products to process', processed: 0 }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    console.log(`Processing ${products.length} products`);
+    console.log('Root folders:', JSON.stringify(rootFolders, null, 2));
+    if (rootError) console.error('Root error:', rootError);
     
-    let successCount = 0;
-    let errorCount = 0;
-    const errors: string[] = [];
-
-    for (const product of products) {
-      try {
-        const { category, original_id } = product;
-        if (!category || !original_id) {
-          console.log(`Skipping product ${product.product_id}: missing category or original_id`);
-          continue;
-        }
-
-        // Build external image path  
-        const externalPath = `new_db/${category}/${original_id}/${original_id}.png`;
-        
-        console.log(`Downloading: ${externalPath}`);
-
-        // Download image using Supabase storage API
-        const { data: imageData, error: downloadError } = await externalSupabase.storage
-          .from('SwipeStyle')
-          .download(externalPath);
-
-        if (downloadError) {
-          throw new Error(`Failed to download image: ${downloadError.message}`);
-        }
-
-        const imageBuffer = await imageData.arrayBuffer();
-
-        // Upload to local storage
-        const localPath = `${category}/${original_id}.png`;
-        
-        const { error: uploadError } = await localSupabase.storage
-          .from('clothing-images')
-          .upload(localPath, imageBuffer, {
-            contentType: 'image/png',
-            upsert: true
-          });
-
-        if (uploadError) {
-          throw new Error(`Upload failed: ${uploadError.message}`);
-        }
-
-        // Update product with new path
-        const { error: updateError } = await localSupabase
-          .from('products')
-          .update({ image_processed: localPath })
-          .eq('id', product.id);
-
-        if (updateError) {
-          throw new Error(`Database update failed: ${updateError.message}`);
-        }
-
-        successCount++;
-        console.log(`✓ Migrated: ${product.product_id}`);
-
-      } catch (error) {
-        errorCount++;
-        const errorMsg = `Failed to process ${product.product_id}: ${error instanceof Error ? error.message : String(error)}`;
-        console.error(errorMsg);
-        errors.push(errorMsg);
-      }
+    // List new_db contents
+    const { data: newDbContents, error: newDbError } = await externalSupabase.storage
+      .from('SwipeStyle')
+      .list('new_db', { limit: 100 });
+    
+    console.log('new_db contents:', JSON.stringify(newDbContents, null, 2));
+    if (newDbError) console.error('new_db error:', newDbError);
+    
+    // Try to list one category
+    if (newDbContents && newDbContents.length > 0) {
+      const firstCategory = newDbContents[0].name;
+      const { data: categoryContents, error: categoryError } = await externalSupabase.storage
+        .from('SwipeStyle')
+        .list(`new_db/${firstCategory}`, { limit: 10 });
+      
+      console.log(`Category ${firstCategory} contents:`, JSON.stringify(categoryContents, null, 2));
+      if (categoryError) console.error('Category error:', categoryError);
     }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        processed: products.length,
-        successful: successCount,
-        failed: errorCount,
-        errors: errors.slice(0, 10), // Return first 10 errors
-        hasMore: products.length === batchSize
+      JSON.stringify({ 
+        success: true, 
+        rootFolders: rootFolders?.length || 0,
+        newDbContents: newDbContents?.length || 0,
+        message: 'Check logs for structure'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
