@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import MLInsights from "./pages/MLInsights";
 import AdminPanel from "./pages/AdminPanel";
 import ImportProducts from "./pages/ImportProducts";
+import MigrateImages from "./pages/MigrateImages";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/ml-insights" element={<MLInsights />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/import-products" element={<ImportProducts />} />
+          <Route path="/migrate-images" element={<MigrateImages />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
