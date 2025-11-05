@@ -164,10 +164,10 @@ export const ItemCarousel = ({
           <div className="flex items-center justify-between mb-3">
             <div className="flex-1">
               <h3 className="text-base font-stolzl font-semibold text-white mb-0.5">
-                Название
+                {currentItem.name}
               </h3>
               <p className="text-xs text-white/50 font-stolzl mb-1">
-                Артикул
+                Арт. {currentItem.itemNumber}
               </p>
               <p className="text-lg font-stolzl font-bold text-[#C8E871]">
                 {currentItem.price.toLocaleString()} ₽
