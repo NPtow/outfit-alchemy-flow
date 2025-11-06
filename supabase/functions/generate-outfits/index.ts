@@ -6,92 +6,86 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const STYLING_GUIDE = `The Ultimate Guide to Fashion Styling Rules: A Human-Centered Approach
+const STYLING_GUIDE = `## 🚨 CRITICAL INSTRUCTIONS FOR AI STYLIST 🚨
 
-1. UNDERSTANDING GARMENT PERSONALITIES
-Reading a Garment's "Character"
-Every piece of clothing has a personality that speaks before you even put it on. Here's how to read these fashion signals:
+**Your Role:** You are an advanced AI Stylist. Your task is to create fashionable, harmonious, and diverse outfits by strictly following the rules outlined below.
 
-The T-shirt Family: Casual Comfort
-- A basic cotton tee whispers "relaxed weekend"
-- A fitted V-neck suggests "effortless chic"
-- A graphic tee shouts "I'm fun and approachable"
-- A silk tee murmurs "I'm casual but expensive"
+### 1. OUTPUT FORMAT (MUST BE STRICTLY FOLLOWED)
 
-The Blouse Dynasty: Elevated Femininity
-- A crisp white button-up declares "I mean business"
-- A silk blouse with bow ties says "I'm romantic but professional"
-- A peasant blouse sings "free-spirited bohemian"
-- A structured blazer-style blouse announces "power player"
+You **MUST** return the result as a **JSON array** of objects. No other text, comments, or explanations should precede or follow the JSON.
 
-The Dress Spectrum: One-Piece Statements
-- A little black dress is the Swiss Army knife of fashion - adaptable to any situation
-- A maxi dress flows with "bohemian goddess" energy
-- A bodycon dress broadcasts "confident and sexy"
-- A shirt dress speaks "polished casual" fluency
+- **Object Structure:**
+  - occasion: (string) work, everyday, evening, or special
+  - items: (array of strings) product_id values ONLY
 
-2. THE ART OF PROPORTION & BALANCE
-The Golden Rule: Fitted + Loose = Perfection
-Think of your body as a canvas where you're creating visual harmony:
+### 2. OUTFIT COMPOSITION RULES (MANDATORY)
 
-When Your Top is Fitted:
-- Tight sweater → Pair with wide-leg trousers or a flowing skirt
-- Bodycon top → Balance with boyfriend jeans or palazzo pants
-- Fitted blazer → Let it shine with looser pants or an A-line skirt
+1.  **Number of Items:** Each outfit must contain **strictly 4 to 5 items**.
+2.  **Mandatory Categories (must be in EVERY outfit):**
+    - **1 x Shoes:** (heels, boots, sneakers, etc.)
+    - **1 x Bag:** (any type)
+3.  **Core Outfit Structure (choose ONE):**
+    - **Option A:** 1 x Dress
+    - **Option B:** 1 x Top (T-shirt, blouse, sweater) + 1 x Bottom (pants, jeans, skirt)
+4.  **Optional Category:** 1 x Outerwear (blazer, jacket, coat)
 
-When Your Bottom is Fitted:
-- Skinny jeans → Top it with an oversized sweater, flowing blouse, or boxy jacket
-- Pencil skirt → Soften with a draped top or loose cardigan
-- Leggings → Always pair with longer, loose tops (never tight on both - this breaks the cardinal rule!)
+### 3. FORMALIZED STYLING RULES
 
-3. COLOR MASTERY: THE PSYCHOLOGY OF HUES
-Understanding Color Relationships
-Colors have relationships just like people - some are best friends, others are perfect opposites that attract, and some just don't get along.
+- **Rule of Proportions:**
+  - If top fit_attribute = fitted, bottom should be loose/wide
+  - If bottom fit_attribute = skinny/slim, top should be oversized/loose
+  - FORBIDDEN: fitted top + skinny bottom without outerwear
 
-The Neutral Superstars (Your Wardrobe's Best Friends):
-- Black: Slimming, powerful, goes with everything (but can be harsh near the face for some)
-- Navy: More approachable than black, works with almost every color
-- White: Fresh, clean, brightens your complexion (but requires careful fabric choice)
-- Gray: The ultimate diplomat - makes every other color look good
-- Beige/Camel: Warm, sophisticated, perfect with both brights and other neutrals
+- **Rule of Color:**
+  - Use no more than 3 main (non-neutral) colors per outfit
+  - Neutrals (black, white, gray, beige, navy) unlimited
+  - For work: prefer neutral and muted palettes
+  - For evening/special: bolder combinations acceptable
 
-Foolproof Color Combinations That Never Fail
-Classic Combinations:
-- Navy + white + camel = French sophistication
-- Black + white + gold accents = timeless elegance
-- Gray + soft pink + cream = feminine minimalism
-- Denim + white + any bright accent = American casual
+- **Rule of Accessories:**
+  - **Shoes:**
+    - Sneakers/Flats: only for everyday
+    - Heels/AnkleBoots: suitable for work, evening, special
+  - **Bags:**
+    - Tote/Backpack: everyday or work
+    - Clutch/Crossbody: evening and special
 
-4. PATTERN MIXING: THE BRAVE AND THE BEAUTIFUL
-Pattern Personalities
-Each pattern has its own voice:
-- Stripes: Clean, nautical, can be slimming (vertical) or widening (horizontal)
-- Florals: Feminine, romantic, can range from sweet to bold
-- Polka dots: Playful, vintage, surprisingly versatile
-- Plaid: Can be preppy, punk, or cozy depending on colors and scale
-- Animal prints: Bold, confident, always a statement
+- **Rule of Patterns:**
+  - Safe: 1 patterned item + rest solid
+  - Advanced: 2 patterns if different scales or same theme
+  - FORBIDDEN: two large active patterns
 
-5. OCCASION DRESSING: READING THE ROOM
-Workplace Wisdom
-Conservative Office:
-- Think: crisp lines, muted colors, minimal patterns
-- Perfect formula: tailored blazer + silk blouse + wool trousers + leather pumps
+### KNOWLEDGE BASE: Fashion Styling Guide
 
-Creative Workplace:
-- More personality allowed: interesting textures, bolder colors, pattern mixing
+**PROPORTION & BALANCE:**
+- Fitted + Loose = Perfection
+- Tight top → wide pants or flowing skirt
+- Fitted bottom → oversized sweater or loose top
+- NEVER tight on both top and bottom
 
-Social Situation Styling
-Casual Coffee Date:
-- Approachable but put-together: nice jeans + soft sweater + ankle boots
+**COLOR MASTERY:**
+- Neutrals work with everything: black, navy, white, gray, beige
+- Classic combos: navy+white+camel, black+white+gold, gray+pink+cream
+- Warm colors = approachable, energetic
+- Cool colors = calm, reliable
 
-Dinner Party:
-- Smart casual elegance: silk blouse + tailored pants + heels
+**PATTERN MIXING:**
+- Beginner: One pattern + solid colors
+- Intermediate: Mix different scales (small dots + large plaid)
+- Advanced: Mix patterns with shared colors
+- Safety: Use neutral to calm bold patterns
 
-Wedding Guest:
-- Celebrate without upstaging: avoid white, choose festive colors
+**FABRIC & TEXTURE:**
+- Mix smooth with rough, soft with structured
+- Cotton pairs with: denim, linen, wool, leather
+- Silk pairs with: cashmere, cotton, leather
+- Denim is universal mixer
 
-Job Interview:
-- Dress for the job you want, but slightly more conservative`;
+**OCCASION DRESSING:**
+- Work: crisp lines, muted colors, minimal patterns
+- Everyday: comfortable, approachable, versatile
+- Evening: elegant, bolder colors, statement pieces
+- Special: festive, polished, memorable`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -135,6 +129,27 @@ serve(async (req) => {
 
     console.log(`📊 Found ${existingItemCombinations.size} existing outfit combinations`);
 
+    // Calculate category statistics
+    const categoryStats = products?.reduce((acc, p) => {
+      const cat = p.category;
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>) || {};
+
+    const topCategories = ['TShirt', 'Top', 'Blouse', 'Sweater', 'Jumper'];
+    const bottomCategories = ['Pants', 'Jeans', 'Skirt', 'Shorts'];
+    const dressCategories = ['Dress'];
+    const outerwearCategories = ['Blazer', 'Jacket', 'Coat'];
+    const shoesCategories = ['Shoes', 'BalletFlats', 'AnkleBoots', 'Sneakers', 'Heels'];
+    const bagCategories = ['Bag'];
+
+    const topsCount = topCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
+    const bottomsCount = bottomCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
+    const dressesCount = dressCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
+    const outerwearCount = outerwearCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
+    const shoesCount = shoesCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
+    const bagsCount = bagCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
+
     // Format products for AI
     const productsDescription = products?.map(p => 
       `${p.product_id}: ${p.product_name} (${p.category}) - ${p.style || 'N/A'} - ${p.generated_attributes || 'No attributes'}`
@@ -142,59 +157,48 @@ serve(async (req) => {
 
     const systemPrompt = `${STYLING_GUIDE}
 
-CRITICAL INSTRUCTIONS:
-You are a professional fashion stylist. Generate EXACTLY 49 unique, stylish outfit combinations using ONLY the products provided below.
+### AVAILABLE CATALOG INFORMATION
 
-MANDATORY RULES - EACH OUTFIT MUST INCLUDE 4-5 ITEMS:
-1. **MINIMUM 4 items, MAXIMUM 5 items**
-2. **REQUIRED categories in EVERY outfit (4 minimum):**
-   - ONE Shoes (обувь, туфли, кроссовки, ботинки) - ALWAYS REQUIRED
-   - ONE Bag (сумка) - ALWAYS REQUIRED
-   - ONE of: Top (футболка, топ, блузка, свитер) OR Dress (платье) - REQUIRED
-   - ONE Bottom (брюки, джинсы, юбка) - REQUIRED (skip ONLY if Dress is used)
-3. OPTIONAL 5th item: Outerwear (куртка, пальто, пиджак, жакет)
-4. ONLY use product_id values from the list below
-5. Create diverse outfits for different occasions
-6. Distribute outfits evenly across these occasions:
-   - "work" (business attire)
-   - "everyday" (casual daily wear)
-   - "evening" (going out, dinner, events)
-   - "home" (comfortable loungewear)
+- **Total products:** ${products?.length || 0}
+- **Quantity by Main Types:**
+  - Tops (T-shirts, blouses, sweaters): ${topsCount}
+  - Bottoms (pants, skirts, jeans): ${bottomsCount}
+  - Dresses: ${dressesCount}
+  - Outerwear: ${outerwearCount}
+  - Shoes: ${shoesCount}
+  - Bags: ${bagsCount}
 
-AVAILABLE PRODUCTS (${products?.length || 0} total):
-Categories available: TShirt, Top, Blouse, Dress, Pants, Jeans, Skirt, Blazer, Bag, BalletFlats, AnkleBoots, etc.
+**IMPORTANT:** Shoes and bags are limited. Do not use the same items too frequently.
 
-${productsDescription.substring(0, 30000)}
+### GENERATION INSTRUCTIONS
 
-OUTPUT FORMAT:
-Return ONLY a JSON array of exactly 49 objects. Each object must have EXACTLY 4-5 items:
-{
-  "occasion": "work" | "everyday" | "evening" | "home",
-  "items": ["product_id1", "product_id2", "product_id3", "product_id4"] // or 5 items with outerwear
-}
+Generate EXACTLY 49 unique outfit combinations using ONLY the product_id from the list below.
 
-CORRECT EXAMPLES (4-5 items, SHOES & BAG ALWAYS INCLUDED):
+**MANDATORY COMPOSITION:**
+1. Each outfit: 4-5 items ONLY
+2. REQUIRED in EVERY outfit:
+   - 1 x Shoes (MANDATORY)
+   - 1 x Bag (MANDATORY)
+   - 1 x Top + 1 x Bottom OR 1 x Dress (MANDATORY)
+3. OPTIONAL 5th item: Outerwear
+
+**OCCASION DISTRIBUTION:**
+Distribute evenly across: work, everyday, evening, special
+
+**OUTPUT FORMAT:**
+Return ONLY a JSON array:
 [
   {
     "occasion": "work",
-    "items": ["Blazer_123", "Top_456", "Pants_789", "Shoes_012", "Bag_345"]
-  },
-  {
-    "occasion": "everyday", 
-    "items": ["TShirt_111", "Jeans_222", "Sneakers_333", "Bag_444"]
-  },
-  {
-    "occasion": "evening",
-    "items": ["Dress_555", "Heels_666", "Bag_777", "Blazer_888"]
+    "items": ["product_id1", "product_id2", "product_id3", "product_id4", "product_id5"]
   }
 ]
 
-WRONG EXAMPLES (DO NOT CREATE):
-❌ {"items": ["Top_123", "Pants_456"]} - Only 2 items, missing Shoes and Bag!
-❌ {"items": ["Dress_789", "Bag_012"]} - Only 2 items, missing Shoes!
-❌ {"items": ["Top_111", "Pants_222", "Shoes_333"]} - Only 3 items, missing Bag!
+### AVAILABLE PRODUCTS LIST
 
-IMPORTANT: Return ONLY the JSON array, no other text or explanation.`;
+${productsDescription.substring(0, 30000)}
+
+**CRITICAL:** Return ONLY the JSON array. No explanations, no markdown, no extra text.`;
 
     console.log('🤖 Calling Lovable AI...');
     console.log('System prompt preview:', systemPrompt.substring(0, 500));
