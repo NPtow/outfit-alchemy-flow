@@ -21,66 +21,58 @@ const TelegramAuth = () => {
 
       // Check if opened in Telegram WebApp
       const tg = window.Telegram?.WebApp;
-      if (tg && tg.initDataUnsafe?.user) {
-        console.log("Detected Telegram WebApp, auto-authenticating...");
+      if (tg?.initData) {
+        console.log("Telegram Mini App detected");
         tg.ready();
         tg.expand();
         
-        const user = tg.initDataUnsafe.user;
-        // Для Mini App отправляем hash (который содержит весь initData)
-        authenticateWithTelegram({
-          hash: tg.initData,
-          user: {
-            id: user.id,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            username: user.username,
-            photo_url: user.photo_url,
-          }
-        });
+        // Отправляем только initData для валидации
+        authenticateWithTelegram(tg.initData);
       } else {
-        // Not in Telegram WebApp, show login widget
+        // Not in Telegram WebApp
+        console.log("Not in Telegram, showing login widget");
         setIsLoading(false);
         setupLoginWidget();
       }
     });
   }, [navigate]);
 
-  const authenticateWithTelegram = async (authData: any) => {
+  const authenticateWithTelegram = async (initData: string) => {
     setIsLoading(true);
-    console.log("Telegram auth data:", authData);
+    console.log("Starting Telegram authentication");
 
     try {
-      // Call edge function to verify and create session
       const { data, error } = await supabase.functions.invoke("telegram-auth", {
-        body: { telegramData: authData },
+        body: { initData },
       });
 
       if (error) {
         console.error("Auth error:", error);
         toast({
           title: "Ошибка авторизации",
-          description: "Не удалось войти через Telegram",
+          description: error.message || "Не удалось войти через Telegram",
           variant: "destructive",
         });
         setIsLoading(false);
         return;
       }
 
-      if (data.session) {
-        // Set session
+      if (data?.session) {
         await supabase.auth.setSession({
           access_token: data.session.access_token,
           refresh_token: data.session.refresh_token,
         });
 
-        const userName = authData.user?.first_name || authData.first_name || "пользователь";
+        const userName = data.user?.user_metadata?.first_name || "пользователь";
+        
         toast({
-          title: "Успешный вход!",
-          description: `Добро пожаловать, ${userName}!`,
+          title: "Добро пожаловать!",
+          description: `Вы вошли как ${userName}`,
         });
 
         navigate("/feed");
+      } else {
+        throw new Error("No session returned");
       }
     } catch (error) {
       console.error("Telegram auth error:", error);
@@ -94,10 +86,18 @@ const TelegramAuth = () => {
   };
 
   const setupLoginWidget = () => {
-    // Define callback function globally before loading script
-    (window as any).onTelegramAuth = authenticateWithTelegram;
+    // Для Login Widget используем другой callback
+    (window as any).onTelegramAuth = async (user: any) => {
+      // Login Widget возвращает данные в другом формате
+      // Создаем initData вручную для единообразия
+      const initDataParams = new URLSearchParams();
+      initDataParams.set('user', JSON.stringify(user));
+      initDataParams.set('auth_date', user.auth_date.toString());
+      initDataParams.set('hash', user.hash);
+      
+      await authenticateWithTelegram(initDataParams.toString());
+    };
 
-    // Load Telegram widget script
     const script = document.createElement("script");
     script.src = "https://telegram.org/js/telegram-widget.js?22";
     script.setAttribute("data-telegram-login", botUsername);
