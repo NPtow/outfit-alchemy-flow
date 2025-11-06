@@ -1,16 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { mlApi } from '@/lib/mlApi';
-import { getUserId } from '@/lib/userStorage';
+import { supabase } from '@/integrations/supabase/client';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { Card } from '@/components/ui/card';
 import { Brain, TrendingUp, Palette, Sparkles } from 'lucide-react';
 
 const MLInsights = () => {
-  const userId = getUserId();
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUserId(session?.user?.id || null);
+    };
+    fetchUserId();
+  }, []);
   
   const { data: insights, isLoading } = useQuery({
     queryKey: ['ml-insights', userId],
-    queryFn: () => mlApi.getInsights(userId),
+    queryFn: () => userId ? mlApi.getInsights(userId) : Promise.resolve(null),
+    enabled: !!userId,
     refetchInterval: 5000 // Обновляем каждые 5 секунд
   });
   

@@ -4,8 +4,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
+// Extend Window interface for Telegram WebApp
 declare global {
   interface Window {
+    Telegram?: {
+      WebApp: {
+        initData: string;
+        initDataUnsafe: {
+          user?: {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+            language_code?: string;
+            photo_url?: string;
+          };
+        };
+        ready: () => void;
+        expand: () => void;
+      };
+    };
     TelegramLoginWidget: {
       dataOnauth: (user: any) => void;
     };
@@ -15,7 +33,7 @@ declare global {
 const TelegramAuth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const botUsername = "swipestyle_auth_bot";
 
   useEffect(() => {
@@ -23,56 +41,83 @@ const TelegramAuth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/feed");
+        return;
+      }
+
+      // Check if opened in Telegram WebApp
+      const tg = window.Telegram?.WebApp;
+      if (tg && tg.initDataUnsafe?.user) {
+        console.log("Detected Telegram WebApp, auto-authenticating...");
+        tg.ready();
+        tg.expand();
+        
+        const user = tg.initDataUnsafe.user;
+        authenticateWithTelegram({
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          username: user.username,
+          photo_url: user.photo_url,
+          auth_date: Math.floor(Date.now() / 1000),
+          hash: tg.initData // Use initData as hash for verification
+        });
+      } else {
+        // Not in Telegram WebApp, show login widget
+        setIsLoading(false);
+        setupLoginWidget();
       }
     });
+  }, [navigate]);
 
-    // Define callback function globally before loading script
-    (window as any).onTelegramAuth = async (user: any) => {
-      setIsLoading(true);
-      console.log("Telegram auth callback:", user);
+  const authenticateWithTelegram = async (user: any) => {
+    setIsLoading(true);
+    console.log("Telegram auth data:", user);
 
-      try {
-        // Call edge function to verify and create session
-        const { data, error } = await supabase.functions.invoke("telegram-auth", {
-          body: { telegramData: user },
-        });
+    try {
+      // Call edge function to verify and create session
+      const { data, error } = await supabase.functions.invoke("telegram-auth", {
+        body: { telegramData: user },
+      });
 
-        if (error) {
-          console.error("Auth error:", error);
-          toast({
-            title: "Ошибка авторизации",
-            description: "Не удалось войти через Telegram",
-            variant: "destructive",
-          });
-          setIsLoading(false);
-          return;
-        }
-
-        if (data.session) {
-          // Set session
-          await supabase.auth.setSession({
-            access_token: data.session.access_token,
-            refresh_token: data.session.refresh_token,
-          });
-
-          toast({
-            title: "Успешный вход!",
-            description: `Добро пожаловать, ${user.first_name}!`,
-          });
-
-          navigate("/feed");
-        }
-      } catch (error) {
-        console.error("Telegram auth error:", error);
+      if (error) {
+        console.error("Auth error:", error);
         toast({
-          title: "Ошибка",
-          description: "Произошла ошибка при авторизации",
+          title: "Ошибка авторизации",
+          description: "Не удалось войти через Telegram",
           variant: "destructive",
         });
-      } finally {
         setIsLoading(false);
+        return;
       }
-    };
+
+      if (data.session) {
+        // Set session
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+
+        toast({
+          title: "Успешный вход!",
+          description: `Добро пожаловать, ${user.first_name}!`,
+        });
+
+        navigate("/feed");
+      }
+    } catch (error) {
+      console.error("Telegram auth error:", error);
+      toast({
+        title: "Ошибка",
+        description: "Произошла ошибка при авторизации",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const setupLoginWidget = () => {
+    // Define callback function globally before loading script
+    (window as any).onTelegramAuth = authenticateWithTelegram;
 
     // Load Telegram widget script
     const script = document.createElement("script");
@@ -89,14 +134,7 @@ const TelegramAuth = () => {
     if (container) {
       container.appendChild(script);
     }
-
-    return () => {
-      if (container) {
-        container.innerHTML = "";
-      }
-      delete (window as any).onTelegramAuth;
-    };
-  }, [navigate, toast]);
+  };
 
   return (
     <div className="min-h-screen w-full bg-black flex items-center justify-center px-4">

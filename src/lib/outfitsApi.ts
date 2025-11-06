@@ -1,5 +1,4 @@
 import { supabase } from "@/integrations/supabase/client";
-import { getUserId } from "./userStorage";
 
 function getImageUrl(imagePath: string | null | undefined): string {
   if (!imagePath) return '';
@@ -37,11 +36,10 @@ export interface OutfitsResponse {
 class OutfitsApi {
   private async getUserIdentifiers() {
     const { data: { user } } = await supabase.auth.getUser();
-    const anonymousId = user ? null : getUserId();
     
     return {
       userId: user?.id || null,
-      anonymousId
+      anonymousId: null // Not needed with Telegram auth
     };
   }
 

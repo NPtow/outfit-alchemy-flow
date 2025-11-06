@@ -1,10 +1,6 @@
-export const getUserId = (): string => {
-  let userId = localStorage.getItem('ml_user_id');
-  
-  if (!userId) {
-    userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('ml_user_id', userId);
-  }
-  
-  return userId;
+import { supabase } from "@/integrations/supabase/client";
+
+export const getUserId = async (): Promise<string | null> => {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.user?.id || null;
 };

@@ -1,19 +1,35 @@
 import { useState, useEffect } from "react";
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from "react-router-dom";
 import { VerticalOutfitFeed } from "@/components/VerticalOutfitFeed";
 import { CategoryTabs, Category } from "@/components/CategoryTabs";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { outfitsApi, Outfit } from "@/lib/outfitsApi";
 import { useToast } from "@/hooks/use-toast";
 import { isProductsTableEmpty, autoImportProducts } from "@/lib/importProducts";
+import { supabase } from "@/integrations/supabase/client";
 
 const Feed = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<Category>("all");
   const [outfits, setOutfits] = useState<Outfit[]>([]);
   const { toast } = useToast();
   const [importProgress, setImportProgress] = useState<{ current: number; total: number } | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [importComplete, setImportComplete] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check authentication
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/telegram-auth");
+      }
+      setIsCheckingAuth(false);
+    };
+    checkAuth();
+  }, [navigate]);
   
   // Check if we need to auto-import
   const { data: needsImport, isLoading: checkingDB } = useQuery({
@@ -107,6 +123,18 @@ const Feed = () => {
   };
 
   const filteredOutfits = outfits;
+
+  // Show loading while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen w-full bg-black flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-lg">Загрузка...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full bg-black">

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorage";
 import { useToast } from "@/hooks/use-toast";
 import { mlApi } from '@/lib/mlApi';
-import { getUserId } from '@/lib/userStorage';
+import { supabase } from "@/integrations/supabase/client";
 import likeDefault from "@/assets/icon_like_mode_default.svg";
 import likeActive from "@/assets/icon_like_mode_active.svg";
 import shareDefault from "@/assets/icon_share_mode_default.svg";
@@ -87,8 +87,17 @@ export const VerticalOutfitFeed = ({
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [viewStartTime, setViewStartTime] = useState(Date.now());
+  const [userId, setUserId] = useState<string | null>(null);
   const { toast } = useToast();
-  const userId = getUserId();
+
+  // Get authenticated user ID
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUserId(session?.user?.id || null);
+    };
+    getUserId();
+  }, []);
 
   // Reset index when outfits array changes
   useEffect(() => {
@@ -110,7 +119,7 @@ export const VerticalOutfitFeed = ({
   useEffect(() => {
     setViewStartTime(Date.now());
     
-    if (useML && currentOutfit) {
+    if (useML && currentOutfit && userId) {
       mlApi.recordInteraction(userId, currentOutfit.id, 'view').catch(console.error);
     }
   }, [currentIndex, useML, currentOutfit, userId]);
@@ -178,7 +187,7 @@ export const VerticalOutfitFeed = ({
       onView(currentOutfit.id);
     }
     
-    if (useML && currentOutfit) {
+    if (useML && currentOutfit && userId) {
       // Если меньше 2 секунд = skip
       const interactionType = viewDuration < 2 ? 'skip' : 'view';
       mlApi.recordInteraction(
@@ -260,7 +269,7 @@ export const VerticalOutfitFeed = ({
       setIsLiked(true);
       
       // Записываем лайк в ML backend
-      if (useML) {
+      if (useML && userId) {
         try {
           await mlApi.recordInteraction(userId, currentOutfit.id, 'like');
           
@@ -313,7 +322,7 @@ export const VerticalOutfitFeed = ({
   };
 
   const handleShopLook = () => {
-    if (!showPrices && useML && currentOutfit) {
+    if (!showPrices && useML && currentOutfit && userId) {
       // Записываем view_detail
       mlApi.recordInteraction(userId, currentOutfit.id, 'view_detail').catch(console.error);
     }
