@@ -25,12 +25,17 @@ serve(async (req) => {
 
     // Check if this is Mini App (initData) or Login Widget format
     let userData;
+    let initData = telegramData.initData;
     
-    if (telegramData.initData) {
+    // Если initData нет, но есть hash со строкой "user=", значит это Mini App данные
+    if (!initData && telegramData.hash && telegramData.hash.includes('user=')) {
+      initData = telegramData.hash;
+    }
+    
+    if (initData) {
       // Telegram Mini App validation
       console.log('Validating Mini App data');
-      
-      const initData = telegramData.initData;
+      console.log('initData:', initData);
       const urlParams = new URLSearchParams(initData);
       const hash = urlParams.get('hash');
       

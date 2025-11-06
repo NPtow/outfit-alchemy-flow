@@ -27,9 +27,9 @@ const TelegramAuth = () => {
         tg.expand();
         
         const user = tg.initDataUnsafe.user;
-        // Отправляем весь initData для верификации на сервере
+        // Для Mini App отправляем hash (который содержит весь initData)
         authenticateWithTelegram({
-          initData: tg.initData,
+          hash: tg.initData,
           user: {
             id: user.id,
             first_name: user.first_name,
@@ -46,14 +46,14 @@ const TelegramAuth = () => {
     });
   }, [navigate]);
 
-  const authenticateWithTelegram = async (user: any) => {
+  const authenticateWithTelegram = async (authData: any) => {
     setIsLoading(true);
-    console.log("Telegram auth data:", user);
+    console.log("Telegram auth data:", authData);
 
     try {
       // Call edge function to verify and create session
       const { data, error } = await supabase.functions.invoke("telegram-auth", {
-        body: { telegramData: user },
+        body: { telegramData: authData },
       });
 
       if (error) {
@@ -74,9 +74,10 @@ const TelegramAuth = () => {
           refresh_token: data.session.refresh_token,
         });
 
+        const userName = authData.user?.first_name || authData.first_name || "пользователь";
         toast({
           title: "Успешный вход!",
-          description: `Добро пожаловать, ${user.first_name}!`,
+          description: `Добро пожаловать, ${userName}!`,
         });
 
         navigate("/feed");
