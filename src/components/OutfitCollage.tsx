@@ -16,6 +16,7 @@ export interface CollageItem {
     top: number;
     right: number;
     bottom: number;
+    zIndex?: number;
   };
 }
 
@@ -92,6 +93,7 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
                 top: `${top * 100}%`,
                 width: `${width}%`,
                 height: `${height}%`,
+                zIndex: item.position.zIndex || 1,
               }}
             >
               <img
@@ -100,6 +102,9 @@ export const OutfitCollage = ({ items, outfitId }: OutfitCollageProps) => {
                 className={`w-full h-full object-contain transition-opacity duration-300 ${
                   loadedImages.has(item.id) ? 'opacity-100' : 'opacity-0'
                 }`}
+                style={{
+                  filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15))',
+                }}
                 draggable={false}
                 loading="eager"
                 onLoad={() => handleImageLoad(item.id)}
