@@ -37,9 +37,29 @@ class OutfitsApi {
   private async getUserIdentifiers() {
     const { data: { user } } = await supabase.auth.getUser();
     
+    console.log('🔍 Getting user identifiers, user:', user?.id);
+    
+    if (user?.id) {
+      console.log('✅ User authenticated:', user.id);
+      return {
+        userId: user.id,
+        anonymousId: null
+      };
+    }
+    
+    // For non-authenticated users, use/generate anonymousId
+    let anonymousId = localStorage.getItem('anonymousId');
+    if (!anonymousId) {
+      anonymousId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('anonymousId', anonymousId);
+      console.log('🆕 Generated new anonymousId:', anonymousId);
+    } else {
+      console.log('📦 Using existing anonymousId:', anonymousId);
+    }
+    
     return {
-      userId: user?.id || null,
-      anonymousId: null // Not needed with Telegram auth
+      userId: null,
+      anonymousId
     };
   }
 
