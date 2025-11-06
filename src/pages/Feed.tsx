@@ -10,8 +10,8 @@ import { isProductsTableEmpty, autoImportProducts } from "@/lib/importProducts";
 const Feed = () => {
   const [activeCategory, setActiveCategory] = useState<Category>("all");
   const [outfits, setOutfits] = useState<Outfit[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
-  const [isImporting] = useState(false); // Disabled auto-import since products exist
   
   // Load outfits from new API
   const { data: outfitsData, isLoading: isLoadingOutfits, refetch } = useQuery({
@@ -34,6 +34,28 @@ const Feed = () => {
       setOutfits(outfitsData.outfits);
     }
   }, [outfitsData]);
+
+  // Load more outfits when user scrolls near the end
+  const handleLoadMore = async () => {
+    if (isLoadingMore) return;
+    
+    try {
+      setIsLoadingMore(true);
+      const occasion = activeCategory === 'all' ? 'general' : activeCategory;
+      const moreOutfits = await outfitsApi.getOutfits(occasion, 20);
+      
+      // Add new outfits that don't already exist
+      setOutfits(prev => {
+        const existingIds = new Set(prev.map(o => o.id));
+        const newOutfits = moreOutfits.outfits.filter(o => !existingIds.has(o.id));
+        return [...prev, ...newOutfits];
+      });
+    } catch (error) {
+      console.error('Error loading more outfits:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   // Record view when user sees an outfit
   const handleOutfitView = async (outfitId: string) => {
@@ -115,8 +137,16 @@ const Feed = () => {
               })
             }))}
             onView={handleOutfitView}
+            onInteraction={handleLoadMore}
             useML={false}
           />
+        )}
+        
+        {/* Loading more indicator */}
+        {isLoadingMore && (
+          <div className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
+            Загружаем ещё...
+          </div>
         )}
       </div>
       

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { saveOutfit, removeSavedOutfit, isOutfitSaved } from "@/lib/outfitStorage";
@@ -76,8 +77,23 @@ export const VerticalOutfitFeed = ({
   onView,
   useML = false
 }: VerticalOutfitFeedProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showPrices, setShowPrices] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    // Restore session on mount
+    const session = sessionStorage.getItem('feed_session');
+    if (session) {
+      try {
+        const { currentIndex: savedIndex, timestamp } = JSON.parse(session);
+        // Restore if session is less than 30 minutes old
+        if (Date.now() - timestamp < 30 * 60 * 1000 && savedIndex < outfits.length) {
+          return savedIndex;
+        }
+      } catch (e) {
+        console.error('Failed to restore session:', e);
+      }
+    }
+    return 0;
+  });
+  const [direction, setDirection] = useState(0); // 1 = down, -1 = up
   const [showCarousel, setShowCarousel] = useState(false);
   const [carouselStartIndex, setCarouselStartIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
@@ -157,6 +173,23 @@ export const VerticalOutfitFeed = ({
     });
   }, []);
 
+  // Save session on index change
+  useEffect(() => {
+    if (outfits.length > 0) {
+      sessionStorage.setItem('feed_session', JSON.stringify({
+        currentIndex,
+        timestamp: Date.now()
+      }));
+    }
+  }, [currentIndex, outfits.length]);
+
+  // Trigger fetch when near end
+  useEffect(() => {
+    if (currentIndex >= outfits.length - 3 && onInteraction) {
+      onInteraction();
+    }
+  }, [currentIndex, outfits.length, onInteraction]);
+
   // Show empty state if no outfits
   if (!outfits || outfits.length === 0) {
     return (
@@ -179,6 +212,8 @@ export const VerticalOutfitFeed = ({
   }
 
   const handleNext = () => {
+    if (currentIndex >= outfits.length - 1) return;
+    
     // Вычисляем длительность просмотра
     const viewDuration = (Date.now() - viewStartTime) / 1000;
     
@@ -198,29 +233,27 @@ export const VerticalOutfitFeed = ({
       ).catch(console.error);
     }
     
-    if (currentIndex < outfits.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setViewStartTime(Date.now());
-      setShowPrices(false);
-      setShowCarousel(false);
-      
-      // Trigger prefetch callback when near the end
-      if (onInteraction && currentIndex >= outfits.length - 3) {
-        onInteraction();
-      }
-    }
+    setDirection(1);
+    setCurrentIndex(currentIndex + 1);
+    setViewStartTime(Date.now());
+    setShowCarousel(false);
+    setDetailsViewed(false);
   };
 
   const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setShowPrices(false);
-    }
+    if (currentIndex <= 0) return;
+    
+    setDirection(-1);
+    setCurrentIndex(currentIndex - 1);
+    setViewStartTime(Date.now());
+    setShowCarousel(false);
+    setDetailsViewed(false);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (showCarousel) return;
     setTouchStart(e.targetTouches[0].clientY);
+    setTouchEnd(e.targetTouches[0].clientY);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -230,19 +263,27 @@ export const VerticalOutfitFeed = ({
 
   const handleTouchEnd = () => {
     if (showCarousel) return;
-    if (touchStart - touchEnd > 50) {
+    const diff = touchStart - touchEnd;
+    
+    // Swipe up (next)
+    if (diff > 50) {
       handleNext();
     }
-    if (touchStart - touchEnd < -50) {
+    // Swipe down (prev)
+    else if (diff < -50) {
       handlePrev();
     }
   };
 
   const handleWheel = (e: React.WheelEvent) => {
     if (showCarousel) return;
-    if (e.deltaY > 0) {
+    
+    // Prevent default to avoid double scrolling
+    e.preventDefault();
+    
+    if (e.deltaY > 20) {
       handleNext();
-    } else if (e.deltaY < 0) {
+    } else if (e.deltaY < -20) {
       handlePrev();
     }
   };
@@ -321,13 +362,12 @@ export const VerticalOutfitFeed = ({
     }
   };
 
-  const handleShopLook = () => {
-    if (!showPrices && useML && currentOutfit && userId) {
-      // Записываем view_detail
-      mlApi.recordInteraction(userId, currentOutfit.id, 'view_detail').catch(console.error);
-    }
-    setShowPrices(!showPrices);
-  };
+  // Render only visible outfits (current-1, current, current+1) for performance
+  const visibleOutfits = [
+    currentIndex > 0 ? outfits[currentIndex - 1] : null,
+    outfits[currentIndex],
+    currentIndex < outfits.length - 1 ? outfits[currentIndex + 1] : null
+  ].filter(Boolean);
 
   return (
     <>
@@ -339,11 +379,29 @@ export const VerticalOutfitFeed = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Outfit Slide */}
-        <div
-          key={currentOutfit.id}
-          className="relative w-full h-full flex items-center justify-center animate-fade-in"
-        >
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={currentOutfit.id}
+            custom={direction}
+            initial={{ 
+              y: direction > 0 ? "100%" : direction < 0 ? "-100%" : 0,
+              opacity: 0 
+            }}
+            animate={{ 
+              y: 0,
+              opacity: 1 
+            }}
+            exit={{ 
+              y: direction > 0 ? "-100%" : direction < 0 ? "100%" : 0,
+              opacity: 0 
+            }}
+            transition={{ 
+              type: "tween", 
+              duration: 0.4,
+              ease: [0.4, 0, 0.2, 1]
+            }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
           {/* Action Buttons - Right Side */}
           <div className="absolute right-3 sm:right-6 bottom-40 sm:bottom-52 z-20 flex flex-col gap-3 sm:gap-4">
             {/* Like Button */}
@@ -442,7 +500,7 @@ export const VerticalOutfitFeed = ({
 
           {/* Progress Indicators */}
           <div className="absolute top-4 sm:top-6 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2 z-20">
-            {outfits.map((_, index) => (
+            {outfits.slice(0, Math.min(outfits.length, 10)).map((_, index) => (
               <div
                 key={index}
                 className={cn(
@@ -453,8 +511,14 @@ export const VerticalOutfitFeed = ({
                 )}
               />
             ))}
+            {outfits.length > 10 && (
+              <div className="text-white/40 text-xs self-center">
+                +{outfits.length - 10}
+              </div>
+            )}
           </div>
-        </div>
+        </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Item Carousel */}
