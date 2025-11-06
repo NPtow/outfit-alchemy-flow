@@ -1,27 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logoSwipeStyle from "@/assets/logo-swipestyle.png";
-
-// Extend Window interface for Telegram WebApp
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        initData: string;
-        initDataUnsafe: {
-          user?: {
-            id: number;
-            first_name: string;
-            last_name?: string;
-            username?: string;
-          };
-        };
-        ready: () => void;
-        expand: () => void;
-      };
-    };
-  }
-}
+import "@/types/telegram";
 
 const Intro = () => {
   const navigate = useNavigate();

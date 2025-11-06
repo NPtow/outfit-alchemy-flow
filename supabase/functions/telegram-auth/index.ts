@@ -15,10 +15,7 @@ serve(async (req) => {
   try {
     const { telegramData } = await req.json();
     
-    console.log('Telegram auth attempt:', { 
-      id: telegramData.id, 
-      username: telegramData.username 
-    });
+    console.log('Telegram auth attempt:', telegramData);
 
     // Verify Telegram data
     const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
@@ -26,62 +23,139 @@ serve(async (req) => {
       throw new Error('TELEGRAM_BOT_TOKEN not configured');
     }
 
-    // Create check string
-    const checkHash = telegramData.hash;
-    const dataCheckObject = { ...telegramData };
-    delete dataCheckObject.hash;
+    // Check if this is Mini App (initData) or Login Widget format
+    let userData;
     
-    const dataCheckArr = Object.keys(dataCheckObject)
-      .sort()
-      .map(key => `${key}=${dataCheckObject[key]}`);
-    const dataCheckString = dataCheckArr.join('\n');
-
-    // Create hash using Web Crypto API (Telegram Login Widget algorithm)
-    const encoder = new TextEncoder();
-    
-    // Step 1: Create secret key from bot token using SHA-256
-    const secretKeyBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(botToken));
-    
-    // Step 2: Import the secret key for HMAC
-    const cryptoKey = await crypto.subtle.importKey(
-      'raw',
-      secretKeyBuffer,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
-
-    // Step 3: Sign the data check string
-    const signature = await crypto.subtle.sign(
-      'HMAC',
-      cryptoKey,
-      encoder.encode(dataCheckString)
-    );
-
-    // Step 4: Convert to hex
-    const hash = Array.from(new Uint8Array(signature))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    // Verify hash
-    if (hash !== checkHash) {
-      console.error('Invalid Telegram data hash');
-      return new Response(
-        JSON.stringify({ error: 'Invalid authentication data' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    if (telegramData.initData) {
+      // Telegram Mini App validation
+      console.log('Validating Mini App data');
+      
+      const initData = telegramData.initData;
+      const urlParams = new URLSearchParams(initData);
+      const hash = urlParams.get('hash');
+      
+      if (!hash) {
+        throw new Error('No hash in initData');
+      }
+      
+      // Remove hash from params for validation
+      urlParams.delete('hash');
+      
+      // Sort params and create data check string
+      const params = Array.from(urlParams.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, value]) => `${key}=${value}`)
+        .join('\n');
+      
+      console.log('Data check string:', params);
+      
+      // Create secret key from bot token
+      const encoder = new TextEncoder();
+      const secretKeyBuffer = await crypto.subtle.digest(
+        'SHA-256',
+        encoder.encode(botToken)
       );
+      
+      // Import key for HMAC
+      const key = await crypto.subtle.importKey(
+        'raw',
+        secretKeyBuffer,
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+      
+      // Sign the data check string
+      const signature = await crypto.subtle.sign(
+        'HMAC',
+        key,
+        encoder.encode(params)
+      );
+      
+      // Convert to hex
+      const calculatedHash = Array.from(new Uint8Array(signature))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+      
+      console.log('Calculated hash:', calculatedHash);
+      console.log('Received hash:', hash);
+      
+      if (calculatedHash !== hash) {
+        console.error('Hash mismatch - invalid Telegram data');
+        return new Response(
+          JSON.stringify({ error: 'Invalid authentication data' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Check auth_date
+      const authDate = parseInt(urlParams.get('auth_date') || '0');
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (currentTime - authDate > 86400) {
+        console.error('Telegram data too old');
+        return new Response(
+          JSON.stringify({ error: 'Authentication data expired' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      userData = telegramData.user;
+    } else {
+      // Login Widget validation (existing code)
+      console.log('Validating Login Widget data');
+      
+      const checkHash = telegramData.hash;
+      const dataCheckObject = { ...telegramData };
+      delete dataCheckObject.hash;
+      
+      const dataCheckArr = Object.keys(dataCheckObject)
+        .sort()
+        .map(key => `${key}=${dataCheckObject[key]}`);
+      const dataCheckString = dataCheckArr.join('\n');
+
+      const encoder = new TextEncoder();
+      const secretKeyBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(botToken));
+      
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw',
+        secretKeyBuffer,
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign']
+      );
+
+      const signature = await crypto.subtle.sign(
+        'HMAC',
+        cryptoKey,
+        encoder.encode(dataCheckString)
+      );
+
+      const hash = Array.from(new Uint8Array(signature))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+
+      if (hash !== checkHash) {
+        console.error('Invalid Telegram data hash');
+        return new Response(
+          JSON.stringify({ error: 'Invalid authentication data' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const authDate = parseInt(telegramData.auth_date);
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (currentTime - authDate > 86400) {
+        console.error('Telegram data too old');
+        return new Response(
+          JSON.stringify({ error: 'Authentication data expired' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      userData = telegramData;
     }
 
-    // Check auth_date (data shouldn't be older than 24 hours)
-    const authDate = parseInt(telegramData.auth_date);
-    const currentTime = Math.floor(Date.now() / 1000);
-    if (currentTime - authDate > 86400) {
-      console.error('Telegram data too old');
-      return new Response(
-        JSON.stringify({ error: 'Authentication data expired' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    console.log('Telegram data validated successfully');
 
     // Create Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -89,12 +163,12 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Create or get user by telegram_id
-    const email = `telegram_${telegramData.id}@telegram.user`;
+    const email = `telegram_${userData.id}@telegram.user`;
     
     // Try to sign in first
     const signInResult = await supabase.auth.signInWithPassword({
       email,
-      password: telegramData.id.toString(),
+      password: userData.id.toString(),
     });
 
     let userId: string;
@@ -102,18 +176,18 @@ serve(async (req) => {
 
     // If user doesn't exist, create them
     if (signInResult.error) {
-      console.log('Creating new user for Telegram ID:', telegramData.id);
+      console.log('Creating new user for Telegram ID:', userData.id);
       
       const createResult = await supabase.auth.admin.createUser({
         email,
-        password: telegramData.id.toString(),
+        password: userData.id.toString(),
         email_confirm: true,
         user_metadata: {
-          telegram_id: telegramData.id,
-          first_name: telegramData.first_name,
-          last_name: telegramData.last_name,
-          username: telegramData.username,
-          photo_url: telegramData.photo_url,
+          telegram_id: userData.id,
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          username: userData.username,
+          photo_url: userData.photo_url,
         },
       });
 
@@ -129,11 +203,11 @@ serve(async (req) => {
         .from('profiles')
         .insert({
           user_id: userId,
-          telegram_id: parseInt(telegramData.id),
-          first_name: telegramData.first_name,
-          last_name: telegramData.last_name,
-          username: telegramData.username,
-          photo_url: telegramData.photo_url,
+          telegram_id: parseInt(userData.id),
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          username: userData.username,
+          photo_url: userData.photo_url,
         });
 
       if (profileError) {
@@ -143,7 +217,7 @@ serve(async (req) => {
       // Sign in the new user to get session
       const newSignIn = await supabase.auth.signInWithPassword({
         email,
-        password: telegramData.id.toString(),
+        password: userData.id.toString(),
       });
 
       if (newSignIn.error || !newSignIn.data.session) {
@@ -155,7 +229,7 @@ serve(async (req) => {
       userId = signInResult.data.user!.id;
     }
 
-    console.log('Telegram auth successful for:', telegramData.username);
+    console.log('Telegram auth successful for:', userData.username);
 
     return new Response(
       JSON.stringify({

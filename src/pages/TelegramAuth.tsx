@@ -3,32 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
-
-// Extend Window interface for Telegram WebApp
-declare global {
-  interface Window {
-    Telegram?: {
-      WebApp: {
-        initData: string;
-        initDataUnsafe: {
-          user?: {
-            id: number;
-            first_name: string;
-            last_name?: string;
-            username?: string;
-            language_code?: string;
-            photo_url?: string;
-          };
-        };
-        ready: () => void;
-        expand: () => void;
-      };
-    };
-    TelegramLoginWidget: {
-      dataOnauth: (user: any) => void;
-    };
-  }
-}
+import "@/types/telegram";
 
 const TelegramAuth = () => {
   const navigate = useNavigate();
@@ -52,14 +27,16 @@ const TelegramAuth = () => {
         tg.expand();
         
         const user = tg.initDataUnsafe.user;
+        // Отправляем весь initData для верификации на сервере
         authenticateWithTelegram({
-          id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          username: user.username,
-          photo_url: user.photo_url,
-          auth_date: Math.floor(Date.now() / 1000),
-          hash: tg.initData // Use initData as hash for verification
+          initData: tg.initData,
+          user: {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            username: user.username,
+            photo_url: user.photo_url,
+          }
         });
       } else {
         // Not in Telegram WebApp, show login widget
