@@ -2,16 +2,42 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logoSwipeStyle from "@/assets/logo-swipestyle.png";
 
+// Extend Window interface for Telegram WebApp
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp: {
+        initDataUnsafe: {
+          user?: {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+          };
+        };
+      };
+    };
+  }
+}
+
 const Intro = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Показываем интро 3 секунды, затем переходим к ленте
-    const timer = setTimeout(() => {
-      navigate("/feed", { replace: true });
-    }, 3000);
+    // Проверяем, открыто ли в Telegram WebApp
+    const isTelegramWebApp = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    
+    if (isTelegramWebApp) {
+      // Если открыто в Telegram, сразу перенаправляем на авторизацию
+      navigate("/telegram-auth", { replace: true });
+    } else {
+      // Показываем интро 3 секунды, затем переходим к ленте
+      const timer = setTimeout(() => {
+        navigate("/feed", { replace: true });
+      }, 3000);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, [navigate]);
 
   return (
