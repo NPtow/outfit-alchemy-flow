@@ -20,8 +20,9 @@ async function validateTelegramWebAppData(initData: string, botToken: string): P
       return false;
     }
     
-    // Remove hash from params
+    // Remove hash and signature from params (signature is not part of validation)
     params.delete('hash');
+    params.delete('signature');
     
     // Create data-check-string: sorted key=value pairs joined with \n
     const dataCheckString = Array.from(params.entries())
