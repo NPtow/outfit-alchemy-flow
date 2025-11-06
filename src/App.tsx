@@ -16,6 +16,7 @@ import ImportProducts from "./pages/ImportProducts";
 import MigrateImages from "./pages/MigrateImages";
 import UpdateMetadata from "./pages/UpdateMetadata";
 import Analytics from "./pages/Analytics";
+import LayoutTest from "./pages/LayoutTest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/migrate-images" element={<MigrateImages />} />
           <Route path="/update-metadata" element={<UpdateMetadata />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/layout-test" element={<LayoutTest />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
