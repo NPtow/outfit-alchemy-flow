@@ -7,6 +7,7 @@ declare global {
   interface Window {
     Telegram?: {
       WebApp: {
+        initData: string;
         initDataUnsafe: {
           user?: {
             id: number;
@@ -15,6 +16,8 @@ declare global {
             username?: string;
           };
         };
+        ready: () => void;
+        expand: () => void;
       };
     };
   }
@@ -24,20 +27,41 @@ const Intro = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Проверяем, открыто ли в Telegram WebApp
-    const isTelegramWebApp = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    // Проверяем Telegram WebApp с небольшой задержкой для загрузки SDK
+    const checkTelegram = () => {
+      const tg = window.Telegram?.WebApp;
+      
+      if (tg) {
+        console.log("Telegram WebApp detected:", tg.initDataUnsafe);
+        tg.ready();
+        
+        // Проверяем наличие initData (любые данные от Telegram)
+        if (tg.initData && tg.initData.length > 0) {
+          console.log("Redirecting to telegram-auth");
+          navigate("/telegram-auth", { replace: true });
+          return true;
+        }
+      }
+      return false;
+    };
     
-    if (isTelegramWebApp) {
-      // Если открыто в Telegram, сразу перенаправляем на авторизацию
-      navigate("/telegram-auth", { replace: true });
-    } else {
-      // Показываем интро 3 секунды, затем переходим к ленте
-      const timer = setTimeout(() => {
-        navigate("/feed", { replace: true });
-      }, 3000);
+    // Пробуем сразу
+    if (checkTelegram()) return;
+    
+    // Если не сработало, пробуем через 100ms (на случай медленной загрузки SDK)
+    const quickCheck = setTimeout(() => {
+      if (checkTelegram()) return;
+    }, 100);
+    
+    // Если не Telegram, показываем интро и переходим к ленте
+    const timer = setTimeout(() => {
+      navigate("/feed", { replace: true });
+    }, 3000);
 
-      return () => clearTimeout(timer);
-    }
+    return () => {
+      clearTimeout(quickCheck);
+      clearTimeout(timer);
+    };
   }, [navigate]);
 
   return (
