@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.migrate-images]
 verify_jwt = false
+
+[functions.telegram-auth]
+verify_jwt = false
