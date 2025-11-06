@@ -16,6 +16,59 @@ const AdminPanel = () => {
   const [category, setCategory] = useState('');
   const [isCropping, setIsCropping] = useState(false);
   const [cropImageUrl, setCropImageUrl] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [outfitStats, setOutfitStats] = useState<{total: number, min: number, max: number} | null>(null);
+
+  const loadOutfitStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('outfits')
+        .select('items');
+      
+      if (error) throw error;
+
+      const stats = {
+        total: data?.length || 0,
+        min: Math.min(...(data?.map(o => Array.isArray(o.items) ? o.items.length : 0) || [0])),
+        max: Math.max(...(data?.map(o => Array.isArray(o.items) ? o.items.length : 0) || [0]))
+      };
+      setOutfitStats(stats);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
+  const handleGenerateOutfits = async () => {
+    setIsGenerating(true);
+    
+    try {
+      toast({
+        title: 'Генерация образов',
+        description: 'Запускаем генерацию 49 новых образов...',
+      });
+
+      const { data, error } = await supabase.functions.invoke('generate-outfits');
+
+      if (error) throw error;
+
+      toast({
+        title: 'Успех!',
+        description: `Сгенерировано ${data.generated} новых образов`,
+      });
+
+      // Reload stats
+      await loadOutfitStats();
+    } catch (error: any) {
+      console.error('Error generating outfits:', error);
+      toast({
+        title: 'Ошибка',
+        description: error.message || 'Не удалось сгенерировать образы',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleCropImage = async () => {
     if (!cropImageUrl) {
@@ -152,6 +205,59 @@ const AdminPanel = () => {
         <h1 className="text-3xl font-stolzl font-bold text-primary">
           Админ-панель
         </h1>
+
+        {/* Outfit Generation Section */}
+        <Card className="p-6 space-y-4">
+          <h2 className="text-xl font-stolzl font-semibold">Генерация образов</h2>
+          
+          {outfitStats && (
+            <div className="p-4 bg-primary/5 rounded-lg">
+              <p className="text-sm font-semibold mb-2">Текущая статистика:</p>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>Всего образов: {outfitStats.total}</li>
+                <li>Мин. вещей в образе: {outfitStats.min}</li>
+                <li>Макс. вещей в образе: {outfitStats.max}</li>
+              </ul>
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            <Button
+              onClick={loadOutfitStats}
+              variant="outline"
+              className="flex-1"
+            >
+              Обновить статистику
+            </Button>
+            <Button
+              onClick={handleGenerateOutfits}
+              disabled={isGenerating}
+              className="flex-1"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Генерируем...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Сгенерировать 49 образов
+                </>
+              )}
+            </Button>
+          </div>
+
+          <div className="p-4 bg-primary/5 rounded-lg">
+            <h3 className="text-sm font-semibold mb-2">Новые правила генерации:</h3>
+            <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+              <li>Каждый образ содержит 4-5 вещей</li>
+              <li>Обувь и сумка обязательны в каждом образе</li>
+              <li>Верхняя одежда опциональна (5-я вещь)</li>
+              <li>Все неполноценные образы уже удалены</li>
+            </ul>
+          </div>
+        </Card>
 
         {/* Image Cropping Section */}
         <Card className="p-6 space-y-4">

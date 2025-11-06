@@ -143,16 +143,16 @@ serve(async (req) => {
     const systemPrompt = `${STYLING_GUIDE}
 
 CRITICAL INSTRUCTIONS:
-You are a professional fashion stylist. Generate EXACTLY 50 unique, stylish outfit combinations using ONLY the products provided below.
+You are a professional fashion stylist. Generate EXACTLY 49 unique, stylish outfit combinations using ONLY the products provided below.
 
-MANDATORY RULES - EACH OUTFIT MUST INCLUDE:
-1. **MINIMUM 4 items** (Top OR Dress + Bottom + Shoes + Bag)
-2. **REQUIRED categories in EVERY outfit:**
-   - ONE of: Top (футболка, топ, блузка, свитер) OR Dress (платье)
-   - ONE Bottom (брюки, джинсы, юбка) - SKIP ONLY if Dress is used
+MANDATORY RULES - EACH OUTFIT MUST INCLUDE 4-5 ITEMS:
+1. **MINIMUM 4 items, MAXIMUM 5 items**
+2. **REQUIRED categories in EVERY outfit (4 minimum):**
    - ONE Shoes (обувь, туфли, кроссовки, ботинки) - ALWAYS REQUIRED
    - ONE Bag (сумка) - ALWAYS REQUIRED
-3. OPTIONAL: Outerwear (куртка, пальто, пиджак, жакет) - adds 5th item
+   - ONE of: Top (футболка, топ, блузка, свитер) OR Dress (платье) - REQUIRED
+   - ONE Bottom (брюки, джинсы, юбка) - REQUIRED (skip ONLY if Dress is used)
+3. OPTIONAL 5th item: Outerwear (куртка, пальто, пиджак, жакет)
 4. ONLY use product_id values from the list below
 5. Create diverse outfits for different occasions
 6. Distribute outfits evenly across these occasions:
@@ -167,13 +167,13 @@ Categories available: TShirt, Top, Blouse, Dress, Pants, Jeans, Skirt, Blazer, B
 ${productsDescription.substring(0, 30000)}
 
 OUTPUT FORMAT:
-Return ONLY a JSON array of exactly 50 objects. Each object must have:
+Return ONLY a JSON array of exactly 49 objects. Each object must have EXACTLY 4-5 items:
 {
   "occasion": "work" | "everyday" | "evening" | "home",
-  "items": ["product_id1", "product_id2", "product_id3", "product_id4", ...]
+  "items": ["product_id1", "product_id2", "product_id3", "product_id4"] // or 5 items with outerwear
 }
 
-CORRECT EXAMPLES (4-5 items each):
+CORRECT EXAMPLES (4-5 items, SHOES & BAG ALWAYS INCLUDED):
 [
   {
     "occasion": "work",
@@ -185,13 +185,14 @@ CORRECT EXAMPLES (4-5 items each):
   },
   {
     "occasion": "evening",
-    "items": ["Dress_555", "Heels_666", "Bag_777"]
+    "items": ["Dress_555", "Heels_666", "Bag_777", "Blazer_888"]
   }
 ]
 
 WRONG EXAMPLES (DO NOT CREATE):
-❌ {"items": ["Top_123", "Pants_456"]} - Missing Shoes and Bag!
-❌ {"items": ["Dress_789", "Bag_012"]} - Missing Shoes!
+❌ {"items": ["Top_123", "Pants_456"]} - Only 2 items, missing Shoes and Bag!
+❌ {"items": ["Dress_789", "Bag_012"]} - Only 2 items, missing Shoes!
+❌ {"items": ["Top_111", "Pants_222", "Shoes_333"]} - Only 3 items, missing Bag!
 
 IMPORTANT: Return ONLY the JSON array, no other text or explanation.`;
 
@@ -208,7 +209,7 @@ IMPORTANT: Return ONLY the JSON array, no other text or explanation.`;
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Generate 50 unique, stylish outfits following all the rules above. Return ONLY the JSON array.' }
+          { role: 'user', content: 'Generate 49 unique, stylish outfits with 4-5 items each. SHOES and BAG are MANDATORY in every outfit. Return ONLY the JSON array.' }
         ],
         temperature: 0.9,
       }),
@@ -262,9 +263,9 @@ IMPORTANT: Return ONLY the JSON array, no other text or explanation.`;
           return false;
         }
 
-        // CRITICAL: Check minimum items count
-        if (outfit.items.length < 3) {
-          console.warn(`❌ Outfit has only ${outfit.items.length} items (minimum 3 required):`, outfit);
+        // CRITICAL: Check items count (4-5 items required)
+        if (outfit.items.length < 4 || outfit.items.length > 5) {
+          console.warn(`❌ Outfit has ${outfit.items.length} items (required: 4-5):`, outfit);
           return false;
         }
 
