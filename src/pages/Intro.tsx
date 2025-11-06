@@ -7,41 +7,12 @@ const Intro = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Проверяем Telegram WebApp с небольшой задержкой для загрузки SDK
-    const checkTelegram = () => {
-      const tg = window.Telegram?.WebApp;
-      
-      if (tg) {
-        console.log("Telegram WebApp detected:", tg.initDataUnsafe);
-        tg.ready();
-        
-        // Проверяем наличие initData (любые данные от Telegram)
-        if (tg.initData && tg.initData.length > 0) {
-          console.log("Redirecting to telegram-auth");
-          navigate("/telegram-auth", { replace: true });
-          return true;
-        }
-      }
-      return false;
-    };
-    
-    // Пробуем сразу
-    if (checkTelegram()) return;
-    
-    // Если не сработало, пробуем через 100ms (на случай медленной загрузки SDK)
-    const quickCheck = setTimeout(() => {
-      if (checkTelegram()) return;
-    }, 100);
-    
-    // Если не Telegram, показываем интро и переходим к ленте
+    // Показываем интро 3 секунды, затем переходим к ленте
     const timer = setTimeout(() => {
       navigate("/feed", { replace: true });
     }, 3000);
 
-    return () => {
-      clearTimeout(quickCheck);
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
