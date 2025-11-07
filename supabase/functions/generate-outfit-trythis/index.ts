@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,33 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    // Get authenticated user or use test user
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    );
-
-    let userId = 'test-user-123'; // Default test user
+    const { userId } = await req.json();
     
-    // Try to get authenticated user if Authorization header exists
-    const authHeader = req.headers.get('Authorization');
-    if (authHeader) {
-      const authClient = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-        {
-          global: {
-            headers: { Authorization: authHeader },
-          },
-        }
-      );
-      const { data: { user } } = await authClient.auth.getUser();
-      if (user) {
-        userId = user.id;
-      }
-    }
-
-    console.log(`🔑 Generating outfit for user: ${userId}`);
+    console.log(`🔑 Generating outfit for user: ${userId || 'anonymous'}`);
 
     // Get Try-This API token
     const TRYTHIS_API_TOKEN = Deno.env.get('TRYTHIS_API_TOKEN');
@@ -47,18 +22,18 @@ serve(async (req) => {
       throw new Error('TRYTHIS_API_TOKEN not configured');
     }
 
-    // Call Try-This API with POST (GET with body not supported in Deno fetch)
+    // Call Try-This API with GET request
     console.log('📞 Calling Try-This API...');
     const trythisResponse = await fetch('https://try-this.ru/get_outfit/', {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
       body: JSON.stringify({
         token: TRYTHIS_API_TOKEN,
-        user_id: userId,
-        include_cloths: null
+        user_id: userId || '123',
+        include_cloths: [{}]
       })
     });
 
@@ -71,32 +46,11 @@ serve(async (req) => {
     const trythisData = await trythisResponse.json();
     console.log('✅ Received outfit from Try-This:', trythisData);
 
-    // Validate response structure
-    if (!trythisData.payload || !trythisData.payload.cloths) {
-      throw new Error('Invalid response from Try-This API');
-    }
-
-    // Save outfit to database
-    const { data: savedOutfit, error: saveError } = await supabaseClient
-      .from('trythis_outfits')
-      .insert({
-        user_id: userId,
-        items: trythisData.payload.cloths
-      })
-      .select()
-      .single();
-
-    if (saveError) {
-      console.error('Error saving outfit:', saveError);
-      throw saveError;
-    }
-
-    console.log('💾 Saved outfit to database:', savedOutfit.id);
-
+    // Return the result directly without saving to database
     return new Response(
       JSON.stringify({
         success: true,
-        outfit: savedOutfit
+        cloths: trythisData.cloths || []
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
