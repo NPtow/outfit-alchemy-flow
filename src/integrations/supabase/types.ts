@@ -233,6 +233,27 @@ export type Database = {
         }
         Relationships: []
       }
+      trythis_outfits: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_action_logs: {
         Row: {
           action_type: string
