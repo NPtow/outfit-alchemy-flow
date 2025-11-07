@@ -406,64 +406,65 @@ export const VerticalOutfitFeed = ({
             }}
             className="absolute inset-0 flex items-center justify-center"
           >
-          {/* Action Buttons - Right Side */}
-          <div className="absolute right-3 sm:right-6 bottom-40 sm:bottom-52 z-20 flex flex-col gap-3 sm:gap-4">
-            {/* Like Button */}
-            <button
-              onClick={handleLike}
-              disabled={showCarousel}
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
-              aria-label="Like"
-            >
-              <img 
-                src={isLiked ? likeActive : likeDefault} 
-                alt="Like" 
-                className="w-full h-full"
-                loading="eager"
-              />
-            </button>
-            
-            {/* Details Button */}
-            <button
-              onClick={() => {
-                setDetailsViewed(true);
-                setCarouselStartIndex(0);
-                // Показываем карусель с небольшой задержкой после смены состояния кнопки
-                setTimeout(() => {
-                  setShowCarousel(true);
-                }, 150);
-              }}
-              disabled={showCarousel}
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
-              aria-label="Details"
-            >
-              <img 
-                src={detailsViewed ? detailsActive : detailsDefault} 
-                alt="Details" 
-                className="w-full h-full"
-                loading="eager"
-              />
-            </button>
-            
-            {/* Share Button */}
-            <button
-              onClick={handleShare}
-              disabled={showCarousel}
-              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
-              aria-label="Share"
-            >
-              <img 
-                src={isShared ? shareActive : shareDefault} 
-                alt="Share" 
-                className="w-full h-full"
-                loading="eager"
-              />
-            </button>
-          </div>
+          {/* Outfit Image - Flexible with margins */}
+          <div className="absolute inset-0 m-[2mm] mb-[calc(2mm+60px)] flex items-center justify-center">
+            <div className="relative w-full h-full bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
+              {/* Action Buttons - Inside white container, left bottom */}
+              <div className="absolute left-[2mm] bottom-[10mm] z-20 flex flex-col gap-3 sm:gap-4">
+                {/* Like Button */}
+                <button
+                  onClick={handleLike}
+                  disabled={showCarousel}
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  aria-label="Like"
+                >
+                  <img 
+                    src={isLiked ? likeActive : likeDefault} 
+                    alt="Like" 
+                    className="w-full h-full"
+                    loading="eager"
+                  />
+                </button>
+                
+                {/* Details Button */}
+                <button
+                  onClick={() => {
+                    setDetailsViewed(true);
+                    setCarouselStartIndex(0);
+                    // Показываем карусель с небольшой задержкой после смены состояния кнопки
+                    setTimeout(() => {
+                      setShowCarousel(true);
+                    }, 150);
+                  }}
+                  disabled={showCarousel}
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  aria-label="Details"
+                >
+                  <img 
+                    src={detailsViewed ? detailsActive : detailsDefault} 
+                    alt="Details" 
+                    className="w-full h-full"
+                    loading="eager"
+                  />
+                </button>
+                
+                {/* Share Button */}
+                <button
+                  onClick={handleShare}
+                  disabled={showCarousel}
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  aria-label="Share"
+                >
+                  <img 
+                    src={isShared ? shareActive : shareDefault} 
+                    alt="Share" 
+                    className="w-full h-full"
+                    loading="eager"
+                  />
+                </button>
+              </div>
 
-          {/* Outfit Image */}
-          <div className="relative w-[340px] h-[527px] sm:w-[380px] sm:h-[589px] md:w-[420px] md:h-[651px] mx-auto bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
-            <OutfitCollage 
+              <OutfitCollage
               items={assignFinalGridLayout(
                 currentOutfit.items.map(item => ({
                   id: item.id,
@@ -478,7 +479,8 @@ export const VerticalOutfitFeed = ({
                 }))
               )}
               outfitId={currentOutfit.id}
-            />
+              />
+            </div>
           </div>
 
           {/* Scroll Indicator */}
