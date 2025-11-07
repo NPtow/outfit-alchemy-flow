@@ -106,9 +106,11 @@ serve(async (req) => {
     }
 
     // Get unseen outfits for this user
-    // Limit viewed IDs to last 200 to avoid URL length issues
-    const recentViewedIds = viewedOutfitIds.slice(-200);
-    console.log(`🔍 Filtering out ${recentViewedIds.length} recently viewed outfits`);
+    // Only exclude last 50 viewed to ensure we always have outfits to show
+    // If user viewed more than available, they'll see repeats (which is fine)
+    const maxExclude = Math.min(50, Math.floor((totalOutfits || 100) * 0.5)); // Exclude max 50% of total
+    const recentViewedIds = viewedOutfitIds.slice(-maxExclude);
+    console.log(`🔍 Filtering out ${recentViewedIds.length} recently viewed outfits (from ${viewedOutfitIds.length} total views)`);
     
     let outfitsQuery = supabase
       .from('outfits')
