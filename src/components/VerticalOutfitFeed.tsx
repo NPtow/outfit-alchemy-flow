@@ -111,8 +111,16 @@ export const VerticalOutfitFeed = ({
   // Measure menu heights dynamically
   useEffect(() => {
     const measureMenus = () => {
-      // Measure top menu (CategoryTabs) - with border
-      const topMenu = document.querySelector('[class*="fixed top-0"]');
+      // Measure top menu (CategoryTabs) - более надежный селектор
+      const topMenus = document.querySelectorAll('.fixed');
+      let topMenu = null;
+      topMenus.forEach(el => {
+        const styles = window.getComputedStyle(el);
+        if (styles.top === '0px' && styles.zIndex === '40') {
+          topMenu = el;
+        }
+      });
+      
       if (topMenu) {
         const height = topMenu.getBoundingClientRect().height;
         setTopMenuHeight(height);
@@ -120,7 +128,7 @@ export const VerticalOutfitFeed = ({
       }
       
       // Measure bottom menu (BottomNavigation)
-      const bottomMenu = document.querySelector('nav[class*="fixed bottom"]');
+      const bottomMenu = document.querySelector('nav.fixed');
       if (bottomMenu) {
         const height = bottomMenu.getBoundingClientRect().height;
         setBottomMenuHeight(height);
@@ -448,7 +456,7 @@ export const VerticalOutfitFeed = ({
               bottom: bottomMenuHeight ? `calc(${bottomMenuHeight}px + 2mm + 2mm)` : 'calc(70px + 2mm + 2mm)'
             }}
           >
-            <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center overflow-hidden p-[2mm]">
               {/* Action Buttons - Inside white container, right side */}
               <div className="absolute right-[2mm] bottom-[10mm] z-20 flex flex-col gap-3 sm:gap-4">
                 {/* Like Button */}
