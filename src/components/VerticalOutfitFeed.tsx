@@ -146,19 +146,23 @@ export const VerticalOutfitFeed = ({
       // Preload next outfit
       if (currentIndex < outfits.length - 1) {
         const nextOutfit = outfits[currentIndex + 1];
-        nextOutfit.items.forEach(item => {
-          const img = new Image();
-          img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
-        });
+        if (nextOutfit?.items) {
+          nextOutfit.items.forEach(item => {
+            const img = new Image();
+            img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
+          });
+        }
       }
       
       // Preload previous outfit
       if (currentIndex > 0) {
         const prevOutfit = outfits[currentIndex - 1];
-        prevOutfit.items.forEach(item => {
-          const img = new Image();
-          img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
-        });
+        if (prevOutfit?.items) {
+          prevOutfit.items.forEach(item => {
+            const img = new Image();
+            img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
+          });
+        }
       }
     };
 
