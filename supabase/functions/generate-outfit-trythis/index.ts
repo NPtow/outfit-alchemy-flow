@@ -50,7 +50,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        cloths: trythisData.cloths || []
+        cloths: trythisData.payload?.cloths || []
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
