@@ -13,12 +13,25 @@ const Feed = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
   
-  // Load outfits from new API
+  // Load outfits from Try-This API
   const { data: outfitsData, isLoading: isLoadingOutfits, refetch } = useQuery({
-    queryKey: ['outfits', activeCategory],
-    queryFn: () => {
-      const occasion = activeCategory === 'all' ? 'general' : activeCategory;
-      return outfitsApi.getOutfits(occasion, 20);
+    queryKey: ['trythis-outfits', activeCategory],
+    queryFn: async () => {
+      const products = await outfitsApi.getTryThisOutfit();
+      // Create a single outfit from Try-This response
+      return {
+        outfits: [{
+          id: `trythis_${Date.now()}`,
+          outfit_number: 1,
+          occasion: activeCategory === 'all' ? 'general' : activeCategory,
+          items: products.map(p => p.product_id),
+          products: products,
+          created_at: new Date().toISOString()
+        }],
+        unseenCount: 1,
+        totalCount: 1,
+        viewedCount: 0
+      };
     },
     staleTime: 5000,
   });
@@ -41,15 +54,19 @@ const Feed = () => {
     
     try {
       setIsLoadingMore(true);
-      const occasion = activeCategory === 'all' ? 'general' : activeCategory;
-      const moreOutfits = await outfitsApi.getOutfits(occasion, 20);
+      const products = await outfitsApi.getTryThisOutfit();
       
-      // Add new outfits that don't already exist
-      setOutfits(prev => {
-        const existingIds = new Set(prev.map(o => o.id));
-        const newOutfits = moreOutfits.outfits.filter(o => !existingIds.has(o.id));
-        return [...prev, ...newOutfits];
-      });
+      // Create a new outfit from Try-This
+      const newOutfit = {
+        id: `trythis_${Date.now()}`,
+        outfit_number: outfits.length + 1,
+        occasion: activeCategory === 'all' ? 'general' : activeCategory,
+        items: products.map(p => p.product_id),
+        products: products,
+        created_at: new Date().toISOString()
+      };
+      
+      setOutfits(prev => [...prev, newOutfit]);
     } catch (error) {
       console.error('Error loading more outfits:', error);
     } finally {
