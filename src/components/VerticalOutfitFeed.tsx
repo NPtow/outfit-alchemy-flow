@@ -407,11 +407,11 @@ export const VerticalOutfitFeed = ({
             className="absolute inset-0 flex items-center justify-center"
           >
           {/* Outfit Image - Flexible with margins from top and bottom menus */}
-          {/* Top menu height: ~120px (title + tabs + padding), Bottom menu: ~70px + 24px bottom offset = 94px */}
+          {/* Top menu height: ~100px (title + tabs + padding), Bottom menu: ~70px + 24px bottom offset = 94px */}
           <div 
             className="absolute left-[2mm] right-[2mm] flex items-center justify-center"
             style={{
-              top: 'calc(120px + 2mm)',
+              top: 'calc(100px + 2mm)',
               bottom: 'calc(94px + 2mm)'
             }}
           >
@@ -422,7 +422,7 @@ export const VerticalOutfitFeed = ({
                 <button
                   onClick={handleLike}
                   disabled={showCarousel}
-                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Like"
                 >
                   <img 
@@ -444,7 +444,7 @@ export const VerticalOutfitFeed = ({
                     }, 150);
                   }}
                   disabled={showCarousel}
-                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Details"
                 >
                   <img 
@@ -459,7 +459,7 @@ export const VerticalOutfitFeed = ({
                 <button
                   onClick={handleShare}
                   disabled={showCarousel}
-                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Share"
                 >
                   <img 
