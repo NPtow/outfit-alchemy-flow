@@ -104,7 +104,37 @@ export const VerticalOutfitFeed = ({
   const [touchEnd, setTouchEnd] = useState(0);
   const [viewStartTime, setViewStartTime] = useState(Date.now());
   const [userId, setUserId] = useState<string | null>(null);
+  const [topMenuHeight, setTopMenuHeight] = useState(0);
+  const [bottomMenuHeight, setBottomMenuHeight] = useState(0);
   const { toast } = useToast();
+
+  // Measure menu heights dynamically
+  useEffect(() => {
+    const measureMenus = () => {
+      // Measure top menu (CategoryTabs)
+      const topMenu = document.querySelector('[class*="fixed top-0"]');
+      if (topMenu) {
+        setTopMenuHeight(topMenu.getBoundingClientRect().height);
+      }
+      
+      // Measure bottom menu (BottomNavigation)
+      const bottomMenu = document.querySelector('nav[class*="fixed bottom"]');
+      if (bottomMenu) {
+        setBottomMenuHeight(bottomMenu.getBoundingClientRect().height);
+      }
+    };
+
+    // Measure on mount
+    measureMenus();
+    
+    // Measure on resize
+    window.addEventListener('resize', measureMenus);
+    
+    // Measure after fonts load (affects menu height)
+    document.fonts.ready.then(measureMenus);
+    
+    return () => window.removeEventListener('resize', measureMenus);
+  }, []);
 
   // Get authenticated user ID
   useEffect(() => {
@@ -407,12 +437,11 @@ export const VerticalOutfitFeed = ({
             className="absolute inset-0 flex items-center justify-center"
           >
           {/* Outfit Image - Flexible with margins from top and bottom menus */}
-          {/* Top menu height: ~120px, Bottom menu: height ~70px + 2mm margin = ~70px */}
           <div 
             className="absolute left-[2mm] right-[2mm] flex items-center justify-center"
             style={{
-              top: 'calc(120px + 2mm)',
-              bottom: 'calc(70px + 2mm + 2mm)'
+              top: topMenuHeight ? `calc(${topMenuHeight}px + 2mm)` : 'calc(120px + 2mm)',
+              bottom: bottomMenuHeight ? `calc(${bottomMenuHeight}px + 2mm + 2mm)` : 'calc(70px + 2mm + 2mm)'
             }}
           >
             <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center overflow-hidden">
