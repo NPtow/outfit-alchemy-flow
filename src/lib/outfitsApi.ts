@@ -14,7 +14,6 @@ export interface OutfitItem {
   style?: string;
   price?: number;
   image_processed?: string;
-  image_path?: string;
   shop_link?: string;
 }
 
@@ -87,8 +86,7 @@ class OutfitsApi {
         ...outfit,
         products: outfit.products.map((product: any) => ({
           ...product,
-          image_processed: getImageUrl(product.image_processed),
-          image_path: product.image_path
+          image_processed: getImageUrl(product.image_processed)
         }))
       }))
     };

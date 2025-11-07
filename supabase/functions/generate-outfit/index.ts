@@ -16,52 +16,37 @@ function getExternalImageUrl(path: string): string {
 }
 
 // Fashion styling guide content
-const STYLING_GUIDE = `## AI STYLIST INSTRUCTIONS
+const STYLING_GUIDE = `The Ultimate Guide to Fashion Styling Rules:
 
-**Your Role:** Create fashionable, harmonious outfits following styling rules.
+1. PROPORTION & BALANCE - The Golden Rule: Fitted + Loose = Perfection
+- Tight top → wide-leg pants or flowing skirt
+- Fitted bottom → oversized sweater or loose top
+- NEVER tight on both top and bottom
 
-### OUTPUT FORMAT
-Return ONLY a JSON array. Each object:
-- occasion: work, everyday, evening, or special
-- product_ids: array of exact product_id strings
+2. COLOR MASTERY
+- Neutrals: black, navy, white, gray, beige work with everything
+- Classic combos: navy+white+camel, black+white+gold, gray+pink+cream
+- Warm colors (red, orange, yellow) = approachable and energetic
+- Cool colors (blue, green, purple) = calm and reliable
 
-### OUTFIT COMPOSITION RULES
-1. Each outfit: 4-5 items ONLY
-2. MANDATORY in EVERY outfit:
-   - 1 x Shoes
-   - 1 x Bag
-   - 1 x Top + 1 x Bottom OR 1 x Dress
-3. OPTIONAL 5th item: Outerwear
+3. PATTERN MIXING
+- Beginner: One pattern + solid colors
+- Intermediate: Mix different pattern scales (small polka dots + large plaid)
+- Advanced: Mix patterns with shared colors
+- Safety rule: Use neutral piece to calm bold patterns
 
-### STYLING RULES
+4. FABRIC & TEXTURE
+- Mix smooth with rough, soft with structured
+- Cotton pairs with: denim, linen, wool, leather
+- Silk pairs with: cashmere, cotton, leather
+- Denim is universal mixer
 
-**Proportions:**
-- Fitted top → loose bottom
-- Fitted bottom → loose top
-- FORBIDDEN: fitted top + fitted bottom
-
-**Color:**
-- Max 3 main colors per outfit
-- Neutrals (black, white, gray, beige, navy) unlimited
-- Work: neutral/muted palettes
-- Evening: bolder combinations
-
-**Accessories:**
-- Sneakers/Flats: everyday only
-- Heels/Boots: work, evening, special
-- Tote/Backpack: everyday, work
-- Clutch/Crossbody: evening, special
-
-**Patterns:**
-- Safe: 1 pattern + solids
-- Advanced: 2 patterns if different scales
-- FORBIDDEN: two large patterns
-
-**Occasion Guidelines:**
-- Work: crisp lines, muted colors
-- Everyday: comfortable, versatile
-- Evening: elegant, statement pieces
-- Special: festive, polished`;
+5. OUTFIT BUILDING RULES
+- Create focal point: choose ONE statement piece
+- Balance proportions: fitted + loose
+- Stick to 3-4 colors maximum
+- Match metals in accessories
+- Consider occasion and season`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {

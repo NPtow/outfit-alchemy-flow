@@ -111,8 +111,11 @@ const Feed = () => {
         {/* Feed ready */}
         {!isLoadingOutfits && filteredOutfits.length > 0 && (
           <VerticalOutfitFeed 
-            outfits={filteredOutfits.map(outfit => {
-              const items = outfit.products.map(product => ({
+            outfits={filteredOutfits.map(outfit => ({
+              id: outfit.id,
+              image: '', // Will be generated from products
+              occasion: outfit.occasion,
+              items: outfit.products.map(product => ({
                 id: product.id,
                 name: product.product_name,
                 brand: '',
@@ -120,21 +123,19 @@ const Feed = () => {
                 itemNumber: product.product_id,
                 price: product.price || 0,
                 shopUrl: product.shop_link || '',
-                // Use placeholder image if no image available
-                image: product.image_processed || product.image_path || `https://placehold.co/400x600/e5e7eb/9ca3af?text=${product.category}`,
-                position: { left: '0%', top: '0%' },
+                image: product.image_processed || '',
+                position: { left: '0%', top: '0%' }, // Will be calculated in VerticalOutfitFeed
                 placement: 'below' as const
-              }));
-              
-              console.log(`✅ Outfit ${outfit.id}: ${items.length} items (with placeholders if needed)`);
-              
-              return {
-                id: outfit.id,
-                image: '',
-                occasion: outfit.occasion,
-                items
-              };
-            })}
+              })).filter(item => {
+                // Log and filter out items with no image
+                if (!item.image) {
+                  console.warn('⚠️ Product missing image:', item.itemNumber);
+                  return false;
+                }
+                console.log('✅ Product image URL:', item.image);
+                return true;
+              })
+            }))}
             onView={handleOutfitView}
             onInteraction={handleLoadMore}
             useML={false}

@@ -14,7 +14,7 @@ import detailsDefault from "@/assets/icon_details_mode_default.svg";
 import detailsActive from "@/assets/icon_details_mode_active.svg";
 import { ItemCarousel } from "./ItemCarousel";
 import { OutfitCollage, CollageItem } from "./OutfitCollage";
-import { assignFinalGridLayout } from "@/lib/gridLayoutsFinal";
+import { getOutfitLayout, getCategoryPosition } from "@/lib/outfitLayouts";
 
 // Category mapping from English to Russian for layout positioning
 const categoryMapping: Record<string, string> = {
@@ -146,23 +146,19 @@ export const VerticalOutfitFeed = ({
       // Preload next outfit
       if (currentIndex < outfits.length - 1) {
         const nextOutfit = outfits[currentIndex + 1];
-        if (nextOutfit?.items) {
-          nextOutfit.items.forEach(item => {
-            const img = new Image();
-            img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
-          });
-        }
+        nextOutfit.items.forEach(item => {
+          const img = new Image();
+          img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
+        });
       }
       
       // Preload previous outfit
       if (currentIndex > 0) {
         const prevOutfit = outfits[currentIndex - 1];
-        if (prevOutfit?.items) {
-          prevOutfit.items.forEach(item => {
-            const img = new Image();
-            img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
-          });
-        }
+        prevOutfit.items.forEach(item => {
+          const img = new Image();
+          img.src = item.image || `/clothing-images/${item.category.toLowerCase()}.png`;
+        });
       }
     };
 
@@ -464,8 +460,22 @@ export const VerticalOutfitFeed = ({
           {/* Outfit Image */}
           <div className="relative w-[340px] h-[527px] sm:w-[380px] sm:h-[589px] md:w-[420px] md:h-[651px] mx-auto bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
             <OutfitCollage 
-              items={assignFinalGridLayout(
-                currentOutfit.items.map(item => ({
+              items={currentOutfit.items.map(item => {
+                // Map English category to Russian for layout
+                const russianCategory = categoryMapping[item.category] || item.category.toLowerCase();
+                
+                // Get layout pattern for this outfit composition
+                const mappedItems = currentOutfit.items.map(i => ({
+                  category: categoryMapping[i.category] || i.category.toLowerCase()
+                }));
+                const layout = getOutfitLayout(mappedItems);
+                const position = getCategoryPosition(russianCategory, layout);
+                
+                // If position not found in layout, use a default
+                const defaultPosition = { left: 0.3, top: 0.3, right: 0.7, bottom: 0.7 };
+                const pos = position || defaultPosition;
+                
+                return {
                   id: item.id,
                   name: item.name,
                   brand: item.brand,
@@ -474,9 +484,9 @@ export const VerticalOutfitFeed = ({
                   price: item.price,
                   shopUrl: item.shopUrl,
                   image: item.image || `/clothing-images/${item.category.toLowerCase()}.png`,
-                  position: { left: 0, top: 0, right: 1, bottom: 1 } // temporary, will be replaced by assignFinalGridLayout
-                }))
-              )}
+                  position: pos
+                } as CollageItem;
+              })}
               outfitId={currentOutfit.id}
             />
           </div>
