@@ -407,12 +407,12 @@ export const VerticalOutfitFeed = ({
             className="absolute inset-0 flex items-center justify-center"
           >
           {/* Outfit Image - Flexible with margins from top and bottom menus */}
-          {/* Top menu height: ~120px (title + tabs + padding), Bottom menu: ~70px + 24px bottom offset = 94px */}
+          {/* Top menu height: ~120px, Bottom menu: height ~70px + 2mm margin = ~70px */}
           <div 
             className="absolute left-[2mm] right-[2mm] flex items-center justify-center"
             style={{
               top: 'calc(120px + 2mm)',
-              bottom: 'calc(94px + 2mm)'
+              bottom: 'calc(70px + 2mm + 2mm)'
             }}
           >
             <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center overflow-hidden">
