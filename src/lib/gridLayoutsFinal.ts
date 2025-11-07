@@ -44,11 +44,11 @@ const pattern3_DressOuter = {
 // 2. Определяем типы категорий
 const categoryRules = {
   DRESS: ["платье", "dress"],
-  OUTER: ["куртка", "пиджак", "пальто", "jacket", "coat"],
-  TOP:   ["топ", "футболка", "блузка", "свитер", "tshirt", "blouse", "sweater"],
+  OUTER: ["куртка", "пиджак", "пальто", "jacket", "coat", "down", "winter"],
+  TOP:   ["топ", "футболка", "блузка", "свитер", "tshirt", "blouse", "sweater", "jumper", "shirt"],
   BOTTOM:["брюки", "юбка", "джинсы", "pants", "skirt", "jeans"],
   BAG:   ["сумка", "bag"],
-  SHOES: ["обувь", "туфли", "кроссовки", "ботинки", "shoes"],
+  SHOES: ["обувь", "туфли", "кроссовки", "ботинки", "shoes", "boots", "ankle"],
 };
 
 function getCategoryType(category: string): keyof typeof categoryRules | null {
@@ -76,8 +76,10 @@ export function assignFinalGridLayout(items: CollageItem[]): CollageItem[] {
 
   return items.map(item => {
     const type = getCategoryType(item.category);
-    // Находим позицию по типу, даже если в паттерне нет такого ключа (например, DRESS в pattern1)
-    const position = type ? pattern[type] : { left: 0.3, top: 0.3, right: 0.7, bottom: 0.7 };
+    // Находим позицию по типу, если она есть в паттерне
+    const position = (type && pattern[type]) 
+      ? pattern[type] 
+      : { left: 0.3, top: 0.3, right: 0.7, bottom: 0.7 };
     return { ...item, position };
   });
 }
