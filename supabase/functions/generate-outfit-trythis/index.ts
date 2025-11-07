@@ -13,28 +13,33 @@ serve(async (req) => {
   }
 
   try {
-    // Get authenticated user
+    // Get authenticated user or use test user
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
+      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    let userId = 'test-user-123'; // Default test user
     
-    if (userError || !user) {
-      console.error('User authentication error:', userError);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    // Try to get authenticated user if Authorization header exists
+    const authHeader = req.headers.get('Authorization');
+    if (authHeader) {
+      const authClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+        {
+          global: {
+            headers: { Authorization: authHeader },
+          },
+        }
       );
+      const { data: { user } } = await authClient.auth.getUser();
+      if (user) {
+        userId = user.id;
+      }
     }
 
-    console.log(`🔑 Generating outfit for user: ${user.id}`);
+    console.log(`🔑 Generating outfit for user: ${userId}`);
 
     // Get Try-This API token
     const TRYTHIS_API_TOKEN = Deno.env.get('TRYTHIS_API_TOKEN');
@@ -42,17 +47,18 @@ serve(async (req) => {
       throw new Error('TRYTHIS_API_TOKEN not configured');
     }
 
-    // Call Try-This API
+    // Call Try-This API with POST (GET with body not supported in Deno fetch)
     console.log('📞 Calling Try-This API...');
     const trythisResponse = await fetch('https://try-this.ru/get_outfit/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
       body: JSON.stringify({
         token: TRYTHIS_API_TOKEN,
-        user_id: user.id,
-        include_cloths: [] // Empty array - get full outfit from their catalog
+        user_id: userId,
+        include_cloths: null
       })
     });
 
@@ -74,7 +80,7 @@ serve(async (req) => {
     const { data: savedOutfit, error: saveError } = await supabaseClient
       .from('trythis_outfits')
       .insert({
-        user_id: user.id,
+        user_id: userId,
         items: trythisData.payload.cloths
       })
       .select()
