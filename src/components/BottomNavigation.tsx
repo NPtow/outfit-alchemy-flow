@@ -49,9 +49,9 @@ export const BottomNavigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 px-3 sm:px-4">
-      <div className="relative rounded-full px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-white/[0.32] to-black/[0.32] backdrop-blur-md shadow-lg">
-        <div className="flex items-center justify-center gap-6 sm:gap-8 md:gap-10">
+    <nav className="fixed bottom-4 sm:bottom-6 left-0 right-0 z-50 mx-[2mm]">
+      <div className="relative rounded-full px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-white/[0.32] to-black/[0.32] backdrop-blur-md shadow-lg">
+        <div className="flex items-center justify-around gap-2 sm:gap-4">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             const iconSrc = isActive && item.activeIcon ? item.activeIcon : item.icon;
