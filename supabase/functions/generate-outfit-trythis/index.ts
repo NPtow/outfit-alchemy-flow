@@ -24,16 +24,17 @@ serve(async (req) => {
 
     // Call Try-This API with GET request
     console.log('📞 Calling Try-This API...');
-    const params = new URLSearchParams({
-      token: TRYTHIS_API_TOKEN,
-      user_id: userId || '123'
-    });
     
-    const trythisResponse = await fetch(`https://try-this.ru/get_outfit/?${params.toString()}`, {
+    const trythisResponse = await fetch('https://try-this.ru/get_outfit/', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-      }
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token: TRYTHIS_API_TOKEN,
+        user_id: userId || '123'
+      })
     });
 
     if (!trythisResponse.ok) {
