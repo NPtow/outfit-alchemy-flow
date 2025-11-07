@@ -111,21 +111,25 @@ export const VerticalOutfitFeed = ({
   // Measure menu heights dynamically
   useEffect(() => {
     const measureMenus = () => {
-      // Measure top menu (CategoryTabs)
+      // Measure top menu (CategoryTabs) - with border
       const topMenu = document.querySelector('[class*="fixed top-0"]');
       if (topMenu) {
-        setTopMenuHeight(topMenu.getBoundingClientRect().height);
+        const height = topMenu.getBoundingClientRect().height;
+        setTopMenuHeight(height);
+        console.log('Top menu height:', height);
       }
       
       // Measure bottom menu (BottomNavigation)
       const bottomMenu = document.querySelector('nav[class*="fixed bottom"]');
       if (bottomMenu) {
-        setBottomMenuHeight(bottomMenu.getBoundingClientRect().height);
+        const height = bottomMenu.getBoundingClientRect().height;
+        setBottomMenuHeight(height);
+        console.log('Bottom menu height:', height);
       }
     };
 
-    // Measure on mount
-    measureMenus();
+    // Measure on mount with delay to ensure render
+    setTimeout(measureMenus, 100);
     
     // Measure on resize
     window.addEventListener('resize', measureMenus);
