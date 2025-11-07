@@ -6,9 +6,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const STYLING_GUIDE = `## 🚨 CRITICAL INSTRUCTIONS FOR AI STYLIST 🚨
+const STYLING_GUIDE = `# Improved System Prompt for AI Stylist
+
+---
+
+## 🚨 CRITICAL INSTRUCTIONS FOR AI STYLIST 🚨
 
 **Your Role:** You are an advanced AI Stylist. Your task is to create fashionable, harmonious, and diverse outfits by strictly following the rules outlined below. You must act as an expert who understands not only fashion but also the technical requirements for the output format.
+
+**Primary Goal:** Generate unique outfits using **ONLY** the \`product_id\` from the provided product list.
 
 ### 1. OUTPUT FORMAT (MUST BE STRICTLY FOLLOWED)
 
@@ -56,8 +62,6 @@ Every generated outfit **MUST** adhere to these rules. Outfits that do not compl
 
 ### 3. FORMALIZED STYLING RULES
 
-Use these rules as a technical guide. The original "The Ultimate Guide" text serves as your knowledge base and inspiration.
-
 - **Rule of Proportions:**
   - If a top's \`fit_attribute\` = \`fitted\`, the bottom's \`fit_attribute\` should be \`loose\` or \`wide\`.
   - If a bottom's \`fit_attribute\` = \`skinny\` or \`slim\`, the top's \`fit_attribute\` should be \`oversized\` or \`loose\`.
@@ -73,55 +77,149 @@ Use these rules as a technical guide. The original "The Ultimate Guide" text ser
   - **Shoes:**
     - \`Sneakers\` and \`Flats\` — only for \`occasion: everyday\`.
     - \`Heels\` and \`AnkleBoots\` — suitable for \`occasion: work\`, \`evening\`, \`special\`.
-    - Do not pair athletic shoes with evening dresses (\`Dress\` with \`style: evening\` attribute).
+    - Do not pair athletic shoes with evening dresses.
   - **Bags:**
-    - \`Tote\` or \`Backpack\` — for \`occasion: everyday\` or \`work\` (if the style is not too formal).
-    - \`Clutch\` or \`Crossbody\` (small bag) — for \`occasion: evening\` and \`special\`.
+    - \`Tote\` or \`Backpack\` — for \`occasion: everyday\` or \`work\`.
+    - \`Clutch\` or \`Crossbody\` — for \`occasion: evening\` and \`special\`.
 
 - **Rule of Patterns:**
   - **Safe Rule:** 1 item with a \`pattern\` + the rest \`solid\`.
   - **Advanced Rule:** You can combine 2 patterned items if:
-    - One pattern is large, the other is small (e.g., \`pattern: large_floral\` and \`pattern: small_dots\`).
-    - The patterns belong to the same theme (e.g., \`pattern: stripes\` and \`pattern: nautical_print\`).
-    - **FORBIDDEN:** Combining two large, active patterns (e.g., \`animal_print\` and \`large_floral\`).
+    - One pattern is large, the other is small.
+    - The patterns belong to the same theme.
+  - **FORBIDDEN:** Combining two large, active patterns.
 
 ### KNOWLEDGE BASE: The Ultimate Guide to Fashion Styling Rules
 
 **1. UNDERSTANDING GARMENT PERSONALITIES**
-Every piece of clothing has a personality:
-- T-shirt: casual comfort, from relaxed weekend to effortless chic
-- Blouse: elevated femininity, from business to romantic
-- Dress: one-piece statements, adaptable to any situation
+- T-shirt: casual comfort
+- Blouse: elevated femininity
+- Dress: one-piece statements
 
-**2. THE ART OF PROPORTION & BALANCE**
-The Golden Rule: Fitted + Loose = Perfection
-- Tight top → wide pants or flowing skirt
-- Fitted bottom → oversized sweater or loose top
-- NEVER tight on both top and bottom
+**2. PROPORTION & BALANCE**
+Golden Rule: Fitted + Loose = Perfection
+- Tight top → wide pants
+- Fitted bottom → loose top
+- NEVER tight on both
 
-**3. COLOR MASTERY: THE PSYCHOLOGY OF HUES**
-- Neutrals (black, navy, white, gray, beige) work with everything
-- Classic combos: navy+white+camel, black+white+gold, gray+pink+cream
-- Warm colors = approachable, energetic
-- Cool colors = calm, reliable
+**3. COLOR MASTERY**
+- Neutrals work with everything
+- Classic combos: navy+white+camel, black+white+gold
+- Warm = energetic, Cool = reliable
 
-**4. PATTERN MIXING: THE BRAVE AND THE BEAUTIFUL**
-- Beginner: One pattern + solid colors
-- Intermediate: Mix different scales (small dots + large plaid)
-- Advanced: Mix patterns with shared colors
-- Safety: Use neutral to calm bold patterns
+**4. PATTERN MIXING**
+- Beginner: One pattern + solids
+- Intermediate: Mix different scales
+- Advanced: Shared colors
 
-**5. FABRIC & TEXTURE STORYTELLING**
-- Mix smooth with rough, soft with structured
-- Cotton pairs with: denim, linen, wool, leather
-- Silk pairs with: cashmere, cotton, leather
+**5. FABRIC & TEXTURE**
+- Mix smooth with rough
 - Denim is universal mixer
 
-**6. OCCASION DRESSING: READING THE ROOM**
-- Work: crisp lines, muted colors, minimal patterns
-- Everyday: comfortable, approachable, versatile
-- Evening: elegant, bolder colors, statement pieces
-- Special: festive, polished, memorable`;
+**6. OCCASION DRESSING**
+- Work: crisp, muted, minimal
+- Everyday: comfortable, versatile
+- Evening: elegant, statement
+- Special: festive, polished`;
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 seconds
+const DEFAULT_N_OUTFITS = 20;
+
+async function callLovableAIWithRetry(prompt: string, apiKey: string, maxRetries = MAX_RETRIES) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`⏳ API call attempt ${attempt}/${maxRetries}...`);
+      
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7,
+        }),
+      });
+
+      if (response.status === 429) {
+        const waitTime = RETRY_DELAY * attempt;
+        console.log(`⚠️  Rate limit exceeded. Waiting ${waitTime}ms...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+
+      if (response.status === 402) {
+        throw new Error('❌ Payment required. Add funds to your Lovable AI workspace.');
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`❌ AI API error (status ${response.status}):`, errorText);
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));
+          continue;
+        }
+        throw new Error(`AI API error after ${maxRetries} attempts: ${errorText}`);
+      }
+
+      const aiResponse = await response.json();
+      let content = aiResponse.choices[0].message.content;
+
+      if (!content) {
+        throw new Error('❌ Empty response from API');
+      }
+
+      console.log(`✅ Response received (${content.length} characters)`);
+
+      // Clean markdown blocks
+      content = content.trim();
+      if (content.startsWith('```json')) {
+        content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      } else if (content.startsWith('```')) {
+        content = content.replace(/```/g, '').trim();
+      }
+
+      // Parse JSON
+      try {
+        const outfits = JSON.parse(content);
+        if (!Array.isArray(outfits)) {
+          throw new Error('Response is not an array');
+        }
+        return outfits;
+      } catch (parseError) {
+        console.error('⚠️  JSON parse error:', parseError);
+        console.error('First 500 chars:', content.substring(0, 500));
+        
+        // Try to extract JSON from text
+        const jsonMatch = content.match(/\[.*\]/s);
+        if (jsonMatch) {
+          try {
+            const outfits = JSON.parse(jsonMatch[0]);
+            console.log('✅ JSON extracted from text');
+            return outfits;
+          } catch {}
+        }
+        
+        if (attempt < maxRetries) {
+          console.log(`🔄 Retry in ${RETRY_DELAY * attempt}ms...`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));
+          continue;
+        }
+        throw new Error(`Failed to parse JSON after ${maxRetries} attempts`);
+      }
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      console.log(`❌ Attempt ${attempt} failed:`, error);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));
+    }
+  }
+  throw new Error('All retry attempts exhausted');
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -129,7 +227,9 @@ serve(async (req) => {
   }
 
   try {
-    console.log('🎨 Starting outfit generation...');
+    console.log('=' .repeat(60));
+    console.log('🎨 OUTFIT GENERATION VIA LOVABLE API');
+    console.log('=' .repeat(60));
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -138,6 +238,31 @@ serve(async (req) => {
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
+
+    // Determine number of outfits (priority: n env var > N_OUTFITS env var > request body > default)
+    let nOutfits = DEFAULT_N_OUTFITS;
+    const envN = Deno.env.get('n');
+    const envNOutfits = Deno.env.get('N_OUTFITS');
+    
+    if (envN) {
+      nOutfits = parseInt(envN);
+      console.log(`📌 Using n=${nOutfits} from environment variable`);
+    } else if (envNOutfits) {
+      nOutfits = parseInt(envNOutfits);
+      console.log(`📌 Using N_OUTFITS=${nOutfits} from environment variable`);
+    } else {
+      try {
+        const body = await req.json();
+        if (body.n || body.count) {
+          nOutfits = body.n || body.count;
+          console.log(`📌 Using n=${nOutfits} from request body`);
+        }
+      } catch {
+        console.log(`📌 Using default value: ${nOutfits}`);
+      }
+    }
+
+    console.log(`📊 Final number of outfits to generate: ${nOutfits}`);
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -186,16 +311,22 @@ serve(async (req) => {
     const shoesCount = shoesCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
     const bagsCount = bagCategories.reduce((sum, cat) => sum + (categoryStats[cat] || 0), 0);
 
-    // Format products for AI
+    // Format products as: product_id | category | product_name (Python script format)
+    console.log('\n📋 Formatting product list...');
     const productsDescription = products?.map(p => 
-      `${p.product_id}: ${p.product_name} (${p.category}) - ${p.style || 'N/A'} - ${p.generated_attributes || 'No attributes'}`
+      `${p.product_id} | ${p.category} | ${p.product_name}`
     ).join('\n') || '';
+    console.log(`✅ Formatted ${products?.length} products`);
 
-    const systemPrompt = `${STYLING_GUIDE}
+    const fullPrompt = `${STYLING_GUIDE}
 
-### AVAILABLE CATALOG INFORMATION
+### 3. AVAILABLE CATALOG INFORMATION
 
-- **Total products:** ${products?.length || 0}
+You must create outfits considering the actual quantity of available items.
+
+- **Overall Statistics:**
+  - Total products in the catalog: ${products?.length || 0}
+
 - **Quantity by Main Types:**
   - Tops (T-shirts, blouses, sweaters): ${topsCount}
   - Bottoms (pants, skirts, jeans): ${bottomsCount}
@@ -204,86 +335,55 @@ serve(async (req) => {
   - Shoes: ${shoesCount}
   - Bags: ${bagsCount}
 
-**IMPORTANT:** Shoes and bags are limited. Do not use the same items too frequently.
+- **IMPORTANT NOTE:** The quantity of shoes and bags is limited. Do not use the same articles too frequently to ensure variety.
 
-### GENERATION INSTRUCTIONS
+## LIST OF AVAILABLE PRODUCTS
 
-Generate EXACTLY 49 unique outfit combinations using ONLY the product_id from the list below.
+Below is the list of all available products. Use **ONLY** the \`product_id\` from this list.
 
-**MANDATORY COMPOSITION:**
-1. Each outfit: 4-5 items ONLY
-2. REQUIRED in EVERY outfit:
-   - 1 x Shoes (MANDATORY)
-   - 1 x Bag (MANDATORY)
-   - 1 x Top + 1 x Bottom OR 1 x Dress (MANDATORY)
-3. OPTIONAL 5th item: Outerwear
+\`\`\`
+${productsDescription.substring(0, 35000)}
+\`\`\`
+
+---
+
+## YOUR TASK
+
+Generate **EXACTLY ${nOutfits}** unique outfit combinations.
+
+**MANDATORY REQUIREMENTS:**
+1. Each outfit: **4-5 items** (4 = standard, 5 = with outerwear)
+2. **REQUIRED in EVERY outfit:**
+   - 1 x Shoes (heels, boots, sneakers, etc.)
+   - 1 x Bag (any type)
+   - 1 x Dress OR (1 x Top + 1 x Bottom)
+3. **OPTIONAL:** 1 x Outerwear (blazer, jacket, coat)
 
 **OCCASION DISTRIBUTION:**
-Distribute evenly across: work, everyday, evening, special
+Distribute evenly across: \`work\`, \`everyday\`, \`evening\`, \`special\`
 
-**OUTPUT FORMAT:**
-Return ONLY a JSON array:
+**OUTPUT FORMAT - CRITICAL:**
+Return **ONLY** a JSON array. No text before or after:
+
+\`\`\`json
 [
   {
     "occasion": "work",
-    "items": ["product_id1", "product_id2", "product_id3", "product_id4", "product_id5"]
+    "items": ["product_id1", "product_id2", "product_id3", "product_id4"]
   }
 ]
+\`\`\`
 
-### AVAILABLE PRODUCTS LIST
+**REMINDER:** Use ONLY \`product_id\` from the list above. Return ONLY the JSON array.`;
 
-${productsDescription.substring(0, 30000)}
-
-**CRITICAL:** Return ONLY the JSON array. No explanations, no markdown, no extra text.`;
-
-    console.log('🤖 Calling Lovable AI...');
-    console.log('System prompt preview:', systemPrompt.substring(0, 500));
-
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Generate 49 unique, stylish outfits with 4-5 items each. SHOES and BAG are MANDATORY in every outfit. Return ONLY the JSON array.' }
-        ],
-        temperature: 0.9,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ AI API error:', response.status, errorText);
-      throw new Error(`AI API error: ${response.status} - ${errorText}`);
-    }
-
-    const aiResponse = await response.json();
-    console.log('✅ AI Response received');
-
-    let content = aiResponse.choices[0].message.content;
-    console.log('Raw AI response:', content.substring(0, 500));
-
-    // Clean up response - remove markdown code blocks if present
-    content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-
-    let generatedOutfits;
-    try {
-      generatedOutfits = JSON.parse(content);
-    } catch (parseError) {
-      console.error('❌ JSON parse error:', parseError);
-      console.error('Content that failed to parse:', content);
-      throw new Error('Failed to parse AI response as JSON');
-    }
-
-    if (!Array.isArray(generatedOutfits)) {
-      throw new Error('AI response is not an array');
-    }
-
-    console.log(`🎯 Generated ${generatedOutfits.length} outfits from AI`);
+    console.log('\n📝 Prompt prepared');
+    console.log(`📏 Prompt length: ${fullPrompt.length} characters`);
+    console.log('\n' + '='.repeat(60));
+    console.log('🚀 Sending request to Lovable AI...');
+    
+    const generatedOutfits = await callLovableAIWithRetry(fullPrompt, LOVABLE_API_KEY);
+    
+    console.log(`\n✅ Successfully generated ${generatedOutfits.length} outfits from AI`);
 
     // Get the highest outfit_number to continue numbering
     const { data: maxOutfitData } = await supabase
@@ -296,7 +396,7 @@ ${productsDescription.substring(0, 30000)}
 
     // Filter and prepare outfits for database
     const outfitsToInsert = generatedOutfits
-      .filter(outfit => {
+      .filter((outfit: any) => {
         // Validate structure
         if (!outfit.occasion || !Array.isArray(outfit.items) || outfit.items.length === 0) {
           console.warn('❌ Invalid outfit structure:', outfit);
@@ -350,16 +450,16 @@ ${productsDescription.substring(0, 30000)}
         existingItemCombinations.add(sortedItems);
         return true;
       })
-      .map(outfit => ({
+      .map((outfit: any) => ({
         outfit_number: nextOutfitNumber++,
         occasion: outfit.occasion,
         items: outfit.items
       }));
 
-    console.log(`💾 Inserting ${outfitsToInsert.length} valid outfits into database...`);
+    console.log(`\n💾 Inserting ${outfitsToInsert.length} valid outfits into database...`);
 
     if (outfitsToInsert.length === 0) {
-      throw new Error('No valid outfits to insert');
+      throw new Error('❌ No valid outfits to insert');
     }
 
     const { data: insertedOutfits, error: insertError } = await supabase
@@ -373,11 +473,42 @@ ${productsDescription.substring(0, 30000)}
     }
 
     console.log(`✅ Successfully inserted ${insertedOutfits?.length} outfits`);
+    
+    // Statistics
+    const occasionStats = outfitsToInsert.reduce((acc: Record<string, number>, o: any) => {
+      acc[o.occasion] = (acc[o.occasion] || 0) + 1;
+      return acc;
+    }, {});
+    
+    const itemCounts = outfitsToInsert.map((o: any) => o.items.length);
+    const avgItems = itemCounts.reduce((sum: number, n: number) => sum + n, 0) / itemCounts.length;
+    const minItems = Math.min(...itemCounts);
+    const maxItems = Math.max(...itemCounts);
+
+    console.log('\n' + '='.repeat(60));
+    console.log('📊 STATISTICS');
+    console.log('='.repeat(60));
+    console.log(`Total outfits: ${insertedOutfits?.length}`);
+    console.log('\nBy occasion:');
+    for (const [occasion, count] of Object.entries(occasionStats)) {
+      console.log(`  - ${occasion}: ${count}`);
+    }
+    console.log(`\nAverage items per outfit: ${avgItems.toFixed(1)}`);
+    console.log(`Min items: ${minItems}`);
+    console.log(`Max items: ${maxItems}`);
+    console.log('='.repeat(60));
 
     return new Response(
       JSON.stringify({
         success: true,
         generated: insertedOutfits?.length || 0,
+        statistics: {
+          total: insertedOutfits?.length,
+          byOccasion: occasionStats,
+          avgItems,
+          minItems,
+          maxItems
+        },
         outfits: insertedOutfits
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
