@@ -22,11 +22,11 @@ serve(async (req) => {
       throw new Error('TRYTHIS_API_TOKEN not configured');
     }
 
-    // Call Try-This API with POST request
+    // Call Try-This API with GET request
     console.log('📞 Calling Try-This API...');
     
     const trythisResponse = await fetch('https://try-this.ru/get_outfit/', {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
