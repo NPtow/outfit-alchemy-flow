@@ -20,7 +20,7 @@ export const CategoryTabs = ({ activeCategory, onCategoryChange }: CategoryTabsP
     <div className="fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-md border-b border-white/10">
       <div className="px-3 sm:px-4 py-4 sm:py-5">
         <h1 className="text-2xl sm:text-3xl font-stolzl font-bold text-white mb-4 sm:mb-5">Главная</h1>
-        <div className="flex overflow-x-auto hide-scrollbar gap-[2mm]">
+        <div className="flex overflow-x-auto hide-scrollbar gap-2">
           {categories.map((category) => (
             <button
               key={category.id}
