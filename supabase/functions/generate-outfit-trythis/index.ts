@@ -26,8 +26,7 @@ serve(async (req) => {
     console.log('📞 Calling Try-This API...');
     const params = new URLSearchParams({
       token: TRYTHIS_API_TOKEN,
-      user_id: userId || '123',
-      include_cloths: JSON.stringify([])
+      user_id: userId || '123'
     });
     
     const trythisResponse = await fetch(`https://try-this.ru/get_outfit/?${params.toString()}`, {
