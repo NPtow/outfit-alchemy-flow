@@ -415,7 +415,7 @@ export const VerticalOutfitFeed = ({
               bottom: 'calc(94px + 2mm)'
             }}
           >
-            <div className="relative w-full h-full bg-white rounded-[32px] flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center overflow-hidden">
               {/* Action Buttons - Inside white container, right side */}
               <div className="absolute right-[2mm] bottom-[10mm] z-20 flex flex-col gap-3 sm:gap-4">
                 {/* Like Button */}
