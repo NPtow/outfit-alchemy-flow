@@ -406,11 +406,11 @@ export const VerticalOutfitFeed = ({
             }}
             className="absolute inset-0 flex items-center justify-center"
           >
-          {/* Outfit Image - Flexible with margins */}
-          <div className="absolute inset-0 m-[2mm] mb-[calc(2mm+60px)] flex items-center justify-center">
+          {/* Outfit Image - Flexible with margins from top and bottom menus */}
+          <div className="absolute top-16 bottom-[80px] left-[2mm] right-[2mm] flex items-center justify-center">
             <div className="relative w-full h-full bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
-              {/* Action Buttons - Inside white container, left bottom */}
-              <div className="absolute left-[2mm] bottom-[10mm] z-20 flex flex-col gap-3 sm:gap-4">
+              {/* Action Buttons - Inside white container, right side */}
+              <div className="absolute right-[2mm] bottom-[10mm] z-20 flex flex-col gap-3 sm:gap-4">
                 {/* Like Button */}
                 <button
                   onClick={handleLike}
