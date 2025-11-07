@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { getSavedOutfits, SavedOutfit } from "@/lib/outfitStorage";
 import { OutfitCollage, CollageItem } from "@/components/OutfitCollage";
-import { getOutfitLayout, getCategoryPosition } from "@/lib/outfitLayouts";
+import { assignFinalGridLayout } from "@/lib/gridLayoutsFinal";
 import { Heart } from "lucide-react";
 
 const MyOutfits = () => {
@@ -52,13 +52,8 @@ const MyOutfits = () => {
               >
                 <OutfitCollage
                   key={`collage-${outfit.id}-${outfit.items.length}`}
-                  items={outfit.items.map(item => {
-                    const layout = getOutfitLayout(outfit.items);
-                    const position = getCategoryPosition(item.category, layout);
-                    const defaultPosition = { left: 0.3, top: 0.3, right: 0.7, bottom: 0.7 };
-                    const pos = position || defaultPosition;
-                    
-                    return {
+                  items={assignFinalGridLayout(
+                    outfit.items.map(item => ({
                       id: item.id,
                       name: item.name,
                       brand: item.brand,
@@ -67,9 +62,9 @@ const MyOutfits = () => {
                       price: item.price,
                       shopUrl: item.shopUrl,
                       image: item.image || `/clothing-images/${item.category.toLowerCase()}.png`,
-                      position: pos
-                    } as CollageItem;
-                  })}
+                      position: { left: 0, top: 0, right: 1, bottom: 1 } // temporary, will be replaced by assignFinalGridLayout
+                    }))
+                  )}
                   outfitId={outfit.id}
                 />
               </div>
