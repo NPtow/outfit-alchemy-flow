@@ -22,19 +22,19 @@ serve(async (req) => {
       throw new Error('TRYTHIS_API_TOKEN not configured');
     }
 
-    // Call Try-This API with POST request
+    // Call Try-This API with GET request
     console.log('📞 Calling Try-This API...');
-    const trythisResponse = await fetch('https://try-this.ru/get_outfit/', {
-      method: 'POST',
+    const params = new URLSearchParams({
+      token: TRYTHIS_API_TOKEN,
+      user_id: userId || '123',
+      include_cloths: JSON.stringify([])
+    });
+    
+    const trythisResponse = await fetch(`https://try-this.ru/get_outfit/?${params.toString()}`, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
         'Accept': 'application/json',
-      },
-      body: JSON.stringify({
-        token: TRYTHIS_API_TOKEN,
-        user_id: userId || '123',
-        include_cloths: []
-      })
+      }
     });
 
     if (!trythisResponse.ok) {
