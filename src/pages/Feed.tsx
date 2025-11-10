@@ -12,7 +12,7 @@
 //   const [outfits, setOutfits] = useState<Outfit[]>([]);
 //   const [isLoadingMore, setIsLoadingMore] = useState(false);
 //   const { toast } = useToast();
-  
+
 //   // Load outfits from Try-This API
 //   const { data: outfitsData, isLoading: isLoadingOutfits, refetch } = useQuery({
 //     queryKey: ['trythis-outfits', activeCategory],
@@ -51,11 +51,11 @@
 //   // Load more outfits when user scrolls near the end
 //   const handleLoadMore = async () => {
 //     if (isLoadingMore) return;
-    
+
 //     try {
 //       setIsLoadingMore(true);
 //       const products = await outfitsApi.getTryThisOutfit();
-      
+
 //       // Create a new outfit from Try-This
 //       const newOutfit = {
 //         id: `trythis_${Date.now()}`,
@@ -65,7 +65,7 @@
 //         products: products,
 //         created_at: new Date().toISOString()
 //       };
-      
+
 //       setOutfits(prev => [...prev, newOutfit]);
 //     } catch (error) {
 //       console.error('Error loading more outfits:', error);
@@ -99,11 +99,11 @@
 
 //   return (
 //     <div className="min-h-screen w-full bg-black">
-//       <CategoryTabs 
-//         activeCategory={activeCategory} 
+//       <CategoryTabs
+//         activeCategory={activeCategory}
 //         onCategoryChange={setActiveCategory}
 //       />
-      
+
 //       <div className="pt-16 pb-14">
 //         {/* Loading outfits */}
 //         {isLoadingOutfits && (
@@ -127,7 +127,7 @@
 
 //         {/* Feed ready */}
 //         {!isLoadingOutfits && filteredOutfits.length > 0 && (
-//           <VerticalOutfitFeed 
+//           <VerticalOutfitFeed
 //             outfits={filteredOutfits.map(outfit => {
 //               const items = outfit.products.map(product => ({
 //                 id: product.id,
@@ -142,9 +142,9 @@
 //                 position: { left: '0%', top: '0%' },
 //                 placement: 'below' as const
 //               }));
-              
+
 //               console.log(`✅ Outfit ${outfit.id}: ${items.length} items (with placeholders if needed)`);
-              
+
 //               return {
 //                 id: outfit.id,
 //                 image: '',
@@ -157,7 +157,7 @@
 //             useML={false}
 //           />
 //         )}
-        
+
 //         {/* Loading more indicator */}
 //         {isLoadingMore && (
 //           <div className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
@@ -165,7 +165,7 @@
 //           </div>
 //         )}
 //       </div>
-      
+
 //       <BottomNavigation />
 //     </div>
 //   );
@@ -173,9 +173,8 @@
 
 // export default Feed;
 
-
 import { useState, useEffect } from "react";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { VerticalOutfitFeed } from "@/components/VerticalOutfitFeed";
 import { CategoryTabs, Category } from "@/components/CategoryTabs";
 import { BottomNavigation } from "@/components/BottomNavigation";
@@ -501,7 +500,7 @@ const Feed = () => {
       ],
     },
   ];
- const staticOutfits = [
+  const staticOutfits = [
     {
       id: "outfit-from-db-1",
       occasion: "Casual Look",
@@ -615,21 +614,15 @@ const Feed = () => {
       ],
     },
   ];
-    
 
   const generatedOutfits = staticOutfits;
   const isGenerating = false;
   const generateError = null;
-   return (
+  return (
     <div className="min-h-screen bg-background pb-20">
-      <CategoryTabs 
-        activeCategory={activeCategory} 
-        onCategoryChange={setActiveCategory} 
-      />
+      <CategoryTabs activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
-      <VerticalOutfitFeed 
-        outfits={generatedOutfits}
-      />
+      <VerticalOutfitFeed outfits={generatedOutfits} />
 
       <BottomNavigation />
     </div>
