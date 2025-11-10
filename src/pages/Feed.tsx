@@ -6,6 +6,7 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { outfitsApi, Outfit } from "@/lib/outfitsApi";
 import { useToast } from "@/hooks/use-toast";
 import { isProductsTableEmpty, autoImportProducts } from "@/lib/importProducts";
+import { supabase } from "@/integrations/supabase/client";
 
 const Feed = () => {
   const [activeCategory, setActiveCategory] = useState<Category>("all");
@@ -13,12 +14,58 @@ const Feed = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
   
-  // Load outfits from Try-This API
+  // Load outfits from database or Try-This API
   const { data: outfitsData, isLoading: isLoadingOutfits, refetch } = useQuery({
-    queryKey: ['trythis-outfits', activeCategory],
+    queryKey: ['outfits', activeCategory],
     queryFn: async () => {
+      // First try to load from database
+      const occasion = activeCategory === 'all' ? null : activeCategory;
+      const query = supabase
+        .from('outfits')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (occasion) {
+        query.eq('occasion', occasion);
+      }
+      
+      const { data: dbOutfits, error } = await query;
+      
+      if (error) {
+        console.error('Error loading outfits from DB:', error);
+      }
+      
+      // If we have outfits in DB, use them
+      if (dbOutfits && dbOutfits.length > 0) {
+        console.log('✅ Loaded outfits from database:', dbOutfits.length);
+        return {
+          outfits: dbOutfits.map(outfit => ({
+            id: outfit.id,
+            outfit_number: outfit.outfit_number,
+            occasion: outfit.occasion,
+            items: Array.isArray(outfit.items) ? outfit.items.map((item: any) => item.product_id || '') : [],
+            products: Array.isArray(outfit.items) ? outfit.items.map((item: any) => ({
+              id: item.id || '',
+              product_id: item.product_id || '',
+              category: item.category || '',
+              product_name: item.product_name || '',
+              price: item.price || 0,
+              image_path: item.image_path || '',
+              image_processed: item.image_processed || '',
+              shop_link: item.shop_link || ''
+            })) : [],
+            created_at: outfit.created_at
+          })),
+          unseenCount: dbOutfits.length,
+          totalCount: dbOutfits.length,
+          viewedCount: 0
+        };
+      }
+      
+      // Fallback to Try-This API if no DB outfits
+      console.log('⚠️ No DB outfits, falling back to Try-This API');
       const products = await outfitsApi.getTryThisOutfit();
-      // Create a single outfit from Try-This response
       return {
         outfits: [{
           id: `trythis_${Date.now()}`,
@@ -54,19 +101,54 @@ const Feed = () => {
     
     try {
       setIsLoadingMore(true);
-      const products = await outfitsApi.getTryThisOutfit();
       
-      // Create a new outfit from Try-This
-      const newOutfit = {
-        id: `trythis_${Date.now()}`,
-        outfit_number: outfits.length + 1,
-        occasion: activeCategory === 'all' ? 'general' : activeCategory,
-        items: products.map(p => p.product_id),
-        products: products,
-        created_at: new Date().toISOString()
-      };
+      // Try to load more from database first
+      const occasion = activeCategory === 'all' ? null : activeCategory;
+      const query = supabase
+        .from('outfits')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .range(outfits.length, outfits.length + 9);
       
-      setOutfits(prev => [...prev, newOutfit]);
+      if (occasion) {
+        query.eq('occasion', occasion);
+      }
+      
+      const { data: moreOutfits, error } = await query;
+      
+      if (!error && moreOutfits && moreOutfits.length > 0) {
+        const newOutfits = moreOutfits.map(outfit => ({
+          id: outfit.id,
+          outfit_number: outfit.outfit_number,
+          occasion: outfit.occasion,
+          items: Array.isArray(outfit.items) ? outfit.items.map((item: any) => item.product_id || '') : [],
+          products: Array.isArray(outfit.items) ? outfit.items.map((item: any) => ({
+            id: item.id || '',
+            product_id: item.product_id || '',
+            category: item.category || '',
+            product_name: item.product_name || '',
+            price: item.price || 0,
+            image_path: item.image_path || '',
+            image_processed: item.image_processed || '',
+            shop_link: item.shop_link || ''
+          })) : [],
+          created_at: outfit.created_at
+        }));
+        
+        setOutfits(prev => [...prev, ...newOutfits]);
+      } else {
+        // Fallback to Try-This API
+        const products = await outfitsApi.getTryThisOutfit();
+        const newOutfit = {
+          id: `trythis_${Date.now()}`,
+          outfit_number: outfits.length + 1,
+          occasion: activeCategory === 'all' ? 'general' : activeCategory,
+          items: products.map(p => p.product_id),
+          products: products,
+          created_at: new Date().toISOString()
+        };
+        setOutfits(prev => [...prev, newOutfit]);
+      }
     } catch (error) {
       console.error('Error loading more outfits:', error);
     } finally {
