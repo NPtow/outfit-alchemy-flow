@@ -14,6 +14,20 @@ const Feed = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
   
+  const getImageUrl = (imagePath: string | null | undefined): string => {
+    if (!imagePath) return '';
+    
+    // If it's already a full URL, return as is
+    if (imagePath.startsWith('http')) return imagePath;
+    
+    // Otherwise, construct Supabase Storage URL
+    const { data } = supabase.storage
+      .from('clothing-images')
+      .getPublicUrl(imagePath);
+    
+    return data.publicUrl;
+  };
+  
   // Load outfits from database or Try-This API
   const { data: outfitsData, isLoading: isLoadingOutfits, refetch } = useQuery({
     queryKey: ['outfits', activeCategory],
@@ -219,13 +233,15 @@ const Feed = () => {
                 itemNumber: product.product_id,
                 price: product.price || 0,
                 shopUrl: product.shop_link || '',
-                // Use placeholder image if no image available
-                image: product.image_processed || product.image_path || `https://placehold.co/400x600/e5e7eb/9ca3af?text=${product.category}`,
+                // Use Storage URL or placeholder
+                image: getImageUrl(product.image_processed) || 
+                       getImageUrl(product.image_path) || 
+                       `https://placehold.co/400x600/e5e7eb/9ca3af?text=${encodeURIComponent(product.category)}`,
                 position: { left: '0%', top: '0%' },
                 placement: 'below' as const
               }));
               
-              console.log(`✅ Outfit ${outfit.id}: ${items.length} items (with placeholders if needed)`);
+              console.log(`✅ Outfit ${outfit.id}: ${items.length} items`);
               
               return {
                 id: outfit.id,

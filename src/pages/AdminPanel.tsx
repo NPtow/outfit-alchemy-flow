@@ -30,6 +30,20 @@ const AdminPanel = () => {
     loadProducts();
   }, []);
 
+  const getImageUrl = (imagePath: string | null) => {
+    if (!imagePath) return null;
+    
+    // If it's already a full URL, return as is
+    if (imagePath.startsWith('http')) return imagePath;
+    
+    // Otherwise, construct Supabase Storage URL
+    const { data } = supabase.storage
+      .from('clothing-images')
+      .getPublicUrl(imagePath);
+    
+    return data.publicUrl;
+  };
+
   const loadProducts = async () => {
     try {
       const { data, error } = await supabase
@@ -356,9 +370,17 @@ const AdminPanel = () => {
                 >
                   <div className="aspect-square relative overflow-hidden rounded-lg">
                     <img
-                      src={product.image_processed || product.image_path || `https://placehold.co/200x200?text=${product.category}`}
+                      src={
+                        getImageUrl(product.image_processed) || 
+                        getImageUrl(product.image_path) || 
+                        `https://placehold.co/200x200/e5e7eb/9ca3af?text=${encodeURIComponent(product.category)}`
+                      }
                       alt={product.product_name}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Fallback to placeholder on error
+                        e.currentTarget.src = `https://placehold.co/200x200/e5e7eb/9ca3af?text=${encodeURIComponent(product.category)}`;
+                      }}
                     />
                   </div>
                   <div className="p-2">
