@@ -104,49 +104,7 @@ export const VerticalOutfitFeed = ({
   const [touchEnd, setTouchEnd] = useState(0);
   const [viewStartTime, setViewStartTime] = useState(Date.now());
   const [userId, setUserId] = useState<string | null>(null);
-  const [topMenuHeight, setTopMenuHeight] = useState(0);
-  const [bottomMenuHeight, setBottomMenuHeight] = useState(0);
   const { toast } = useToast();
-
-  // Measure menu heights dynamically
-  useEffect(() => {
-    const measureMenus = () => {
-      // Measure top menu (CategoryTabs) - более надежный селектор
-      const topMenus = document.querySelectorAll('.fixed');
-      let topMenu = null;
-      topMenus.forEach(el => {
-        const styles = window.getComputedStyle(el);
-        if (styles.top === '0px' && styles.zIndex === '40') {
-          topMenu = el;
-        }
-      });
-      
-      if (topMenu) {
-        const height = topMenu.getBoundingClientRect().height;
-        setTopMenuHeight(height);
-        console.log('Top menu height:', height);
-      }
-      
-      // Measure bottom menu (BottomNavigation)
-      const bottomMenu = document.querySelector('nav.fixed');
-      if (bottomMenu) {
-        const height = bottomMenu.getBoundingClientRect().height;
-        setBottomMenuHeight(height);
-        console.log('Bottom menu height:', height);
-      }
-    };
-
-    // Measure on mount with delay to ensure render
-    setTimeout(measureMenus, 100);
-    
-    // Measure on resize
-    window.addEventListener('resize', measureMenus);
-    
-    // Measure after fonts load (affects menu height)
-    document.fonts.ready.then(measureMenus);
-    
-    return () => window.removeEventListener('resize', measureMenus);
-  }, []);
 
   // Get authenticated user ID
   useEffect(() => {
@@ -449,21 +407,22 @@ export const VerticalOutfitFeed = ({
             className="absolute inset-0 flex items-center justify-center"
           >
           {/* Outfit Image - Flexible with margins from top and bottom menus */}
+          {/* Top menu height: ~110px (title + tabs + padding), Bottom menu: ~70px + 24px bottom offset = 94px */}
           <div 
             className="absolute left-[2mm] right-[2mm] flex items-center justify-center"
             style={{
-              top: topMenuHeight ? `calc(${topMenuHeight}px + 2mm)` : 'calc(120px + 2mm)',
-              bottom: bottomMenuHeight ? `calc(${bottomMenuHeight}px + 2mm + 2mm)` : 'calc(70px + 2mm + 2mm)'
+              top: 'calc(110px + 2mm)',
+              bottom: 'calc(94px + 2mm)'
             }}
           >
-            <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center overflow-hidden p-[2mm]">
+            <div className="relative w-full h-full bg-white rounded-3xl sm:rounded-[32px] flex items-center justify-center overflow-hidden">
               {/* Action Buttons - Inside white container, right side */}
               <div className="absolute right-[2mm] bottom-[10mm] z-20 flex flex-col gap-3 sm:gap-4">
                 {/* Like Button */}
                 <button
                   onClick={handleLike}
                   disabled={showCarousel}
-                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Like"
                 >
                   <img 
@@ -485,7 +444,7 @@ export const VerticalOutfitFeed = ({
                     }, 150);
                   }}
                   disabled={showCarousel}
-                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Details"
                 >
                   <img 
@@ -500,7 +459,7 @@ export const VerticalOutfitFeed = ({
                 <button
                   onClick={handleShare}
                   disabled={showCarousel}
-                  className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                   aria-label="Share"
                 >
                   <img 

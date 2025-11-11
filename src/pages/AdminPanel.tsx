@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Plus, Upload, Crop, X } from 'lucide-react';
+import { Loader2, Plus, Upload, Crop } from 'lucide-react';
 import { cropClothingImage } from '@/lib/imageCrop';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const AdminPanel = () => {
   const { toast } = useToast();
@@ -19,44 +18,6 @@ const AdminPanel = () => {
   const [cropImageUrl, setCropImageUrl] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [outfitStats, setOutfitStats] = useState<{total: number, min: number, max: number} | null>(null);
-  
-  // Manual outfit creation
-  const [products, setProducts] = useState<any[]>([]);
-  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
-  const [outfitOccasion, setOutfitOccasion] = useState('general');
-  const [isCreatingOutfit, setIsCreatingOutfit] = useState(false);
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
-
-  const getImageUrl = (imagePath: string | null) => {
-    if (!imagePath) return null;
-    
-    // If it's already a full URL, return as is
-    if (imagePath.startsWith('http')) return imagePath;
-    
-    // Otherwise, construct Supabase Storage URL
-    const { data } = supabase.storage
-      .from('clothing-images')
-      .getPublicUrl(imagePath);
-    
-    return data.publicUrl;
-  };
-
-  const loadProducts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      setProducts(data || []);
-    } catch (error) {
-      console.error('Error loading products:', error);
-    }
-  };
 
   const loadOutfitStats = async () => {
     try {
@@ -238,196 +199,12 @@ const AdminPanel = () => {
     }
   };
 
-  const handleCreateOutfit = async () => {
-    if (selectedProducts.length < 2) {
-      toast({
-        title: 'Ошибка',
-        description: 'Выберите минимум 2 товара для образа',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsCreatingOutfit(true);
-
-    try {
-      // Get selected products data
-      const outfitItems = products
-        .filter(p => selectedProducts.includes(p.product_id))
-        .map(p => ({
-          id: p.id,
-          product_id: p.product_id,
-          category: p.category,
-          product_name: p.product_name,
-          price: p.price,
-          image_path: p.image_path,
-          image_processed: p.image_processed,
-          shop_link: p.shop_link
-        }));
-
-      // Get max outfit number
-      const { data: maxOutfit } = await supabase
-        .from('outfits')
-        .select('outfit_number')
-        .order('outfit_number', { ascending: false })
-        .limit(1)
-        .single();
-
-      const nextOutfitNumber = (maxOutfit?.outfit_number || 0) + 1;
-
-      // Insert outfit
-      const { error: insertError } = await supabase
-        .from('outfits')
-        .insert({
-          occasion: outfitOccasion,
-          outfit_number: nextOutfitNumber,
-          items: outfitItems
-        });
-
-      if (insertError) throw insertError;
-
-      toast({
-        title: 'Успех!',
-        description: `Образ #${nextOutfitNumber} создан с ${outfitItems.length} товарами`,
-      });
-
-      // Reset form
-      setSelectedProducts([]);
-      setOutfitOccasion('general');
-      await loadOutfitStats();
-
-    } catch (error: any) {
-      console.error('Error creating outfit:', error);
-      toast({
-        title: 'Ошибка',
-        description: error.message || 'Не удалось создать образ',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsCreatingOutfit(false);
-    }
-  };
-
-  const toggleProductSelection = (productId: string) => {
-    setSelectedProducts(prev => 
-      prev.includes(productId)
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId]
-    );
-  };
-
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="container mx-auto max-w-2xl space-y-6">
         <h1 className="text-3xl font-stolzl font-bold text-primary">
           Админ-панель
         </h1>
-
-        {/* Manual Outfit Creation Section */}
-        <Card className="p-6 space-y-4">
-          <h2 className="text-xl font-stolzl font-semibold">Создать образ вручную</h2>
-          
-          <div>
-            <label className="text-sm font-semibold mb-2 block">Тип события</label>
-            <Select value={outfitOccasion} onValueChange={setOutfitOccasion}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="general">Повседневный</SelectItem>
-                <SelectItem value="work">Деловой</SelectItem>
-                <SelectItem value="casual">Casual</SelectItem>
-                <SelectItem value="formal">Формальный</SelectItem>
-                <SelectItem value="party">Вечеринка</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-semibold">Выбрано товаров: {selectedProducts.length}</label>
-              {selectedProducts.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedProducts([])}
-                >
-                  Очистить
-                </Button>
-              )}
-            </div>
-            
-            <div className="grid grid-cols-3 gap-3 max-h-96 overflow-y-auto border rounded-lg p-3">
-              {products.map(product => (
-                <div
-                  key={product.product_id}
-                  onClick={() => toggleProductSelection(product.product_id)}
-                  className={`relative cursor-pointer rounded-lg border-2 transition-all ${
-                    selectedProducts.includes(product.product_id)
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:border-primary/50'
-                  }`}
-                >
-                  <div className="aspect-square relative overflow-hidden rounded-lg">
-                    <img
-                      src={
-                        getImageUrl(product.image_processed) || 
-                        getImageUrl(product.image_path) || 
-                        `https://placehold.co/200x200/e5e7eb/9ca3af?text=${encodeURIComponent(product.category)}`
-                      }
-                      alt={product.product_name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback to placeholder on error
-                        e.currentTarget.src = `https://placehold.co/200x200/e5e7eb/9ca3af?text=${encodeURIComponent(product.category)}`;
-                      }}
-                    />
-                  </div>
-                  <div className="p-2">
-                    <p className="text-xs font-semibold truncate">{product.product_name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{product.category}</p>
-                    {product.price && (
-                      <p className="text-xs font-semibold">{product.price} ₽</p>
-                    )}
-                  </div>
-                  {selectedProducts.includes(product.product_id) && (
-                    <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                      {selectedProducts.indexOf(product.product_id) + 1}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Button
-            onClick={handleCreateOutfit}
-            disabled={isCreatingOutfit || selectedProducts.length < 2}
-            className="w-full"
-          >
-            {isCreatingOutfit ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Создаём образ...
-              </>
-            ) : (
-              <>
-                <Plus className="mr-2 h-4 w-4" />
-                Создать образ ({selectedProducts.length} товаров)
-              </>
-            )}
-          </Button>
-
-          <div className="p-4 bg-primary/5 rounded-lg">
-            <h3 className="text-sm font-semibold mb-2">Инструкция:</h3>
-            <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-              <li>Выберите тип события для образа</li>
-              <li>Кликайте на товары чтобы добавить их в образ (минимум 2)</li>
-              <li>Нажмите "Создать образ" чтобы сохранить</li>
-              <li>Образ появится в ленте Feed</li>
-            </ol>
-          </div>
-        </Card>
 
         {/* Outfit Generation Section */}
         <Card className="p-6 space-y-4">

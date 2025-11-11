@@ -141,34 +141,6 @@ class OutfitsApi {
 
     console.log('✅ Outfit generation triggered');
   }
-
-  async getTryThisOutfit(userId?: string): Promise<OutfitItem[]> {
-    console.log('🎨 Getting outfit from Try-This API...');
-
-    const { data, error } = await supabase.functions.invoke('generate-outfit-trythis', {
-      body: { userId: userId || '123' }
-    });
-
-    if (error) {
-      console.error('❌ Error getting Try-This outfit:', error);
-      throw error;
-    }
-
-    console.log('✅ Received Try-This outfit:', data);
-
-    // Transform Try-This format to our format
-    const cloths = data.cloths || [];
-    return cloths.map((item: any, index: number) => ({
-      id: `trythis_${Date.now()}_${index}`,
-      product_id: `trythis_${item.category}_${index}`,
-      product_name: item.category,
-      category: item.category,
-      price: item.price_rub || 0,
-      image_processed: item.img_url,
-      image_path: item.img_url,
-      shop_link: item.shop_url || '',
-    }));
-  }
 }
 
 export const outfitsApi = new OutfitsApi();
