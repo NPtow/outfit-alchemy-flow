@@ -120,8 +120,8 @@ const Feed = () => {
                 itemNumber: product.product_id,
                 price: product.price || 0,
                 shopUrl: product.shop_link || '',
-                // Use placeholder image if no image available
-                image: product.image_processed || product.image_path || `https://placehold.co/400x600/e5e7eb/9ca3af?text=${product.category}`,
+                // Use placeholder image if no image available from external storage
+                image: product.image_processed || `https://placehold.co/400x600/e5e7eb/9ca3af?text=${product.category}`,
                 position: { left: '0%', top: '0%' },
                 placement: 'below' as const
               }));
